@@ -3,7 +3,8 @@ const colors = {
   secondary: '#160F3D',
   white: '#FFFFFF',
   transparent: 'rgba(0, 0, 0, 0.3)',
-  line: 'rgba(0, 0, 0, 0.1)',
+  line: 'rgba(0, 0, 0, 0.08)',
+  headerBg: 'rgba(0, 0, 0, 0.08)',
   disabled: '#c5cbd3',
   border: '#D5D5E0',
   textColor: '#323643'

@@ -2,9 +2,12 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import Apploading from "expo-app-loading";
 import { useFonts } from "expo-font";
+import { enableScreens } from "react-native-screens";
 
 import Routes from "./routes";
 import colors from './constants/colors';
+
+enableScreens();
 
 export default function App() {
   const [loaded] = useFonts({

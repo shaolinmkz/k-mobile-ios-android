@@ -21,6 +21,8 @@ const Home = () => {
     },
   ];
 
+  const iconSize = Dimensions.get("window").height / 30;
+
   const handleModal = () => {
     setModalVisible(prevState => !prevState)
   }
@@ -34,7 +36,7 @@ const Home = () => {
       <View style={styles.menus}>
         {menuCollection.map(({ name, icon }) => (
           <TouchableOpacity style={styles.card} key={name}>
-            <Image source={icon} style={styles.cardIcon} />
+            <Image source={icon} style={styles.cardIcon} height={iconSize} width={iconSize} />
             <Text style={styles.cardText}>{name}</Text>
           </TouchableOpacity>
         ))}
@@ -51,12 +53,12 @@ const styles = StyleSheet.create({
   },
   header: {
     width: "100%",
-    padding: 30,
+    padding: Dimensions.get("window").width / 15,
     borderBottomWidth: 1,
     borderBottomColor: colors.line,
   },
   menus: {
-    padding: 30,
+    padding: Dimensions.get("window").width / 15,
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
@@ -75,11 +77,13 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 30,
   },
-  cardIcon: {},
+  cardIcon: {
+    overflow: 'visible',
+  },
   cardText: {
     color: colors.textColor,
     marginTop: 10,
-    fontSize: Dimensions.get("window").width / 30
+    fontSize: Dimensions.get("window").width / 28
   },
 });
 
