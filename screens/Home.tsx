@@ -16,7 +16,7 @@ const Home = ({ navigation }: React.ComponentProps<any>) => {
     {
       name: "Link / Unlink",
       Icon: LinkSvg,
-      screen: 'Link Account Number'
+      screen: 'AccountNumberList'
     },
     {
       name: "Send Money",

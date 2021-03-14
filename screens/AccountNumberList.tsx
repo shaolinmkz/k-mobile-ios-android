@@ -4,7 +4,6 @@ import {
   StyleSheet,
   Text,
   Dimensions,
-  TouchableOpacity,
   ScrollView,
 } from "react-native";
 import CustomRadioButton from "../components/CustomRadioButton";
@@ -16,15 +15,25 @@ const availableAccountNumbers = "*"
   .split("*")
   .map((val, index) => ({
     id: `${index + 1}`,
-    name: "ADAEZE MOJI IBRAHIM",
-    accountNumber: "3204597897",
+    name: `ADAEZE MOJI IBRAHIM ${index + 1}`,
+    accountNumber: `320459789${index}`,
   }));
 
-const AccountNumberList = () => {
-  const [accountNumberId, setAccountNumberId] = useState("");
+interface Account {
+  id: string;
+  name: string;
+  accountNumber: string;
+}
 
-  const handleCheck = (value: string) => {
-    setAccountNumberId(value);
+const AccountNumberList = ({ navigation }: React.ComponentProps<any>) => {
+  const [selectedAccount, setSelectedAccount] = useState({
+    id: "",
+    name: "",
+    accountNumber: "",
+  });
+
+  const handleCheck = (value: Account) => {
+    setSelectedAccount(value);
   };
 
   return (
@@ -36,24 +45,31 @@ const AccountNumberList = () => {
       <ScrollView style={styles.list}>
         {availableAccountNumbers.map(({ name, accountNumber, id }) => (
           <CustomRadioButton
-            checked={accountNumberId === id}
+            checked={selectedAccount.id === id}
             text1={name}
             text2={accountNumber}
             key={id}
-            onSelect={() => handleCheck(id)}
+            onSelect={() => handleCheck({ name, accountNumber, id })}
           />
         ))}
       </ScrollView>
       <View
         style={{
-          paddingVertical: 40,
+          paddingVertical: Dimensions.get("window").width / 10,
           paddingHorizontal: Dimensions.get("window").width / 15,
         }}
       >
         <CustomButton2
-          onPress={() => {}}
+          onPress={() => {
+            navigation.navigate({
+              name: 'SelectAlias',
+              params: {
+                account: selectedAccount
+              }
+            })
+          }}
           text="Proceed"
-          disabled={!accountNumberId}
+          disabled={!selectedAccount.id}
         />
       </View>
     </View>

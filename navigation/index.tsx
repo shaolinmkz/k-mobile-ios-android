@@ -6,6 +6,7 @@ import { Dimensions, Platform } from "react-native";
 import Home from "../screens/Home";
 import AccountNumberList from "../screens/AccountNumberList";
 import colors from "../constants/colors";
+import SelectAlias from "../screens/SelectAlias";
 
 const Stack = createStackNavigator();
 
@@ -17,6 +18,7 @@ const Routes = () => {
           name="Home"
           component={Home}
           options={{
+            title: 'Home',
             headerTitleStyle: {
               fontSize: Dimensions.get("window").width / 18,
               fontFamily: "lato-bold",
@@ -37,9 +39,22 @@ const Routes = () => {
           }}
         />
         <Stack.Screen
-          name="Link Account Number"
+          name="AccountNumberList"
           component={AccountNumberList}
           options={{
+            title: 'Link Account Number',
+            headerTitleStyle: {
+              fontSize: Dimensions.get("window").width / 20,
+              fontFamily: "lato-bold",
+            },
+            headerTitleContainerStyle: {},
+          }}
+        />
+        <Stack.Screen
+          name="SelectAlias"
+          component={SelectAlias}
+          options={{
+            title: 'Select Alias',
             headerTitleStyle: {
               fontSize: Dimensions.get("window").width / 20,
               fontFamily: "lato-bold",

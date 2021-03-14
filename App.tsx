@@ -5,7 +5,7 @@ import { enableScreens } from "react-native-screens";
 
 enableScreens();
 
-import Routes from "./routes";
+import Routes from "./navigation";
 import colors from "./constants/colors";
 
 const loadFonts = () => {
