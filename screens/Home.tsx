@@ -82,13 +82,13 @@ const styles = StyleSheet.create({
   },
   card: {
     width: Dimensions.get("window").width / 2.5,
-    padding: 20,
-    paddingHorizontal: 10,
+    padding: Dimensions.get("window").width / 20,
+    paddingHorizontal: Dimensions.get("window").width / 40,
     borderWidth: 1,
     borderColor: colors.line,
     backgroundColor: "rgba(231, 234, 240, 0.25)",
     borderRadius: 5,
-    marginBottom: 30,
+    marginBottom: Dimensions.get("window").height / 40,
   },
   cardIcon: {
     overflow: "visible",
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
   cardText: {
     color: colors.textColor,
     marginTop: 10,
-    fontSize: Dimensions.get("window").width / 28,
+    fontSize: Dimensions.get("window").width / 30,
   },
 });
 

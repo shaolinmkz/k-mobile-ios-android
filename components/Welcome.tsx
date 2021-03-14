@@ -75,8 +75,8 @@ const styles = StyleSheet.create({
   content: {
     marginHorizontal: 20,
     height: Dimensions.get("window").height / 1.25,
-    paddingHorizontal: 20,
-    paddingVertical: 40,
+    paddingHorizontal: Dimensions.get("window").width / 20,
+    paddingVertical: Dimensions.get("window").height / 20,
     justifyContent: 'center',
   },
   title: {
@@ -86,13 +86,13 @@ const styles = StyleSheet.create({
   bodyText: {
     fontFamily: "lato-regular",
     fontSize: Dimensions.get("window").width / 26,
-    lineHeight: 25,
+    lineHeight: Dimensions.get("window").height / 30,
     marginBottom: Dimensions.get("window").height / 20,
     textAlign: 'center',
   },
   innerText: {
     paddingTop: Dimensions.get("window").height / 2,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   "bold-uppercase": {
     fontFamily: "lato-bold",
