@@ -1,48 +1,58 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Text, Image, Dimensions, TouchableOpacity } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  Dimensions,
+  TouchableOpacity,
+} from "react-native";
 import Welcome from "../components/Welcome";
 import colors from "../constants/colors";
-
+import { LinkSvg, TransactionSvg, TransferSvg } from "../assets/icons/svgs";
 const Home = () => {
   const [modalVisible, setModalVisible] = useState(true);
 
   const menuCollection = [
     {
       name: "Link / Unlink",
-      icon: require("../assets/icons/link.png"),
+      Icon: LinkSvg,
     },
     {
       name: "Send Money",
-      icon: require("../assets/icons/transfer.png"),
+      Icon: TransferSvg,
     },
     {
       name: "Transactions History",
-      icon: require("../assets/icons/transactions.png"),
+      Icon: TransactionSvg,
     },
   ];
 
   const iconSize = Dimensions.get("window").height / 30;
 
   const handleModal = () => {
-    setModalVisible(prevState => !prevState)
-  }
+    setModalVisible((prevState) => !prevState);
+  };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Send Money to Alias</Text>
-      </View>
+    <>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.headerText}>Send Money to Alias</Text>
+        </View>
 
-      <View style={styles.menus}>
-        {menuCollection.map(({ name, icon }) => (
-          <TouchableOpacity style={styles.card} key={name}>
-            <Image source={icon} style={styles.cardIcon} height={iconSize} width={iconSize} />
-            <Text style={styles.cardText}>{name}</Text>
-          </TouchableOpacity>
-        ))}
+        <View style={styles.menus}>
+          {menuCollection.map(({ name, Icon }) => (
+            <TouchableOpacity style={styles.card} key={name}>
+              <View style={styles.cardIcon}>
+                <Icon width={iconSize} height={iconSize} />
+              </View>
+              <Text style={styles.cardText}>{name}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
       </View>
       <Welcome mode="light" visible={modalVisible} handleModal={handleModal} />
-    </View>
+    </>
   );
 };
 
@@ -64,7 +74,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   headerText: {
-    fontSize: 22,
+    fontSize: 18,
     fontFamily: "lato-regular",
   },
   card: {
@@ -78,12 +88,12 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   cardIcon: {
-    overflow: 'visible',
+    overflow: "visible",
   },
   cardText: {
     color: colors.textColor,
     marginTop: 10,
-    fontSize: Dimensions.get("window").width / 28
+    fontSize: Dimensions.get("window").width / 28,
   },
 });
 

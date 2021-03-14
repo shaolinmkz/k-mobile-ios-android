@@ -1,25 +1,32 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
-import Apploading from "expo-app-loading";
-import { useFonts } from "expo-font";
+import * as Font from "expo-font";
 import { enableScreens } from "react-native-screens";
-
-import Routes from "./routes";
-import colors from './constants/colors';
 
 enableScreens();
 
-export default function App() {
-  const [loaded] = useFonts({
+import Routes from "./routes";
+import colors from "./constants/colors";
+
+const loadFonts = () => {
+  return Font.loadAsync({
     "lato-thin": require("./assets/fonts/Lato-Thin.ttf"),
     "lato-light": require("./assets/fonts/Lato-Light.ttf"),
     "lato-regular": require("./assets/fonts/Lato-Regular.ttf"),
     "lato-bold": require("./assets/fonts/Lato-Bold.ttf"),
   });
+};
 
-  return !loaded ? (
-    <Apploading />
-  ) : (
+export default function App() {
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    loadFonts().finally(() => {
+      setLoaded(true);
+    });
+  }, []);
+
+  return !loaded ? null : (
     <View style={styles.container}>
       <Routes />
     </View>
