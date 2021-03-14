@@ -9,21 +9,24 @@ import {
 import Welcome from "../components/Welcome";
 import colors from "../constants/colors";
 import { LinkSvg, TransactionSvg, TransferSvg } from "../assets/icons/svgs";
-const Home = () => {
+const Home = ({ navigation }: React.ComponentProps<any>) => {
   const [modalVisible, setModalVisible] = useState(true);
 
   const menuCollection = [
     {
       name: "Link / Unlink",
       Icon: LinkSvg,
+      screen: 'Link Account Number'
     },
     {
       name: "Send Money",
       Icon: TransferSvg,
+      screen: 'Home'
     },
     {
       name: "Transactions History",
       Icon: TransactionSvg,
+      screen: 'Home'
     },
   ];
 
@@ -41,8 +44,8 @@ const Home = () => {
         </View>
 
         <View style={styles.menus}>
-          {menuCollection.map(({ name, Icon }) => (
-            <TouchableOpacity style={styles.card} key={name}>
+          {menuCollection.map(({ name, Icon, screen }) => (
+            <TouchableOpacity style={styles.card} key={name} onPress={() => navigation.navigate(screen)}>
               <View style={styles.cardIcon}>
                 <Icon width={iconSize} height={iconSize} />
               </View>
