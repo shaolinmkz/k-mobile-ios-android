@@ -9,6 +9,7 @@ import {
 import CustomRadioButton from "../components/CustomRadioButton";
 import CustomButton2 from "../components/CustomButton2";
 import colors from "../constants/colors";
+import LinkInfoModal from "../components/LinkInfoModal";
 
 const availableAccountNumbers = "*"
   .repeat(10)
@@ -25,7 +26,8 @@ interface Account {
   accountNumber: string;
 }
 
-const AccountNumberList = ({ navigation }: React.ComponentProps<any>) => {
+const AccountNumberList = ({ navigation, route }: React.ComponentProps<any>) => {
+  const [isFirstTime, setIsFirstTime] = useState(route.params.isFirstTime);
   const [selectedAccount, setSelectedAccount] = useState({
     id: "",
     name: "",
@@ -36,7 +38,12 @@ const AccountNumberList = ({ navigation }: React.ComponentProps<any>) => {
     setSelectedAccount(value);
   };
 
+  const handleIsFirstTime = () => {
+    setIsFirstTime(false);
+  };
+
   return (
+    <>
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerText}>Available Account Numbers</Text>
@@ -73,6 +80,8 @@ const AccountNumberList = ({ navigation }: React.ComponentProps<any>) => {
         />
       </View>
     </View>
+    <LinkInfoModal mode="dark" visible={isFirstTime} handleModal={handleIsFirstTime} />
+    </>
   );
 };
 

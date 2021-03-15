@@ -6,7 +6,7 @@ import {
   Dimensions,
   TouchableOpacity,
 } from "react-native";
-import Welcome from "../components/Welcome";
+import WelcomeModal from "../components/WelcomeModal";
 import colors from "../constants/colors";
 import { LinkSvg, TransactionSvg, TransferSvg } from "../assets/icons/svgs";
 const Home = ({ navigation }: React.ComponentProps<any>) => {
@@ -36,6 +36,19 @@ const Home = ({ navigation }: React.ComponentProps<any>) => {
     setModalVisible((prevState) => !prevState);
   };
 
+  const handleNavigation = (screen: string) => {
+    if(screen === 'AccountNumberList') {
+      navigation.navigate({
+        name: screen,
+        params: {
+          isFirstTime: true
+        }
+      });
+    } else {
+      navigation.navigate(screen);
+    }
+  };
+
   return (
     <>
       <View style={styles.container}>
@@ -45,7 +58,7 @@ const Home = ({ navigation }: React.ComponentProps<any>) => {
 
         <View style={styles.menus}>
           {menuCollection.map(({ name, Icon, screen }) => (
-            <TouchableOpacity style={styles.card} key={name} onPress={() => navigation.navigate(screen)}>
+            <TouchableOpacity style={styles.card} key={name} onPress={() => handleNavigation(screen)}>
               <View style={styles.cardIcon}>
                 <Icon width={iconSize} height={iconSize} />
               </View>
@@ -54,7 +67,7 @@ const Home = ({ navigation }: React.ComponentProps<any>) => {
           ))}
         </View>
       </View>
-      <Welcome mode="light" visible={modalVisible} handleModal={handleModal} />
+      <WelcomeModal mode="dark" visible={modalVisible} handleModal={handleModal} />
     </>
   );
 };
@@ -88,7 +101,7 @@ const styles = StyleSheet.create({
     borderColor: colors.line,
     backgroundColor: "rgba(231, 234, 240, 0.25)",
     borderRadius: 5,
-    marginBottom: Dimensions.get("window").height / 40,
+    marginBottom: Dimensions.get("window").height / 30,
   },
   cardIcon: {
     overflow: "visible",
