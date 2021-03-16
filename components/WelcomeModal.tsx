@@ -27,17 +27,16 @@ const Welcome: React.FC<Props> = ({ mode, visible, handleModal }: Props) => {
               ...styles.title,
               color: textColor,
               ...styles["bold-uppercase"],
+              fontSize: Dimensions.get("window").width / 18
             }}
           >
             WELCOME!
           </Text>
 
           <Text style={{ ...styles.bodyText, color: textColor }}>
-            HERE ARE A FEW{" "}
             <Text style={{ ...styles["bold-uppercase"] }}>
-              TERMS AND CONDITIONS
-            </Text>{" "}
-            BEFORE YOU PROCEED
+            A FEW TERMS AND CONDITIONS BEFORE YOU PROCEED
+            </Text>
           </Text>
           <View>
             <Text style={{ ...styles.bodyText, color: textColor }}>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -6,6 +6,7 @@ import {
   Dimensions,
   Modal,
   TouchableOpacity,
+  Animated,
 } from "react-native";
 import colors from "../constants/colors";
 import { CheckSvg, TimesSvg, LinkSvg } from "../assets/icons/svgs";
@@ -23,14 +24,36 @@ const LinkModalInfo: React.FC<Props> = ({
   handleModal,
   selectedPhoneOrEmail,
 }: Props) => {
-  const backgroundColor =
-    mode === "dark" ? colors.secondary : colors.transparent;
-  const contentBackgroundColor =
-    mode === "dark" ? colors.secondary : colors.white;
-  const textColor = mode === "dark" ? colors.white : colors.textColor;
+  const { current: startValue } = useRef(new Animated.Value(0));
+
+  const isDarkMode = mode === "dark";
+  const backgroundColor = isDarkMode ? colors.secondary : colors.transparent;
+  const contentBackgroundColor = isDarkMode ? colors.secondary : colors.white;
+  const textColor = isDarkMode ? colors.white : colors.textColor;
 
   const topIconSize = Dimensions.get("window").height / 10;
   const bottomIconSize = Dimensions.get("window").height / 40;
+
+  useEffect(() => {
+    if (visible) {
+      Animated.loop(
+        Animated.spring(startValue, {
+          toValue: -20,
+          friction: 1,
+          useNativeDriver: true,
+        }),
+        {
+          iterations: 100,
+        }
+      ).start();
+    }
+  }, [visible]);
+
+  useEffect(() => {
+    return () => {
+      handleModal();
+    };
+  }, []);
 
   return (
     <Modal
@@ -50,11 +73,28 @@ const LinkModalInfo: React.FC<Props> = ({
               marginBottom: Dimensions.get("window").height / 20,
             }}
           >
-            <CheckSvg width={topIconSize} height={topIconSize} />
+            <Animated.View
+              style={[
+                {
+                  transform: [
+                    {
+                      translateY: startValue,
+                    },
+                  ],
+                },
+              ]}
+            >
+              <CheckSvg width={topIconSize} height={topIconSize} />
+            </Animated.View>
           </View>
 
           <Text style={{ ...styles.bodyText, color: textColor }}>
-            <Text style={{ ...styles["bold-uppercase"],  fontSize: Dimensions.get("window").width / 18, }}>
+            <Text
+              style={{
+                ...styles["bold-uppercase"],
+                fontSize: Dimensions.get("window").width / 18,
+              }}
+            >
               Account Linked Successfully
             </Text>
           </Text>
@@ -72,13 +112,15 @@ const LinkModalInfo: React.FC<Props> = ({
             </Text>
           </View>
 
-          <View style={{
+          <View
+            style={{
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "center",
               width: "100%",
               marginBottom: Dimensions.get("window").height / 22,
-            }}>
+            }}
+          >
             <LinkSvg white />
           </View>
 
@@ -155,8 +197,8 @@ const styles = StyleSheet.create({
   btnContainer: {
     flexDirection: "row",
     justifyContent: "center",
-    alignItems: 'center',
-    width: '100%',
+    alignItems: "center",
+    width: "100%",
     marginTop: Dimensions.get("window").height / 20,
   },
 });

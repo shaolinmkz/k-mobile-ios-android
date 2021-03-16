@@ -15,7 +15,7 @@ import CustomButton2 from "../components/CustomButton2";
 import colors from "../constants/colors";
 import { combinedValidators, sanitizePhoneNumber } from "../helpers";
 
-const SelectAlias = ({ route, navigation }: React.ComponentProps<any>) => {
+const LinkAlias = ({ route, navigation }: React.ComponentProps<any>) => {
   const { account } = route.params;
 
   const [phoneOrEmail, setPhoneOrEmail] = useState("");
@@ -196,4 +196,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SelectAlias;
+export default LinkAlias;

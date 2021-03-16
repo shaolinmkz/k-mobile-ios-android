@@ -14,7 +14,7 @@ const CustomButton2 = ({ text, onPress, disabled }: Props) => {
   const disabledTextStyle = disabled ? { color: colors.white } : {}
 
   return (
-    <TouchableOpacity style={{ ...styles.button, ...disabledBtnStyle  }} onPress={disabled ? () => {} : onPress}>
+    <TouchableOpacity activeOpacity={0.5} style={{ ...styles.button, ...disabledBtnStyle  }} onPress={disabled ? () => {} : onPress}>
       <Text style={{ ...styles.text, ...disabledTextStyle  }}>{text}</Text>
     </TouchableOpacity>
   );

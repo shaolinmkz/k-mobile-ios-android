@@ -69,7 +69,7 @@ const AccountNumberList = ({ navigation, route }: React.ComponentProps<any>) => 
         <CustomButton2
           onPress={() => {
             navigation.navigate({
-              name: 'SelectAlias',
+              name: 'LinkAlias',
               params: {
                 account: selectedAccount
               }

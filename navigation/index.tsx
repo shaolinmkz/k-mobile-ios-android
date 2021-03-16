@@ -6,7 +6,7 @@ import { Dimensions, Platform } from "react-native";
 import Home from "../screens/Home";
 import AccountNumberList from "../screens/AccountNumberList";
 import colors from "../constants/colors";
-import SelectAlias from "../screens/SelectAlias";
+import LinkAlias from "../screens/LinkAlias";
 import OtpScreen from "../screens/OtpScreen";
 
 const Stack = createStackNavigator();
@@ -23,6 +23,7 @@ const Routes = () => {
             headerTitleStyle: {
               fontSize: Dimensions.get("window").width / 18,
               fontFamily: "lato-bold",
+              color: colors.secondary
             },
             headerTitleContainerStyle:
               Platform.OS === "android"
@@ -52,8 +53,8 @@ const Routes = () => {
           }}
         />
         <Stack.Screen
-          name="SelectAlias"
-          component={SelectAlias}
+          name="LinkAlias"
+          component={LinkAlias}
           options={{
             title: 'Select Alias',
             headerTitleStyle: {

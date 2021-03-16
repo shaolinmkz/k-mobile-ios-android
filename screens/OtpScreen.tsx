@@ -49,7 +49,6 @@ const OtpScreen = ({ navigation, route }: React.ComponentProps<any>) => {
   };
 
   const handleNavigation = (screen: string) => {
-    setModalVisible(false);
     navigation.navigate(screen);
   };
 

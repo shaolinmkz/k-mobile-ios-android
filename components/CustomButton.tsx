@@ -35,7 +35,7 @@ const CustomButton = ({ text, mode, focus, onPress }: Props) => {
 
 
   return (
-    <TouchableOpacity style={{ ...styles.button, backgroundColor, borderColor  }} onPress={onPress}>
+    <TouchableOpacity activeOpacity={0.5} style={{ ...styles.button, backgroundColor, borderColor  }} onPress={onPress}>
       <Text style={{ ...styles.text, color: textColor  }}>{text}</Text>
     </TouchableOpacity>
   );

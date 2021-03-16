@@ -58,7 +58,7 @@ const Home = ({ navigation }: React.ComponentProps<any>) => {
 
         <View style={styles.menus}>
           {menuCollection.map(({ name, Icon, screen }) => (
-            <TouchableOpacity style={styles.card} key={name} onPress={() => handleNavigation(screen)}>
+            <TouchableOpacity activeOpacity={0.5} style={styles.card} key={name} onPress={() => handleNavigation(screen)}>
               <View style={styles.cardIcon}>
                 <Icon width={iconSize} height={iconSize} />
               </View>
