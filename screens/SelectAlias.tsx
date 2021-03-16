@@ -8,30 +8,30 @@ import {
   TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  Keyboard
+  Keyboard,
 } from "react-native";
 import CustomRadioButton from "../components/CustomRadioButton";
 import CustomButton2 from "../components/CustomButton2";
 import colors from "../constants/colors";
 import { combinedValidators, sanitizePhoneNumber } from "../helpers";
 
-const SelectAlias = ({ route }: React.ComponentProps<any>) => {
+const SelectAlias = ({ route, navigation }: React.ComponentProps<any>) => {
   const { account } = route.params;
 
   const [phoneOrEmail, setPhoneOrEmail] = useState("");
-  const [selectedPhoneNumber, setSelectedPhoneNumber] = useState("");
+  const [selectedPhoneOrEmail, setSelectedPhoneOrEmail] = useState("");
 
   const handleCheck = (value: string) => {
-    setSelectedPhoneNumber(value);
+    setSelectedPhoneOrEmail(value);
     setPhoneOrEmail(sanitizePhoneNumber(value));
   };
 
   const handlePhoneOrEmail = (value: string) => {
     setPhoneOrEmail(value);
     if (combinedValidators.phoneAndEmail(value)) {
-      setSelectedPhoneNumber(value);
+      setSelectedPhoneOrEmail(value);
     } else {
-      setSelectedPhoneNumber('');
+      setSelectedPhoneOrEmail("");
     }
   };
 
@@ -39,7 +39,7 @@ const SelectAlias = ({ route }: React.ComponentProps<any>) => {
     .repeat(1)
     .split("*")
     .map((val, index) => `+234806${90 - index}2${40 + index}8${index}`)
-    .concat('xyz@example.com');
+    .concat("xyz@example.com");
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -74,7 +74,9 @@ const SelectAlias = ({ route }: React.ComponentProps<any>) => {
               style={{
                 borderWidth: 1,
                 borderRadius: Dimensions.get("window").width / 15,
-                borderColor: combinedValidators.phoneAndEmail(phoneOrEmail) ? colors.primary : colors.textColor,
+                borderColor: combinedValidators.phoneAndEmail(phoneOrEmail)
+                  ? colors.primary
+                  : colors.textColor,
                 width: Dimensions.get("window").width / 15,
                 height: Dimensions.get("window").width / 15,
                 marginRight: Dimensions.get("window").width / 15,
@@ -101,7 +103,7 @@ const SelectAlias = ({ route }: React.ComponentProps<any>) => {
             </TouchableOpacity>
             <TextInput
               value={phoneOrEmail}
-              placeholder="08034662893"
+              placeholder="Phone number or email"
               autoCorrect={false}
               autoCompleteType="off"
               autoCapitalize="none"
@@ -127,7 +129,7 @@ const SelectAlias = ({ route }: React.ComponentProps<any>) => {
           </Text>
           {availablePhoneNumbers.map((phoneNumber) => (
             <CustomRadioButton
-              checked={selectedPhoneNumber === phoneNumber}
+              checked={selectedPhoneOrEmail === phoneNumber}
               text1=""
               text2={phoneNumber}
               key={phoneNumber}
@@ -142,9 +144,20 @@ const SelectAlias = ({ route }: React.ComponentProps<any>) => {
           }}
         >
           <CustomButton2
-            onPress={() => {}}
+            onPress={() => {
+              navigation.navigate({
+                name: "OtpScreen",
+                params: {
+                  selectedPhoneOrEmail: sanitizePhoneNumber(selectedPhoneOrEmail),
+                },
+              });
+            }}
             text="Proceed"
-            disabled={!selectedPhoneNumber}
+            disabled={
+              !combinedValidators.phoneAndEmail(
+                sanitizePhoneNumber(selectedPhoneOrEmail)
+              )
+            }
           />
         </View>
       </View>

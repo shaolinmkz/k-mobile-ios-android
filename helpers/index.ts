@@ -2,6 +2,31 @@ import { phonePrefix as phoneNumberPrefix, telcoPrefixes } from "./phoneNumberPr
 
 export const anonymousFunc = () => null;
 
+/**
+ * @function timerConverter
+ * @description formats milliseconds into a (minute : seconds) timer clock
+ */
+ export const timerConverter = {
+  sec: (minuteValue: string, secondsValue: number) => {
+    if (minuteValue === "00") {
+      return "00";
+    }
+    if (secondsValue <= 10) {
+      return secondsValue === 0 ? 60 : `0${secondsValue - 1}`;
+    }
+    return `${secondsValue - 1}`;
+  },
+  min: (minuteValue: number, secondsValue: number) => {
+    if (secondsValue <= 0) {
+      return minuteValue - 1 || "00";
+    }
+    if (minuteValue <= 10) {
+      return `0${minuteValue}`;
+    }
+    return `${minuteValue}`;
+  },
+};
+
 export const ternaryResolver = (
   resolvedExpression: any,
   truthyValue: any,

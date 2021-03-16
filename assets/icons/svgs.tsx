@@ -1,15 +1,19 @@
-import React from 'react';
-import { SvgXml } from 'react-native-svg';
-
+import React from "react";
+import { SvgXml } from "react-native-svg";
 
 export const LinkSvg = (props: React.ComponentProps<any>) => {
-  const svgString = `<svg width="25" height="26" viewBox="0 0 25 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+  const svgString1 = `<svg width="25" height="26" viewBox="0 0 25 26" fill="none" xmlns="http://www.w3.org/2000/svg">
   <path d="M13.146 21.3421C12.422 22.8697 11.1229 24.0486 9.53251 24.6215C7.9421 25.1943 6.18962 25.1144 4.65789 24.3993V24.3993C3.13034 23.6754 1.95138 22.3763 1.37855 20.7859C0.805715 19.1955 0.885571 17.443 1.60067 15.9113L3.54056 11.7886C4.26425 10.2612 5.56307 9.08225 7.15325 8.50941C8.74344 7.93656 10.4957 8.01638 12.0272 8.73142V8.73142C12.9219 9.15349 13.7061 9.77791 14.3178 10.5553C14.9296 11.3327 15.352 12.2417 15.5519 13.2106" stroke="#D01C5D" stroke-linecap="round" stroke-linejoin="round"/>
   <path d="M12.0106 4.65789C12.7345 3.13034 14.0336 1.95138 15.624 1.37855C17.2144 0.805715 18.9669 0.885571 20.4986 1.60067C22.0258 2.32464 23.2045 3.62348 23.7773 5.21356C24.3501 6.80364 24.2705 8.55577 23.5558 10.0873L21.616 14.21C20.892 15.7375 19.5929 16.9165 18.0025 17.4893C16.4121 18.0621 14.6596 17.9823 13.1279 17.2672V17.2672C12.3603 16.9055 11.6727 16.394 11.1057 15.7626C10.5388 15.1313 10.1038 14.3929 9.82642 13.5909" stroke="#D01C5D" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>`;
 
-  return <SvgXml xml={svgString} {...props} />
-}
+  const svgString2 = `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
+  <path d="M11.1216 17.9518C10.5183 19.2247 9.43577 20.2072 8.11042 20.6845C6.78508 21.1619 5.32468 21.0954 4.04825 20.4994V20.4994C2.77528 19.8961 1.79282 18.8136 1.31546 17.4882C0.838096 16.1629 0.904642 14.7025 1.50056 13.426L3.11714 9.99053C3.72021 8.71765 4.80256 7.7352 6.12771 7.25783C7.45287 6.78046 8.91309 6.84698 10.1894 7.44285V7.44285C10.9349 7.79457 11.5884 8.31492 12.0982 8.96275C12.608 9.61057 12.96 10.3681 13.1266 11.1755" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M10.1756 4.04825C10.7789 2.77528 11.8615 1.79282 13.1868 1.31546C14.5121 0.838095 15.9725 0.904643 17.249 1.50056C18.5216 2.10387 19.5039 3.18623 19.9812 4.5113C20.4586 5.83636 20.3922 7.29647 19.7967 8.57279L18.1801 12.0083C17.5768 13.2813 16.4942 14.2637 15.1689 14.7411C13.8435 15.2184 12.3831 15.1519 11.1067 14.556V14.556C10.467 14.2546 9.89405 13.8283 9.42156 13.3022C8.94908 12.7761 8.5866 12.1607 8.35547 11.4924" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>`;
+
+  return <SvgXml xml={props.white ? svgString2 : svgString1} {...props} />;
+};
 
 export const TransactionSvg = (props: React.ComponentProps<any>) => {
   const svgString = `<svg width="24" height="22" viewBox="0 0 24 22" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -25,8 +29,8 @@ export const TransactionSvg = (props: React.ComponentProps<any>) => {
   </defs>
   </svg>`;
 
-  return <SvgXml xml={svgString} {...props} />
-}
+  return <SvgXml xml={svgString} {...props} />;
+};
 
 export const TransferSvg = (props: React.ComponentProps<any>) => {
   const svgString = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -34,8 +38,8 @@ export const TransferSvg = (props: React.ComponentProps<any>) => {
   <path d="M13.5 23.5L9 15L0.5 10.5L23.5 0.5L13.5 23.5Z" stroke="#D01C5D" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>`;
 
-  return <SvgXml xml={svgString} {...props} />
-}
+  return <SvgXml xml={svgString} {...props} />;
+};
 
 export const WaveSvg = (props: React.ComponentProps<any>) => {
   const svgString = `<svg xmlns="http://www.w3.org/2000/svg" width="84" height="84" viewBox="0 0 84 84" fill="none">
@@ -43,6 +47,23 @@ export const WaveSvg = (props: React.ComponentProps<any>) => {
   <path d="M48.8091 58.2882C49.6991 56.7466 50.9502 55.4597 52.4578 54.5286L60.1847 49.7056C61.6149 48.8684 62.1093 47.0522 61.2822 45.6047C60.487 44.2218 58.7527 43.7055 57.3379 44.436L48.3363 49.1467L59.9627 35.4894C61.0326 34.2364 60.9046 32.3379 59.6516 31.2681C58.4332 30.2182 56.6268 30.3069 55.5176 31.468L45.14 42.6823L54.6504 26.2097C55.4804 24.772 54.9899 22.9415 53.5523 22.1114C52.1146 21.2814 50.2667 21.7619 49.4367 23.1996L39.9362 39.6548L44.8293 24.4195C45.3449 22.8464 44.4692 21.163 42.8962 20.6474C41.3231 20.1319 39.6224 20.9975 39.1241 22.5806L30.7396 43.5832L28.1707 36.0722C27.7014 34.4849 26.0259 33.5868 24.4386 34.056C22.8512 34.5253 21.9531 36.2008 22.4224 37.7882C22.4197 37.8328 22.427 37.8601 22.4344 37.8875L24.545 55.2726C25.1273 57.6643 26.6712 59.7104 28.8017 60.9405L34.8642 64.4406C41.0133 67.9908 45.4389 64.1255 48.8091 58.2882Z" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>`;
 
-  return <SvgXml xml={svgString} {...props} />
-}
+  return <SvgXml xml={svgString} {...props} />;
+};
 
+export const CheckSvg = (props: React.ComponentProps<any>) => {
+  const svgString = `<svg xmlns="http://www.w3.org/2000/svg" width="84" height="84" viewBox="0 0 84 84" fill="none">
+  <path d="M21 38.3518L29.7111 50.7145C30.0415 51.2081 30.4851 51.6156 31.0048 51.9031C31.5245 52.1907 32.1054 52.35 32.6991 52.3677C33.2928 52.3855 33.8821 52.2611 34.4181 52.0051C34.9541 51.7491 35.4211 51.3688 35.7804 50.8958L60.3337 32" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M42 82C64.0914 82 82 64.0914 82 42C82 19.9086 64.0914 2 42 2C19.9086 2 2 19.9086 2 42C2 64.0914 19.9086 82 42 82Z" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>`;
+
+  return <SvgXml xml={svgString} {...props} />;
+};
+
+export const TimesSvg = (props: React.ComponentProps<any>) => {
+  const svgString = `<<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15" fill="none">
+  <path d="M13.7341 0.919914C13.4901 0.675938 13.1592 0.538873 12.8142 0.538873C12.4692 0.538873 12.1383 0.675938 11.8943 0.919914L0.867316 11.9469C0.646207 12.1948 0.528308 12.5179 0.537788 12.85C0.547266 13.182 0.683406 13.4979 0.918297 13.7327C1.15319 13.9676 1.46904 14.1038 1.80109 14.1133C2.13314 14.1227 2.45624 14.0048 2.70415 13.7837L13.7311 2.75675C13.9746 2.51329 14.1116 2.18325 14.1122 1.83895C14.1127 1.49465 13.9768 1.16416 13.7341 0.919914Z" fill="#160F3D"/>
+  <path d="M13.7352 11.9466L2.70825 0.919588C2.46034 0.69848 2.13724 0.58058 1.80519 0.590059C1.47314 0.599539 1.1573 0.735679 0.922404 0.970571C0.687513 1.20546 0.551373 1.52131 0.541893 1.85336C0.532414 2.18541 0.650313 2.50851 0.871422 2.75642L11.8984 13.7834C12.1463 14.0045 12.4694 14.1224 12.8015 14.1129C13.1335 14.1035 13.4494 13.9673 13.6843 13.7324C13.9191 13.4975 14.0553 13.1817 14.0648 12.8496C14.0742 12.5176 13.9563 12.1945 13.7352 11.9466V11.9466Z" fill="#160F3D"/>
+  </svg>`;
+
+  return <SvgXml xml={svgString} {...props} />;
+};

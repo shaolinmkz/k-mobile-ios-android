@@ -7,6 +7,7 @@ import Home from "../screens/Home";
 import AccountNumberList from "../screens/AccountNumberList";
 import colors from "../constants/colors";
 import SelectAlias from "../screens/SelectAlias";
+import OtpScreen from "../screens/OtpScreen";
 
 const Stack = createStackNavigator();
 
@@ -55,6 +56,19 @@ const Routes = () => {
           component={SelectAlias}
           options={{
             title: 'Select Alias',
+            headerTitleStyle: {
+              fontSize: Dimensions.get("window").width / 20,
+              fontFamily: "lato-bold",
+            },
+            headerTitleContainerStyle: {},
+          }}
+        />
+
+        <Stack.Screen
+          name="OtpScreen"
+          component={OtpScreen}
+          options={{
+            title: 'One Time Password',
             headerTitleStyle: {
               fontSize: Dimensions.get("window").width / 20,
               fontFamily: "lato-bold",
