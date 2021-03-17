@@ -21,7 +21,7 @@ const Home = ({ navigation }: React.ComponentProps<any>) => {
     {
       name: "Send Money",
       Icon: TransferSvg,
-      screen: 'Home'
+      screen: 'AccountNumberList'
     },
     {
       name: "Transactions History",
@@ -36,17 +36,16 @@ const Home = ({ navigation }: React.ComponentProps<any>) => {
     setModalVisible((prevState) => !prevState);
   };
 
-  const handleNavigation = (screen: string) => {
-    if(screen === 'AccountNumberList') {
+  const handleNavigation = (nextScreen: string, triggerBtn: string) => {
+      const isLinkUnlink = nextScreen === 'AccountNumberList' && triggerBtn === 'Link / Unlink';
+
       navigation.navigate({
-        name: screen,
+        name: nextScreen,
         params: {
-          isFirstTime: true
+          isFirstTime: isLinkUnlink ? true : false,
+          isLinking: isLinkUnlink
         }
       });
-    } else {
-      navigation.navigate(screen);
-    }
   };
 
   return (
@@ -58,7 +57,7 @@ const Home = ({ navigation }: React.ComponentProps<any>) => {
 
         <View style={styles.menus}>
           {menuCollection.map(({ name, Icon, screen }) => (
-            <TouchableOpacity activeOpacity={0.5} style={styles.card} key={name} onPress={() => handleNavigation(screen)}>
+            <TouchableOpacity activeOpacity={0.5} style={styles.card} key={name} onPress={() => handleNavigation(screen, name)}>
               <View style={styles.cardIcon}>
                 <Icon width={iconSize} height={iconSize} />
               </View>

@@ -12,7 +12,7 @@ import colors from "../constants/colors";
 import LinkInfoModal from "../components/LinkInfoModal";
 
 const availableAccountNumbers = "*"
-  .repeat(10)
+  .repeat(3)
   .split("*")
   .map((val, index) => ({
     id: `${index + 1}`,
@@ -27,6 +27,7 @@ interface Account {
 }
 
 const AccountNumberList = ({ navigation, route }: React.ComponentProps<any>) => {
+  const isLinking = route.params.isLinking;
   const [isFirstTime, setIsFirstTime] = useState(route.params.isFirstTime);
   const [selectedAccount, setSelectedAccount] = useState({
     id: "",
@@ -46,7 +47,7 @@ const AccountNumberList = ({ navigation, route }: React.ComponentProps<any>) => 
     <>
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>Available Account Numbers</Text>
+        <Text style={styles.headerText}>{isLinking ? 'Select account to link' : 'Select account to debit'}</Text>
       </View>
 
       <ScrollView style={styles.list}>
@@ -69,7 +70,7 @@ const AccountNumberList = ({ navigation, route }: React.ComponentProps<any>) => 
         <CustomButton2
           onPress={() => {
             navigation.navigate({
-              name: 'LinkAlias',
+              name: isLinking ? 'LinkAlias' : 'SelectAlias',
               params: {
                 account: selectedAccount
               }

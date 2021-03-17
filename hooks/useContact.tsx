@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import * as Contacts from "expo-contacts";
 
-interface ContactType {
+export interface ContactType {
   emails: Contacts.Email[];
   phoneNumbers: Contacts.PhoneNumber[];
   firstName: string;
@@ -10,27 +10,13 @@ interface ContactType {
   id: string;
   contactType: any;
   name: string;
+  initials?: string;
 }
 
 export const useContact = () => {
-  const [contacts, setContacts] = useState([
-    {
-      emails: [],
-      phoneNumbers: [],
-      firstName: "",
-      lastName: "",
-      id: "",
-      contactType: "",
-      name: "",
-    },
-  ]);
+  const [contacts, setContacts] = useState<ContactType[]>([]);
 
   const [contactSearchTerm, setContactSearchTerm] = useState("");
-  const [selectedPhoneNumber, setSelectedPhoneNumber] = useState("");
-
-  const handleCheck = (value: string) => {
-    setSelectedPhoneNumber(value);
-  };
 
   const handleContactSearch = (value: string) => {
     setContactSearchTerm(value);
@@ -55,6 +41,7 @@ export const useContact = () => {
           lastName,
           contactType: contactTypeOverride,
           name,
+          initials: `${`${firstName}`.toUpperCase().slice(0, 1)}${`${lastName}`.toUpperCase().slice(0, 1)}`
         })
       );
 
@@ -62,25 +49,46 @@ export const useContact = () => {
     });
   };
 
-  useEffect(() => {
-    (async () => {
-      const { status } = await Contacts.requestPermissionsAsync();
-      if (status === "granted") {
-        const { data } = await Contacts.getContactsAsync();
 
-        if (data?.length) {
-          const contactData = unPackContacts(data);
-          setContacts(contactData);
-        }
+  const getContacts = () => {
+    return Contacts.requestPermissionsAsync()
+    .then(({ status }) => {
+      if (status === "granted") {
+        Contacts.getContactsAsync()
+        .then(({ data }) => {
+          if (data?.length) {
+            unPackContacts(data).then(contactData => {
+              setContacts(contactData);
+            });
+            return data;
+          }
+        })
       }
-    })();
+    })
+  }
+
+  useEffect(() => {
+    getContacts();
   }, []);
 
   return {
     handleContactSearch,
-    handleCheck,
     contactSearchTerm,
-    selectedPhoneNumber,
     contacts,
+    searchedContacts: contacts?.filter?.(({ firstName, lastName, emails, phoneNumbers, name }) => {
+      const contactSearchTermLC = contactSearchTerm.toLowerCase();
+      if(`${name}`.toLowerCase().includes(contactSearchTermLC)) {
+        return true
+      } else if(`${firstName}`.toLowerCase().includes(contactSearchTermLC)) {
+        return true
+      } else if (`${lastName}`.toLowerCase().includes(contactSearchTermLC)) {
+        return true
+      } else if (emails?.find?.((data) => `${data?.email}`.toLowerCase().includes(contactSearchTermLC))) {
+        return true
+      } else if (phoneNumbers?.find?.(data => `${data?.number}`.toLowerCase().includes(contactSearchTermLC))) {
+        return true
+      }
+      return false
+    }),
   };
 };

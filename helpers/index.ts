@@ -52,7 +52,7 @@ export const currencyConverter = {
   toNaira: (amount: (number | string)) => {
     amount = Number(amount);
 
-    amount.toLocaleString('en-NG', {
+    return amount.toLocaleString('en-NG', {
     style: "currency",
     currency: 'NGN',
   })
@@ -72,6 +72,8 @@ export const findTelco = (phoneNumber: string, telcos = telcoPrefixes) => {
 export const isValidAlphabet = (text: string) => /^[a-zA-Z -]*$/.test(text);
 
 export const isValidPhoneNumber = (value: string) => {
+
+  value = value?.replace(/\s/gm, '')
 
   if(`${value}`.slice(0, 4) === '+234') {
     value = `0${`${value}`.slice(4)}`
@@ -93,7 +95,7 @@ export const sanitizePhoneNumber = (value: string) => {
     value = `0${`${value}`.slice(3)}`
   }
 
-  return value
+  return value.replace(/\s/gm, '')
 }
 
 /**

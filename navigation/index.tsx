@@ -7,6 +7,8 @@ import Home from "../screens/Home";
 import AccountNumberList from "../screens/AccountNumberList";
 import colors from "../constants/colors";
 import LinkAlias from "../screens/LinkAlias";
+import SelectAlias from "../screens/SelectAlias";
+import SendMoney from "../screens/SendMoney";
 import OtpScreen from "../screens/OtpScreen";
 
 const Stack = createStackNavigator();
@@ -44,7 +46,7 @@ const Routes = () => {
           name="AccountNumberList"
           component={AccountNumberList}
           options={{
-            title: 'Link Account Number',
+            title: 'Accounts',
             headerTitleStyle: {
               fontSize: Dimensions.get("window").width / 20,
               fontFamily: "lato-bold",
@@ -70,6 +72,32 @@ const Routes = () => {
           component={OtpScreen}
           options={{
             title: 'One Time Password',
+            headerTitleStyle: {
+              fontSize: Dimensions.get("window").width / 20,
+              fontFamily: "lato-bold",
+            },
+            headerTitleContainerStyle: {},
+          }}
+        />
+
+        <Stack.Screen
+          name="SelectAlias"
+          component={SelectAlias}
+          options={{
+            title: 'Select Alias',
+            headerTitleStyle: {
+              fontSize: Dimensions.get("window").width / 20,
+              fontFamily: "lato-bold",
+            },
+            headerTitleContainerStyle: {},
+          }}
+        />
+
+        <Stack.Screen
+          name="SendMoney"
+          component={SendMoney}
+          options={{
+            title: 'Send to Alias',
             headerTitleStyle: {
               fontSize: Dimensions.get("window").width / 20,
               fontFamily: "lato-bold",
