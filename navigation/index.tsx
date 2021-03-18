@@ -97,7 +97,7 @@ const Routes = () => {
           name="SendMoney"
           component={SendMoney}
           options={{
-            title: 'Send to Alias',
+            title: 'Send Money',
             headerTitleStyle: {
               fontSize: Dimensions.get("window").width / 20,
               fontFamily: "lato-bold",

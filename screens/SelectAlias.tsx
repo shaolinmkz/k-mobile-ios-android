@@ -9,6 +9,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   FlatList,
+  KeyboardAvoidingView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useContact, ContactType } from "../hooks/useContact";
@@ -74,46 +75,23 @@ const SelectAlias = ({ route, navigation }: React.ComponentProps<any>) => {
             >
               Enter email or phone number
             </Text>
-            <View
+            <KeyboardAvoidingView
+              behavior="padding"
               style={{
                 flexDirection: "row",
                 alignItems: "center",
               }}
             >
-              <TouchableOpacity
-                activeOpacity={0.5}
+              <Ionicons
+                name="add-circle-outline"
+                size={Dimensions.get("window").width / 13}
                 style={{
-                  borderWidth: 1,
-                  borderRadius: Dimensions.get("window").width / 15,
-                  borderColor: combinedValidators.phoneAndEmail(phoneOrEmail)
+                  marginRight: Dimensions.get("window").width / 15,
+                  color: combinedValidators.phoneAndEmail(phoneOrEmail)
                     ? colors.primary
                     : colors.textColor,
-                  width: Dimensions.get("window").width / 15,
-                  height: Dimensions.get("window").width / 15,
-                  marginRight: Dimensions.get("window").width / 15,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  position: "relative",
-                  backgroundColor: combinedValidators.phoneAndEmail(
-                    phoneOrEmail
-                  )
-                    ? colors.primary
-                    : colors.white,
                 }}
-              >
-                <Text
-                  style={{
-                    fontSize: Dimensions.get("window").width / 20,
-                    color: combinedValidators.phoneAndEmail(phoneOrEmail)
-                      ? colors.white
-                      : colors.textColor,
-                    position: "absolute",
-                    top: -Dimensions.get("window").height / 400,
-                  }}
-                >
-                  +
-                </Text>
-              </TouchableOpacity>
+              />
               <TextInput
                 value={phoneOrEmail}
                 placeholder="Phone number or email"
@@ -127,7 +105,7 @@ const SelectAlias = ({ route, navigation }: React.ComponentProps<any>) => {
                   minWidth: "60%",
                 }}
               />
-            </View>
+            </KeyboardAvoidingView>
           </View>
         )}
 

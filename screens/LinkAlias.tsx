@@ -9,7 +9,9 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
+  KeyboardAvoidingView,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import CustomRadioButton from "../components/CustomRadioButton";
 import CustomButton2 from "../components/CustomButton2";
 import colors from "../constants/colors";
@@ -43,7 +45,7 @@ const LinkAlias = ({ route, navigation }: React.ComponentProps<any>) => {
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <View style={styles.container}>
+      <KeyboardAvoidingView behavior="padding" style={styles.container}>
         <View style={styles.account}>
           <Text style={styles.accountHeading}>Linking alias to:</Text>
           <Text style={styles.accountText}>
@@ -69,38 +71,16 @@ const LinkAlias = ({ route, navigation }: React.ComponentProps<any>) => {
               alignItems: "center",
             }}
           >
-            <TouchableOpacity
-              activeOpacity={0.5}
+            <Ionicons
+              name="add-circle-outline"
+              size={Dimensions.get("window").width / 13}
               style={{
-                borderWidth: 1,
-                borderRadius: Dimensions.get("window").width / 15,
-                borderColor: combinedValidators.phoneAndEmail(phoneOrEmail)
+                marginRight: Dimensions.get("window").width / 15,
+                color: combinedValidators.phoneAndEmail(phoneOrEmail)
                   ? colors.primary
                   : colors.textColor,
-                width: Dimensions.get("window").width / 15,
-                height: Dimensions.get("window").width / 15,
-                marginRight: Dimensions.get("window").width / 15,
-                alignItems: "center",
-                justifyContent: "center",
-                position: "relative",
-                backgroundColor: combinedValidators.phoneAndEmail(phoneOrEmail)
-                  ? colors.primary
-                  : colors.white,
               }}
-            >
-              <Text
-                style={{
-                  fontSize: Dimensions.get("window").width / 20,
-                  color: combinedValidators.phoneAndEmail(phoneOrEmail)
-                    ? colors.white
-                    : colors.textColor,
-                  position: "absolute",
-                  top: -Dimensions.get("window").height / 400,
-                }}
-              >
-                +
-              </Text>
-            </TouchableOpacity>
+            />
             <TextInput
               value={phoneOrEmail}
               placeholder="Phone number or email"
@@ -148,7 +128,9 @@ const LinkAlias = ({ route, navigation }: React.ComponentProps<any>) => {
               navigation.navigate({
                 name: "OtpScreen",
                 params: {
-                  selectedPhoneOrEmail: sanitizePhoneNumber(selectedPhoneOrEmail),
+                  selectedPhoneOrEmail: sanitizePhoneNumber(
+                    selectedPhoneOrEmail
+                  ),
                 },
               });
             }}
@@ -160,7 +142,7 @@ const LinkAlias = ({ route, navigation }: React.ComponentProps<any>) => {
             }
           />
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
   );
 };

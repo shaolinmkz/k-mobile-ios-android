@@ -8,6 +8,7 @@ import {
   TextInput,
   TouchableWithoutFeedback,
   Keyboard,
+  KeyboardAvoidingView,
 } from "react-native";
 import CustomButton2 from "../components/CustomButton2";
 import LinkSuccessModal from "../components/LinkSuccessModal";
@@ -59,7 +60,7 @@ const OtpScreen = ({ navigation, route }: React.ComponentProps<any>) => {
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <>
-        <View style={styles.container}>
+        <KeyboardAvoidingView behavior="padding" style={styles.container}>
           <View style={styles.heading}>
             <Text style={styles.headingText}>
               Kindly enter the 6-digit OTP sent to your phone number
@@ -92,7 +93,7 @@ const OtpScreen = ({ navigation, route }: React.ComponentProps<any>) => {
               ))}
           </View>
           <OtpTimer />
-        </View>
+        </KeyboardAvoidingView>
         <View
           style={{
             paddingHorizontal: Dimensions.get("window").width / 15,
