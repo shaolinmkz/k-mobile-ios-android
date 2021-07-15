@@ -8,25 +8,28 @@ import {
 } from "react-native";
 import WelcomeModal from "../components/WelcomeModal";
 import colors from "../constants/colors";
-import { LinkSvg, TransactionSvg, TransferSvg } from "../assets/icons/svgs";
+import { LinkSvg, UnlinkSvg, TransferSvg } from "../assets/icons/svgs";
+import fonts from "../constants/fonts";
+
+
 const Home = ({ navigation }: React.ComponentProps<any>) => {
   const [modalVisible, setModalVisible] = useState(true);
 
   const menuCollection = [
-    {
-      name: "Link / Unlink",
-      Icon: LinkSvg,
-      screen: 'AccountNumberList'
-    },
     {
       name: "Send Money",
       Icon: TransferSvg,
       screen: 'AccountNumberList'
     },
     {
-      name: "Transactions History",
-      Icon: TransactionSvg,
-      screen: 'Home'
+      name: "Link Alias",
+      Icon: LinkSvg,
+      screen: 'AccountNumberList'
+    },
+    {
+      name: "Unlink Alias",
+      Icon: UnlinkSvg,
+      screen: 'AccountNumberList'
     },
   ];
 
@@ -52,10 +55,10 @@ const Home = ({ navigation }: React.ComponentProps<any>) => {
     <>
       <View style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.headerText}>Send Money to Alias</Text>
+          <Text style={styles.headerText}>Quick actions</Text>
         </View>
 
-        <View style={styles.menus}>
+        <View style={styles.cardContainer}>
           {menuCollection.map(({ name, Icon, screen }) => (
             <TouchableOpacity activeOpacity={0.5} style={styles.card} key={name} onPress={() => handleNavigation(screen, name)}>
               <View style={styles.cardIcon}>
@@ -78,37 +81,37 @@ const styles = StyleSheet.create({
   },
   header: {
     width: "100%",
-    padding: Dimensions.get("window").width / 15,
-    borderBottomWidth: 1,
+    paddingVertical: Dimensions.get("window").width / 10,
+    paddingHorizontal: Dimensions.get("window").width / 15,
+    borderBottomWidth: 2,
     borderBottomColor: colors.line,
   },
-  menus: {
+  cardContainer: {
     padding: Dimensions.get("window").width / 15,
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
   },
   headerText: {
-    fontSize: 18,
-    fontFamily: "lato-regular",
+    fontSize: Dimensions.get("window").width / 17,
+    fontFamily: fonts.regular,
+    color: colors.secondary,
   },
   card: {
-    width: Dimensions.get("window").width / 2.5,
-    padding: Dimensions.get("window").width / 20,
+    height: Dimensions.get("window").width / 4,
     paddingHorizontal: Dimensions.get("window").width / 40,
-    borderWidth: 1,
+    width: "100%",
+    borderBottomWidth: 1,
     borderColor: colors.line,
-    backgroundColor: "rgba(231, 234, 240, 0.25)",
-    borderRadius: 5,
-    marginBottom: Dimensions.get("window").height / 30,
+    flexDirection: "row",
+    alignItems: "center",
   },
   cardIcon: {
     overflow: "visible",
+    marginRight: Dimensions.get("window").width / 10
   },
   cardText: {
     color: colors.textColor,
     marginTop: 10,
-    fontSize: Dimensions.get("window").width / 30,
+    fontSize: Dimensions.get("window").width / 20,
+    fontFamily: fonts.regular,
   },
 });
 

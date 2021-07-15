@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingVertical: 20,
     borderBottomWidth: 1,
-    borderBottomColor: colors.line
+    borderBottomColor: colors.line,
   },
   radioCheckOuter: {
     backgroundColor: colors.white,

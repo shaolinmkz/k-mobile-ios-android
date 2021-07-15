@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { useState, useEffect } from "react";
+import randomColor from "randomcolor";
 import * as Contacts from "expo-contacts";
 
 export interface ContactType {
@@ -11,6 +12,7 @@ export interface ContactType {
   contactType: any;
   name: string;
   initials?: string;
+  displayColor?: string;
 }
 
 export const useContact = () => {
@@ -41,9 +43,10 @@ export const useContact = () => {
           lastName,
           contactType: contactTypeOverride,
           name,
+          displayColor: randomColor({ luminosity: 'dark'}),
           initials: `${`${firstName}`.toUpperCase().slice(0, 1)}${`${lastName}`.toUpperCase().slice(0, 1)}`
         })
-      );
+      ).sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
 
       resolve(unpackedData);
     });

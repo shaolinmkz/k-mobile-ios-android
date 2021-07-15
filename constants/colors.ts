@@ -7,7 +7,8 @@ const colors = {
   headerBg: '#edebf2',
   disabled: '#c5cbd3',
   border: '#D5D5E0',
-  textColor: '#323643'
+  textColor: '#323643',
+  error: '#D01C5D',
 }
 
 export default colors;

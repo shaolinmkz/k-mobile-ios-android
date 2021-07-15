@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import * as Font from "expo-font";
+import { Provider } from "react-redux";
 import { enableScreens } from "react-native-screens";
+import store from "./redux";
 
 enableScreens();
 
@@ -27,9 +29,11 @@ export default function App() {
   }, []);
 
   return !loaded ? null : (
-    <View style={styles.container}>
-      <Routes />
-    </View>
+    <Provider store={store}>
+      <View style={styles.container}>
+        <Routes />
+      </View>
+    </Provider>
   );
 }
 

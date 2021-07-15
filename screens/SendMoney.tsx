@@ -83,7 +83,7 @@ const SendMoney = ({ route, navigation }: React.ComponentProps<any>) => {
                       width: Dimensions.get("window").width / 7,
                       height: Dimensions.get("window").width / 7,
                       borderRadius: 100,
-                      backgroundColor: colors.secondary,
+                      backgroundColor: selectedContact.displayColor,
                       justifyContent: "center",
                       alignItems: "center",
                       marginRight: Dimensions.get("window").width / 30,

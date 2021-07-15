@@ -16,6 +16,7 @@ import { useContact, ContactType } from "../hooks/useContact";
 import CustomButton2 from "../components/CustomButton2";
 import colors from "../constants/colors";
 import { combinedValidators, sanitizePhoneNumber } from "../helpers";
+import fonts from "../constants/fonts";
 
 const SelectAlias = ({ route, navigation }: React.ComponentProps<any>) => {
   const { account } = route.params;
@@ -168,13 +169,14 @@ const SelectAlias = ({ route, navigation }: React.ComponentProps<any>) => {
           style={{
             padding: Dimensions.get("window").width / 15,
           }}
-          renderItem={({ item }) => (
-            <TouchableOpacity
+          renderItem={({ item }) => {
+            return item.phoneNumbers?.[0]?.number ? (
+              <TouchableOpacity
               activeOpacity={0.5}
               style={{
                 flexDirection: "row",
                 alignItems: "center",
-                marginBottom: Dimensions.get("window").width / 15,
+                marginBottom: Dimensions.get("window").width / 20,
               }}
               onPress={() =>
                 handleSelect(item, `${item.phoneNumbers?.[0]?.number}`)
@@ -185,7 +187,7 @@ const SelectAlias = ({ route, navigation }: React.ComponentProps<any>) => {
                   width: Dimensions.get("window").width / 10,
                   height: Dimensions.get("window").width / 10,
                   borderRadius: 100,
-                  backgroundColor: colors.secondary,
+                  backgroundColor: item.displayColor,
                   justifyContent: "center",
                   alignItems: "center",
                   marginRight: Dimensions.get("window").width / 30,
@@ -194,7 +196,7 @@ const SelectAlias = ({ route, navigation }: React.ComponentProps<any>) => {
                 <Text
                   style={{
                     color: colors.white,
-                    fontFamily: "lato-regular",
+                    fontFamily: fonts.regular,
                     fontSize: Dimensions.get("window").width / 25,
                   }}
                 >
@@ -206,7 +208,7 @@ const SelectAlias = ({ route, navigation }: React.ComponentProps<any>) => {
                 <Text
                   style={{
                     color: colors.secondary,
-                    fontFamily: "lato-bold",
+                    fontFamily: fonts.bold,
                     fontSize: Dimensions.get("window").width / 25,
                   }}
                 >
@@ -215,12 +217,10 @@ const SelectAlias = ({ route, navigation }: React.ComponentProps<any>) => {
                 <Text style={{ color: colors.secondary }}>
                   {item.phoneNumbers?.[0]?.number}
                 </Text>
-                <Text style={{ color: colors.secondary }}>
-                  {item.emails?.[0]?.email}
-                </Text>
               </View>
             </TouchableOpacity>
-          )}
+            ) : null;
+          }}
         />
 
         {combinedValidators.phoneAndEmail(
@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
   },
   accountHeading: {
     fontSize: 18,
-    fontFamily: "lato-regular",
+    fontFamily: fonts.regular,
   },
   phonebook: {
     width: "100%",

@@ -103,12 +103,13 @@ export const sanitizePhoneNumber = (value: string) => {
  * @description combines different validatiors used in the app
  */
 export const combinedValidators = {
-  phoneAndEmail: (value: string) =>
-    !(
+  phoneAndEmail: (value: string) => {
+    return !(
       (!isValidEmail(value) &&
         !/^[0-9]*$/.test(value) &&
         `${value}`.length !== 11) ||
       (/^[0-9]*$/.test(value) && !isValidPhoneNumber(value)) ||
       (!Number.isInteger(+`${value}`) && !isValidEmail(value))
-    ),
+    )
+  }
 };
