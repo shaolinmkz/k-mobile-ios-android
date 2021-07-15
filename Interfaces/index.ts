@@ -30,7 +30,7 @@ export interface IAction {
 
 export interface IInputProps {
   value: string | undefined;
-  onChangeText?: (value: string) => void | undefined;
+  onChangeText: (value: string) => void | undefined;
   label: string;
   placeholder: string;
   autoCorrect: boolean;

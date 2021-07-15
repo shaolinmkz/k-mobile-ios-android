@@ -3,10 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   View,
   StyleSheet,
-  Text,
   Dimensions,
-  TouchableOpacity,
-  Image,
   ScrollView,
 } from "react-native";
 import colors from "../constants/colors";
@@ -85,27 +82,6 @@ const BankAppSetup = ({ navigation }: React.ComponentProps<any>) => {
               }}
             />
           </View>
-
-          {/* {selectedBank && (
-            <View
-              style={{
-                borderColor: colors.secondary,
-                borderWidth: 1,
-                padding: 10,
-              }}
-            >
-              <Text
-                style={{
-                  textAlign: "center",
-                  fontSize: Dimensions.get("window").width / 20,
-                  color: colors.secondary,
-                  fontFamily: fonts.bold,
-                }}
-              >
-                {selectedBank.label}
-              </Text>
-            </View>
-          )} */}
 
           {selectedBank && (
             <CustomTextInput
