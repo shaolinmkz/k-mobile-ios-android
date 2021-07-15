@@ -24,7 +24,7 @@ const CustomTextInput = (props: IInputProps) => {
 
   return (
     <View
-      style={styles.inputFrame}
+      style={{ ...styles.inputFrame, paddingBottom: ternaryResolver(disabled, 15, styles.inputFrame.paddingVertical )}}
       onTouchStart={() => inputRef?.current?.focus?.()}
     >
       <View style={styles.inputContainer}>

@@ -1,11 +1,6 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  View,
-  StyleSheet,
-  Dimensions,
-  ScrollView,
-} from "react-native";
+import { View, StyleSheet, Dimensions, ScrollView, Text } from "react-native";
 import colors from "../constants/colors";
 import fonts from "../constants/fonts";
 import { IInitialState, IAppState, IBank } from "../Interfaces";
@@ -15,7 +10,7 @@ import { combinedValidators, isValidAlphabet } from "../helpers";
 import CustomButton from "../components/CustomButton";
 import CustomRadioButton from "../components/CustomRadioButton";
 import CustomModal from "../components/CustomModal";
-import { FlatList } from "react-native-gesture-handler";
+import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 
 const BankAppSetup = ({ navigation }: React.ComponentProps<any>) => {
   const dispatch = useDispatch();
@@ -55,45 +50,83 @@ const BankAppSetup = ({ navigation }: React.ComponentProps<any>) => {
     setModalOpen((prevState) => !prevState);
   };
 
-  const handleBankSelect = (bank: IBank) => {
+  const handleBankSelect = (bank: IBank | undefined) => {
     dispatch({ type: SELECT_BANK, payload: bank });
-    handleBankSelectModal();
+    if (bank) {
+      handleBankSelectModal();
+    }
   };
 
   return (
     <>
       <ScrollView style={styles.container}>
         <View style={styles.inputContainer}>
-          <View style={styles.btnContainer}>
-            <CustomButton
-              text="Tap to select a bank"
-              focus
-              mode="light"
-              onPress={handleBankSelectModal}
-              customParentStyle={{
-                width: "100%",
-                backgroundColor: colors.secondary,
-                borderColor: colors.secondary,
-                paddingVertical: Dimensions.get("window").height / 50,
-                marginBottom: Dimensions.get("window").height / 50,
-              }}
-              customChildStyle={{
-                fontSize: Dimensions.get("window").height / 50,
-              }}
-            />
-          </View>
+          {!selectedBank && (
+            <View style={styles.btnContainer}>
+              <CustomButton
+                text="Tap to select a bank"
+                focus
+                mode="light"
+                onPress={handleBankSelectModal}
+                customParentStyle={{
+                  width: "100%",
+                  backgroundColor: colors.secondary,
+                  borderColor: colors.secondary,
+                  paddingVertical: Dimensions.get("window").height / 50,
+                  marginBottom: Dimensions.get("window").height / 50,
+                }}
+                customChildStyle={{
+                  fontSize: Dimensions.get("window").height / 50,
+                }}
+              />
+            </View>
+          )}
 
           {selectedBank && (
-            <CustomTextInput
-              value={selectedBank.label}
-              label="Bank:"
-              placeholder="bank"
-              autoCorrect={false}
-              autoCompleteType="off"
-              autoCapitalize="none"
-              maxLength={100}
-              disabled
-            />
+            <View>
+              <CustomTextInput
+                value={selectedBank.label}
+                label="Bank:"
+                placeholder="bank"
+                autoCorrect={false}
+                autoCompleteType="off"
+                autoCapitalize="none"
+                disabled
+              />
+
+              <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+
+              <TouchableOpacity
+                style={{ padding: 10 }}
+                onPress={() => handleBankSelectModal()}
+              >
+                <Text
+                  style={{
+                    fontSize: 18,
+                    color: colors.primary,
+                    textAlign: "center",
+                  }}
+                >
+                  Change
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={{ padding: 10 }}
+                onPress={() => handleBankSelect(undefined)}
+              >
+                <Text
+                  style={{
+                    fontSize: 18,
+                    color: colors.primary,
+                    textAlign: "center",
+                  }}
+                >
+                  Clear
+                </Text>
+              </TouchableOpacity>
+              </View>
+            </View>
           )}
 
           <CustomTextInput
@@ -165,10 +198,7 @@ const BankAppSetup = ({ navigation }: React.ComponentProps<any>) => {
         </View>
       </ScrollView>
 
-      <CustomModal
-        mode="plain"
-        visible={modalOpen}
-      >
+      <CustomModal mode="plain" visible={modalOpen}>
         <FlatList
           data={registeredBanks}
           keyExtractor={({ value }) => value}
