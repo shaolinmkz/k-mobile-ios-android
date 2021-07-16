@@ -1,16 +1,37 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { View, StyleSheet, Dimensions, ScrollView, Text } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Dimensions,
+  FlatList,
+  Text,
+  Keyboard,
+  TouchableWithoutFeedback,
+} from "react-native";
 import colors from "../constants/colors";
 import fonts from "../constants/fonts";
 import { IInitialState, IAppState, IBank } from "../Interfaces";
-import { CHANGE_SETUP_INPUT, SELECT_BANK } from "../redux/types";
+import {
+  CHANGE_SETUP_INPUT,
+  SELECT_BANK,
+  SHOW_FIELD_ERRORS,
+  HIDE_FIELD_ERRORS,
+} from "../redux/types";
+import { loginAction } from "../redux/actions";
 import CustomTextInput from "../components/CustomTextInput";
-import { combinedValidators, isValidAlphabet } from "../helpers";
+import {
+  combinedValidators,
+  fallbackResolver,
+  isValidAlphabet,
+  showError,
+  ternaryResolver,
+  toastSuccess,
+} from "../helpers";
 import CustomButton from "../components/CustomButton";
 import CustomRadioButton from "../components/CustomRadioButton";
 import CustomModal from "../components/CustomModal";
-import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
+import CustomSelect from "../components/CustomSelect";
 
 const BankAppSetup = ({ navigation }: React.ComponentProps<any>) => {
   const dispatch = useDispatch();
@@ -27,23 +48,14 @@ const BankAppSetup = ({ navigation }: React.ComponentProps<any>) => {
     bvn,
     phoneNumber,
     selectedBank,
+    loginLoading,
+    showFieldError,
   } = appState;
-
-  const handleNavigation = (nextScreen: string, triggerBtn: string) => {
-    const isLinkUnlink =
-      nextScreen === "AccountNumberList" && triggerBtn === "Link / Unlink";
-
-    navigation.navigate({
-      name: nextScreen,
-      params: {
-        isFirstTime: isLinkUnlink ? true : false,
-        isLinking: isLinkUnlink,
-      },
-    });
-  };
 
   const handleInputChange = (name: string) => (value: any) => {
     dispatch({ type: CHANGE_SETUP_INPUT, payload: { name, value } });
+    dispatch({ type: HIDE_FIELD_ERRORS });
+    toastSuccess("Hello Guys...")
   };
 
   const handleBankSelectModal = () => {
@@ -52,153 +64,170 @@ const BankAppSetup = ({ navigation }: React.ComponentProps<any>) => {
 
   const handleBankSelect = (bank: IBank | undefined) => {
     dispatch({ type: SELECT_BANK, payload: bank });
+    dispatch({ type: HIDE_FIELD_ERRORS });
+
     if (bank) {
       handleBankSelectModal();
     }
   };
 
+  const handleLogin = async () => {
+    const payload = {
+      username: selectedBank?.username,
+      password: selectedBank?.password,
+    };
+
+    await loginAction(dispatch)(payload, navigation);
+  };
+
+  const validator = {
+    senderFullName: [
+      !isValidAlphabet(senderFullName),
+      senderFullName.trim().split(" ").length < 2,
+    ].includes(true),
+    accountNumber: accountNumber?.length !== 10,
+    bvn: bvn?.length !== 11,
+    phoneNumber: !combinedValidators.phoneAndEmail(phoneNumber),
+    selectedBank: !selectedBank,
+  };
+
   return (
     <>
-      <ScrollView style={styles.container}>
-        <View style={styles.inputContainer}>
-          {!selectedBank && (
-            <View style={styles.btnContainer}>
-              <CustomButton
-                text="Tap to select a bank"
-                focus
-                mode="light"
-                onPress={handleBankSelectModal}
-                customParentStyle={{
-                  width: "100%",
-                  backgroundColor: colors.secondary,
-                  borderColor: colors.secondary,
-                  paddingVertical: Dimensions.get("window").height / 50,
-                  marginBottom: Dimensions.get("window").height / 50,
-                }}
-                customChildStyle={{
-                  fontSize: Dimensions.get("window").height / 50,
-                }}
-              />
-            </View>
-          )}
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <>
+          <View style={styles.container}>
+            <View style={styles.inputContainer}>
+              <View style={styles.btnContainer}>
+                <CustomSelect
+                  text={fallbackResolver(selectedBank?.label, "Select a bank")}
+                  onPress={handleBankSelectModal}
+                  customParentStyle={{
+                    width: "100%",
+                    marginBottom: ternaryResolver(
+                      validator.selectedBank && showFieldError,
+                      Dimensions.get("window").height / 50,
+                      undefined
+                    ),
+                  }}
+                  customChildStyle={{}}
+                />
+              </View>
 
-          {selectedBank && (
-            <View>
+              <View>
+                {validator.selectedBank && showFieldError && (
+                  <Text
+                    style={{
+                      textAlign: "center",
+                      color: colors.primary,
+                      fontSize: 15,
+                    }}
+                  >
+                    Please select a bank
+                  </Text>
+                )}
+              </View>
+
               <CustomTextInput
-                value={selectedBank.label}
-                label="Bank:"
-                placeholder="bank"
+                value={senderFullName}
+                label="Name:"
+                placeholder="Firstname Lastname"
                 autoCorrect={false}
                 autoCompleteType="off"
                 autoCapitalize="none"
-                disabled
+                maxLength={100}
+                onChangeText={handleInputChange("senderFullName")}
+                error={
+                  showError(senderFullName, showFieldError) &&
+                  validator.senderFullName
+                    ? "Enter a valid name"
+                    : ""
+                }
               />
 
-              <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+              <CustomTextInput
+                value={accountNumber}
+                label="Account No:"
+                placeholder="Account number"
+                autoCorrect={false}
+                autoCompleteType="off"
+                autoCapitalize="none"
+                keyboardType="numeric"
+                maxLength={100}
+                onChangeText={handleInputChange("accountNumber")}
+                error={
+                  showError(accountNumber, showFieldError) &&
+                  validator.accountNumber
+                    ? "Enter a valid account number"
+                    : ""
+                }
+              />
 
-              <TouchableOpacity
-                style={{ padding: 10 }}
-                onPress={() => handleBankSelectModal()}
-              >
-                <Text
-                  style={{
-                    fontSize: 18,
-                    color: colors.primary,
-                    textAlign: "center",
-                  }}
-                >
-                  Change
-                </Text>
-              </TouchableOpacity>
+              <CustomTextInput
+                value={bvn}
+                label="BVN:"
+                placeholder="Bank verification number"
+                autoCorrect={false}
+                autoCompleteType="off"
+                autoCapitalize="none"
+                keyboardType="numeric"
+                maxLength={100}
+                onChangeText={handleInputChange("bvn")}
+                error={
+                  showError(bvn, showFieldError) && validator.bvn
+                    ? "Enter a valid bank verification number"
+                    : ""
+                }
+              />
 
-              <TouchableOpacity
-                style={{ padding: 10 }}
-                onPress={() => handleBankSelect(undefined)}
-              >
-                <Text
-                  style={{
-                    fontSize: 18,
-                    color: colors.primary,
-                    textAlign: "center",
-                  }}
-                >
-                  Clear
-                </Text>
-              </TouchableOpacity>
-              </View>
+              <CustomTextInput
+                value={phoneNumber}
+                label="Alias:"
+                placeholder="Phone number or email"
+                autoCorrect={false}
+                autoCompleteType="off"
+                autoCapitalize="none"
+                maxLength={100}
+                onChangeText={handleInputChange("phoneNumber")}
+                error={
+                  showError(phoneNumber, showFieldError) &&
+                  validator.phoneNumber
+                    ? "Enter a valid phone number or email"
+                    : ""
+                }
+              />
             </View>
-          )}
 
-          <CustomTextInput
-            value={senderFullName}
-            label="Name:"
-            placeholder="Fullname"
-            autoCorrect={false}
-            autoCompleteType="off"
-            autoCapitalize="none"
-            maxLength={100}
-            onChangeText={handleInputChange("senderFullName")}
-            error={
-              senderFullName &&
-              (senderFullName?.length < 3 || !isValidAlphabet(senderFullName))
-                ? "Enter a valid name"
-                : ""
-            }
-          />
+            <View
+              style={{
+                ...styles.inputContainer,
+                marginBottom: Dimensions.get("window").height / 20,
+              }}
+            >
+              <CustomButton
+                text="Login"
+                focus
+                mode="light"
+                onPress={handleLogin}
+                callback={() => dispatch({ type: SHOW_FIELD_ERRORS })}
+                loading={loginLoading}
+                disabled={Object.values(validator).includes(true)}
+                customParentStyle={{
+                  width: "100%",
+                  backgroundColor: colors.primary,
+                  borderColor: colors.primary,
+                  height: Dimensions.get("window").height / 15,
+                  marginBottom: Dimensions.get("window").height / 50,
+                }}
+                customChildStyle={{
+                  fontSize: Dimensions.get("window").height / 40,
+                }}
+              />
+            </View>
+          </View>
+        </>
+      </TouchableWithoutFeedback>
 
-          <CustomTextInput
-            value={phoneNumber}
-            label="Alias:"
-            placeholder="Phone number or email"
-            autoCorrect={false}
-            autoCompleteType="off"
-            autoCapitalize="none"
-            maxLength={100}
-            onChangeText={handleInputChange("phoneNumber")}
-            error={
-              phoneNumber && !combinedValidators.phoneAndEmail(phoneNumber)
-                ? "Enter a valid phone number or email"
-                : ""
-            }
-          />
-
-          <CustomTextInput
-            value={accountNumber}
-            label="Account No:"
-            placeholder="Account number"
-            autoCorrect={false}
-            autoCompleteType="off"
-            autoCapitalize="none"
-            keyboardType="numeric"
-            maxLength={100}
-            onChangeText={handleInputChange("accountNumber")}
-            error={
-              accountNumber && accountNumber?.length !== 10
-                ? "Enter a valid account number"
-                : ""
-            }
-          />
-
-          <CustomTextInput
-            value={bvn}
-            label="BVN:"
-            placeholder="Bank verification number"
-            autoCorrect={false}
-            autoCompleteType="off"
-            autoCapitalize="none"
-            keyboardType="numeric"
-            maxLength={100}
-            onChangeText={handleInputChange("bvn")}
-            error={
-              bvn && bvn?.length !== 11
-                ? "Enter a valid bank verification number"
-                : ""
-            }
-          />
-        </View>
-      </ScrollView>
-
-      <CustomModal mode="plain" visible={modalOpen}>
+      <CustomModal animationType="slide" mode="plain" visible={modalOpen}>
         <FlatList
           data={registeredBanks}
           keyExtractor={({ value }) => value}
@@ -220,6 +249,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
+    justifyContent: "space-between",
   },
   inputContainer: {
     paddingHorizontal: Dimensions.get("window").width / 15,

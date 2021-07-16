@@ -4,11 +4,11 @@ import * as Font from "expo-font";
 import { Provider } from "react-redux";
 import { enableScreens } from "react-native-screens";
 import store from "./redux";
+import colors from "./constants/colors";
 
 enableScreens();
 
 import Routes from "./navigation";
-import colors from "./constants/colors";
 
 const loadFonts = () => {
   return Font.loadAsync({

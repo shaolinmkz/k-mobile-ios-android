@@ -69,7 +69,7 @@ const Home = ({ navigation }: React.ComponentProps<any>) => {
           ))}
         </View>
       </View>
-      <WelcomeModal mode="dark" visible={modalVisible} handleModal={handleModal} />
+      <WelcomeModal mode="light" visible={modalVisible} handleModal={handleModal} />
     </>
   );
 };

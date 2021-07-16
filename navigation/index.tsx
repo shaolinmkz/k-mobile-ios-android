@@ -13,7 +13,9 @@ import SendMoney from "../screens/SendMoney";
 import OtpScreen from "../screens/OtpScreen";
 import BankAppSetup from "../screens/BankAppSetup";
 import fonts from "../constants/fonts";
+import HocNavRefSetter from "../components/HocNavRefSetter";
 import { ternaryResolver } from "../helpers";
+import { navigationRef } from "../helpers/navigationRef";
 
 const Stack = createStackNavigator();
 
@@ -31,16 +33,27 @@ const headerTitleContainerStyle = {
   flexDirection: "row",
   alignItems: "center",
   paddingLeft:
-    Dimensions.get("window").width / ternaryResolver(Platform.OS === "android", 15, 30),
+    Dimensions.get("window").width /
+    ternaryResolver(Platform.OS === "android", 15, 30),
 };
+
+const components = {
+  BankAppSetup: (props) => <HocNavRefSetter {...props} component={BankAppSetup} />,
+  Home: (props) => <HocNavRefSetter {...props} component={Home} />,
+  AccountNumberList: (props) => <HocNavRefSetter {...props} component={AccountNumberList} />,
+  LinkAlias: (props) => <HocNavRefSetter {...props} component={LinkAlias} />,
+  OtpScreen: (props) => <HocNavRefSetter {...props} component={OtpScreen} />,
+  SelectAlias: (props) => <HocNavRefSetter {...props} component={SelectAlias} />,
+  SendMoney: (props) => <HocNavRefSetter {...props} component={SendMoney} />,
+}
 
 const Routes = () => {
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <Stack.Navigator initialRouteName="BankAppSetup">
         <Stack.Screen
           name="BankAppSetup"
-          component={BankAppSetup}
+          component={components.BankAppSetup}
           options={{
             title: "Bank Setup",
             headerTitleStyle: {
@@ -54,7 +67,7 @@ const Routes = () => {
         />
         <Stack.Screen
           name="Home"
-          component={Home}
+          component={components.Home}
           options={{
             title: "Home",
             headerTitleStyle: {
@@ -68,65 +81,65 @@ const Routes = () => {
         />
         <Stack.Screen
           name="AccountNumberList"
-          component={AccountNumberList}
+          component={components.AccountNumberList}
           options={{
             title: "Accounts",
             headerTitleStyle: {
               fontSize: Dimensions.get("window").width / 20,
               fontFamily: fonts.bold,
             },
-             headerStyle,
+            headerStyle,
           }}
         />
         <Stack.Screen
           name="LinkAlias"
-          component={LinkAlias}
+          component={components.LinkAlias}
           options={{
             title: "Select Alias",
             headerTitleStyle: {
               fontSize: Dimensions.get("window").width / 20,
               fontFamily: fonts.bold,
             },
-             headerStyle,
+            headerStyle,
           }}
         />
 
         <Stack.Screen
           name="OtpScreen"
-          component={OtpScreen}
+          component={components.OtpScreen}
           options={{
             title: "One Time Password",
             headerTitleStyle: {
               fontSize: Dimensions.get("window").width / 20,
               fontFamily: fonts.bold,
             },
-             headerStyle,
+            headerStyle,
           }}
         />
 
         <Stack.Screen
           name="SelectAlias"
-          component={SelectAlias}
+          component={components.SelectAlias}
           options={{
             title: "Select Alias",
             headerTitleStyle: {
               fontSize: Dimensions.get("window").width / 20,
               fontFamily: fonts.bold,
             },
-             headerStyle,
+            headerStyle,
           }}
         />
 
         <Stack.Screen
           name="SendMoney"
-          component={SendMoney}
+          component={components.SendMoney}
           options={{
             title: "Send Money",
             headerTitleStyle: {
               fontSize: Dimensions.get("window").width / 20,
               fontFamily: fonts.bold,
             },
-             headerStyle,
+            headerStyle,
           }}
         />
       </Stack.Navigator>

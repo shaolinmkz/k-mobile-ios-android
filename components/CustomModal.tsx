@@ -8,13 +8,14 @@ interface Props {
   visible: boolean;
   children: React.ReactNode;
   parentStyle?: any;
+  animationType?: "slide" | "fade" | "none";
 }
 
-const CustomModal: React.FC<Props> = ({ mode, visible, children, parentStyle }: Props) => {
+const CustomModal: React.FC<Props> = ({ mode, visible, children, parentStyle, animationType }: Props) => {
   const backgroundColor = ternaryResolver(mode === "plain", colors.white, colors.transparent);
 
   return (
-    <Modal animationType="fade" transparent visible={visible} style={{ flex: 1 }}>
+    <Modal animationType={animationType} transparent visible={visible} style={{ flex: 1 }}>
       <View style={{ ...styles.modal, backgroundColor, ...parentStyle }}>
         {children}
       </View>
@@ -24,6 +25,7 @@ const CustomModal: React.FC<Props> = ({ mode, visible, children, parentStyle }: 
 
 CustomModal.defaultProps = {
   parentStyle: {},
+  animationType: "fade"
 }
 
 const styles = StyleSheet.create({

@@ -7,16 +7,22 @@ export interface IBank {
   bankCode: string,
   label: string,
   value: string,
+  username: string,
+  password: string,
 }
 
 export interface IInitialState {
   kwiklliLogo: string;
   registeredBanks: Array<IBank>;
   selectedBank: IBank | null,
-  accountNumber: string | undefined,
-  bvn: string | undefined,
-  phoneNumber: string | undefined,
+  accountNumber: string,
+  bvn: string,
+  phoneNumber: string,
   senderFullName: string,
+  loginLoading: boolean,
+  showFieldError: boolean,
+  token: string,
+  userData: any,
 }
 
 export interface IAppState {

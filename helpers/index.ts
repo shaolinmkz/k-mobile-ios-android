@@ -1,4 +1,6 @@
+import colors from '../constants/colors';
 import { phonePrefix as phoneNumberPrefix, telcoPrefixes } from "./phoneNumberPrefixes";
+export { navigate } from "./navigationRef";
 
 export const anonymousFunc = () => null;
 
@@ -113,3 +115,15 @@ export const combinedValidators = {
     )
   }
 };
+
+export const toastError = (message: string) => {
+
+};
+
+export const toastSuccess = (message: string) => {
+
+}
+
+export const showError = (...values: any) => {
+  return values.map((value: any) => Boolean(value)).includes(true);
+}

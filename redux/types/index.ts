@@ -1,4 +1,9 @@
 export const LOGIN = "LOGIN";
+export const LOGIN_LOADING = "LOGIN_LOADING";
+export const STOP_LOGIN_LOADING = "STOP_LOGIN_LOADING";
+export const SHOW_FIELD_ERRORS = "SHOW_FIELD_ERRORS";
+export const HIDE_FIELD_ERRORS = "HIDE_FIELD_ERRORS";
+
 export const LOGOUT = "LOGOUT";
 
 export const RESET_STATE = "RESET_STATE";

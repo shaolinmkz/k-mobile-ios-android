@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { StyleSheet, Text, Dimensions, View, TextInput } from "react-native";
+import { StyleSheet, Text, Dimensions, View, TextInput, Keyboard } from "react-native";
 import colors from "../constants/colors";
 import fonts from "../constants/fonts";
 import { ternaryResolver } from "../helpers";
@@ -24,7 +24,14 @@ const CustomTextInput = (props: IInputProps) => {
 
   return (
     <View
-      style={{ ...styles.inputFrame, paddingBottom: ternaryResolver(disabled, 15, styles.inputFrame.paddingVertical )}}
+      style={{
+        ...styles.inputFrame,
+        paddingBottom: ternaryResolver(
+          disabled,
+          15,
+          styles.inputFrame.paddingVertical
+        ),
+      }}
       onTouchStart={() => inputRef?.current?.focus?.()}
     >
       <View style={styles.inputContainer}>
@@ -43,6 +50,7 @@ const CustomTextInput = (props: IInputProps) => {
           keyboardType={keyboardType}
           style={styles.inputStyle}
           ref={inputRef}
+          onSubmitEditing={() => Keyboard.dismiss()}
         />
       </View>
       {!!error && <Text style={styles.error}>{error}</Text>}
@@ -87,7 +95,7 @@ const styles = StyleSheet.create({
     minWidth: "60%",
   },
   label: {
-    fontSize: Dimensions.get("window").width / 20,
+    fontSize: Dimensions.get("window").width / 25,
     color: colors.secondary,
     fontFamily: fonts.bold,
   },

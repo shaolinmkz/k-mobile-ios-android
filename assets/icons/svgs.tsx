@@ -65,6 +65,14 @@ export const WaveSvg = (props: React.ComponentProps<any>) => {
   return <SvgXml xml={svgString} {...props} />;
 };
 
+export const CaretSvg = (props: React.ComponentProps<any>) => {
+  const svgString = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 330 330" style="enable-background:new 0 0 330 330;" xml:space="preserve">
+  <path id="XMLID_225_" d="M325.607,79.393c-5.857-5.857-15.355-5.858-21.213,0.001l-139.39,139.393L25.607,79.393  c-5.857-5.857-15.355-5.858-21.213,0.001c-5.858,5.858-5.858,15.355,0,21.213l150.004,150c2.813,2.813,6.628,4.393,10.606,4.393  s7.794-1.581,10.606-4.394l149.996-150C331.465,94.749,331.465,85.251,325.607,79.393z"/>
+  </svg>`;
+
+  return <SvgXml xml={svgString} {...props} />;
+};
+
 export const CheckSvg = (props: React.ComponentProps<any>) => {
   const svgString = `<svg xmlns="http://www.w3.org/2000/svg" width="84" height="84" viewBox="0 0 84 84" fill="none">
   <path d="M21 38.3518L29.7111 50.7145C30.0415 51.2081 30.4851 51.6156 31.0048 51.9031C31.5245 52.1907 32.1054 52.35 32.6991 52.3677C33.2928 52.3855 33.8821 52.2611 34.4181 52.0051C34.9541 51.7491 35.4211 51.3688 35.7804 50.8958L60.3337 32" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>

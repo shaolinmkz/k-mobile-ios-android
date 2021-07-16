@@ -46,7 +46,7 @@ export const useContact = () => {
           displayColor: randomColor({ luminosity: 'dark'}),
           initials: `${`${firstName}`.toUpperCase().slice(0, 1)}${`${lastName}`.toUpperCase().slice(0, 1)}`
         })
-      ).sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+      ).sort((a, b) => `${a.name}`.toLowerCase().localeCompare(`${b.name}`.toLowerCase()));
 
       resolve(unpackedData);
     });
