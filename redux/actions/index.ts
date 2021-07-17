@@ -156,17 +156,17 @@ export const validatePhoneNumber = (dispatch: (data: any) => void) => async (val
   }
 };
 
-export const handleVerifyUser = (dispatch: (data: any) => void) => async ({ accountNumber, bankCode, bvn }: any) => {
-  const payload = {
-    accountNumber,
-    bankCode,
-    bvn,
-  };
-
+export const handleVerifyUser = (dispatch: (data: any) => void) => async () => {
 
   try {
     dispatch({ type: SET_PAGE_LOADING, payload: true });
-    const { appKey } = await getApiAndToken();
+
+    const { accountNumber, appKey, bvn, selectedBank } = await getApiAndToken();
+    const payload = {
+      accountNumber,
+      bankCode: selectedBank?.bankCode,
+      bvn,
+    };
 
     const { data: { data } } = await api
       .post('/banks/enroll-user', payload, {
@@ -174,8 +174,8 @@ export const handleVerifyUser = (dispatch: (data: any) => void) => async ({ acco
           appKey,
         },
       });
-
-    fetchUserIdLinkedToBVNAction(dispatch)({ bankCode, bvn }); // fetches users linked aliases
+      console.log(data)
+    fetchUserIdLinkedToBVNAction(dispatch)({ bankCode: selectedBank?.bankCode, bvn }); // fetches users linked aliases
     dispatch({ type: SET_USER_EXIST, payload: data?.userExist });
 
   }
@@ -227,7 +227,7 @@ export const handleInitiateUnlink = (dispatch: (data: any) => void, resend = fal
 export const handleUnlink = (dispatch: (data: any) => void) => async ({ userId, otp }: any) => {
 
   try {
-    const { accountNumber, appKey, bvn, selectedBank } = await getApiAndToken();
+    const { appKey, bvn, selectedBank } = await getApiAndToken();
 
     const payload = {
       userId,
@@ -246,7 +246,7 @@ export const handleUnlink = (dispatch: (data: any) => void) => async ({ userId, 
 
     toastSuccess(`${payload.userId} has been unlinked successfully`);
     dispatch({ type: SET_UNLINK_SUCCESSFUL, payload: true })
-    handleVerifyUser(dispatch)({ accountNumber, bankCode: selectedBank?.bankCode, bvn });
+    handleVerifyUser(dispatch)();
     fetchUserIdLinkedToBVNAction(dispatch)({ bankCode: selectedBank?.bankCode, bvn });
   }
   catch (error) {
@@ -262,7 +262,7 @@ export const handleUnlink = (dispatch: (data: any) => void) => async ({ userId, 
  */
 export const handleInitiateLinking = (dispatch: (data: any) => void, resend = false) => async ({ userId }: any) => {
   try {
-    const { accountNumber, appKey, bvn, selectedBank } = await getApiAndToken();
+    const { accountNumber, appKey, selectedBank } = await getApiAndToken();
 
     const payload = {
       accountNumber: accountNumber,
@@ -320,7 +320,7 @@ export const handleIndependentLinking = (dispatch: (data: any) => void) => async
     toastSuccess(message);
     dispatch({ type: RESET_OTP_FIELDS });
     dispatch({ type: SET_LINK_SUCCESSFUL, payload: true });
-    handleVerifyUser(dispatch)({ accountNumber, bankCode: selectedBank?.bankCode, bvn });
+    handleVerifyUser(dispatch)();
     replace("Home");
   } catch (error) {
     toastError(error?.response?.data?.message);
@@ -369,7 +369,7 @@ export const handleSendOTP = (dispatch: (data: any) => void, resend = false) => 
 
 export const handleLinking = (dispatch: (data: any) => void) => async ({ otp }: any) => {
   try {
-    const { accountNumber, phoneNumber, senderFullName, bvn, appKey, selectedBank } = await getApiAndToken();
+    const { phoneNumber, senderFullName, bvn, appKey, selectedBank } = await getApiAndToken();
 
     const payload = {
       phoneNumber,
@@ -390,7 +390,7 @@ export const handleLinking = (dispatch: (data: any) => void) => async ({ otp }: 
 
     toastSuccess(message);
     dispatch({ type: SET_LINK_SUCCESSFUL, payload: true });
-    handleVerifyUser(dispatch)({ accountNumber, bankCode: selectedBank?.bankCode, bvn });
+    handleVerifyUser(dispatch)();
   } catch (error) {
     toastError(error?.response?.data?.message)
   } finally {

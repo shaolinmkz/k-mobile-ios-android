@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import {
   View,
   StyleSheet,
@@ -10,9 +11,13 @@ import WelcomeModal from "../components/WelcomeModal";
 import colors from "../constants/colors";
 import { LinkSvg, UnlinkSvg, TransferSvg } from "../assets/icons/svgs";
 import fonts from "../constants/fonts";
+import { handleVerifyUser } from "../redux/actions";
+import PageLoader from "../components/PageLoader";
 
-const Home = ({ navigation, selectedBank }: React.ComponentProps<any>) => {
+const Home = ({ navigation, selectedBank, pageLoading }: React.ComponentProps<any>) => {
   const [modalVisible, setModalVisible] = useState(true);
+
+  const dispatch = useDispatch();
 
   const menuCollection = [
     {
@@ -51,18 +56,11 @@ const Home = ({ navigation, selectedBank }: React.ComponentProps<any>) => {
     });
   };
 
-  if (modalVisible && !!selectedBank) {
-    return (
-      <WelcomeModal
-        data={selectedBank}
-        mode="dark"
-        visible
-        handleModal={handleModal}
-      />
-    );
-  }
+  useEffect(() => {
+    handleVerifyUser(dispatch)()
+  }, [])
 
-  return (
+  return pageLoading ? <PageLoader /> : (
     <>
       <View style={styles.container}>
         <View style={styles.header}>
@@ -85,6 +83,14 @@ const Home = ({ navigation, selectedBank }: React.ComponentProps<any>) => {
           ))}
         </View>
       </View>
+      {
+         modalVisible && !!selectedBank && <WelcomeModal
+         data={selectedBank}
+         mode="dark"
+         visible
+         handleModal={handleModal}
+       />
+      }
     </>
   );
 };
