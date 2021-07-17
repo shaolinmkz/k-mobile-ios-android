@@ -41,7 +41,7 @@ export const fallbackResolver = (actualValue: any, fallbackValue: any) => {
   return actualValue || fallbackValue;
 };
 
-export const isValidEmail = (email: string) => {
+export const isValidEmail = (email: any) => {
   const pattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
   return pattern.test(email);
 };
@@ -71,9 +71,9 @@ export const findTelco = (phoneNumber: string, telcos = telcoPrefixes) => {
   )?.name;
 };
 
-export const isValidAlphabet = (text: string) => /^[a-zA-Z -]*$/.test(text);
+export const isValidAlphabet = (text: any) => /^[a-zA-Z -]*$/.test(text);
 
-export const isValidPhoneNumber = (value: string) => {
+export const isValidPhoneNumber = (value: any) => {
 
   value = value?.replace(/\s/gm, '')
 
@@ -90,7 +90,7 @@ export const isValidPhoneNumber = (value: string) => {
   /^[0-9]*$/.test(value);
 };
 
-export const sanitizePhoneNumber = (value: string) => {
+export const sanitizePhoneNumber = (value: any) => {
   if(`${value}`.slice(0, 4) === '+234') {
     value = `0${`${value}`.slice(4)}`
   } else if(`${value}`.slice(0, 3) === '234') {
@@ -105,7 +105,7 @@ export const sanitizePhoneNumber = (value: string) => {
  * @description combines different validatiors used in the app
  */
 export const combinedValidators = {
-  phoneAndEmail: (value: string) => {
+  phoneAndEmail: (value: any) => {
     return !(
       (!isValidEmail(value) &&
         !/^[0-9]*$/.test(value) &&

@@ -1,32 +1,58 @@
 import { KeyboardTypeOptions } from "react-native";
 
 export interface IBank {
-  appName: string,
-  appIcon: string,
-  apiKey: string,
-  bankCode: string,
-  label: string,
-  value: string,
-  username: string,
-  password: string,
+  appName: string;
+  appIcon: string;
+  apiKey: string;
+  bankCode: string;
+  label: string;
+  value: string;
+  username: string;
+  password: string;
 }
 
 export interface IInitialState {
-  kwiklliLogo: string;
-  registeredBanks: Array<IBank>;
-  selectedBank: IBank | null,
-  accountNumber: string,
-  bvn: string,
-  phoneNumber: string,
-  senderFullName: string,
-  loginLoading: boolean,
-  showFieldError: boolean,
-  token: string,
-  userData: any,
+  kwiklliLogo?: string;
+  registeredBanks?: Array<IBank>;
+  selectedBank?: IBank | null;
+  accountNumber?: string;
+  bvn?: string;
+  phoneNumber?: string;
+  senderFullName?: string;
+  loginLoading?: boolean;
+  showFieldError?: boolean;
+  token?: string;
+  appKey?: string,
+  userData?: any;
+  linkedAliases?: any[];
+  isValidatingPhoneNumber?: boolean;
+  receiverId?: string,
+  amount?: string,
+  unlinkSuccessful?: boolean,
+  linkSuccessful?: boolean,
+  transferSuccessful?: boolean,
+  userExist?: null | boolean,
+  hasChecked?: boolean,
+  actionLoading?: boolean,
+  otp?: {
+    char1?: string,
+    char2?: string,
+    char3?: string,
+    char4?: string,
+    char5?: string,
+    char6?: string,
+  },
+  userId?: string,
+  validatedDataOptions?: [] | null,
+  validatedData?: any,
+  isLinked?: boolean,
+  maxAmount?: string | number,
+  reversalDuration?: string | number,
+  pageLoading?: boolean,
 }
 
 export interface IAppState {
-  appState: IInitialState
+  appState: IInitialState;
 }
 
 export interface IAction {

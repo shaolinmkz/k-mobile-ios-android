@@ -34,10 +34,12 @@ import CustomButton from "../components/CustomButton";
 import CustomRadioButton from "../components/CustomRadioButton";
 import CustomModal from "../components/CustomModal";
 import CustomSelect from "../components/CustomSelect";
+import PageLoader from "../components/PageLoader";
 
 
 const BankAppSetup = ({ navigation }: any) => {
   const dispatch = useDispatch();
+  const [initializing, setInitializing] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
 
   const appState: IInitialState = useSelector(
@@ -85,7 +87,7 @@ const BankAppSetup = ({ navigation }: any) => {
   const validator = {
     senderFullName: [
       !isValidAlphabet(senderFullName),
-      senderFullName.trim().split(" ").length < 2,
+      `${senderFullName}`.trim().split(" ").length < 2,
     ].includes(true),
     accountNumber: accountNumber?.length !== 10,
     bvn: bvn?.length !== 11,
@@ -100,9 +102,12 @@ const BankAppSetup = ({ navigation }: any) => {
       const prevAppState = await AsyncStorage.getItem("appState");
       const authenticated = await validateToken(token);
 
-      if(authenticated) {
-        if(prevAppState) {
-          dispatch({ type: APP_STATE_UPDATE, payload: JSON.parse(prevAppState) });
+      if (authenticated) {
+        if (prevAppState) {
+          dispatch({
+            type: APP_STATE_UPDATE,
+            payload: JSON.parse(prevAppState),
+          });
           navigation.replace("Home");
         }
       }
@@ -121,18 +126,20 @@ const BankAppSetup = ({ navigation }: any) => {
   };
 
   useEffect(() => {
-    isAuthenticated();
+    isAuthenticated().finally(() => setInitializing(false));
   }, []);
 
   useEffect(() => {
     isAuthenticated().then((isAuth) => {
-      if(!isAuth) {
+      if (!isAuth) {
         setAppState(appState);
       }
-    })
-  }, [accountNumber, bvn, phoneNumber, selectedBank, senderFullName])
+    });
+  }, [accountNumber, bvn, phoneNumber, selectedBank, senderFullName]);
 
-  return (
+  return initializing ? (
+    <PageLoader />
+  ) : (
     <>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <>
@@ -268,20 +275,22 @@ const BankAppSetup = ({ navigation }: any) => {
         </>
       </TouchableWithoutFeedback>
 
-      <CustomModal animationType="slide" mode="plain" visible={modalOpen}>
-        <FlatList
-          data={registeredBanks}
-          keyExtractor={({ value }) => value}
-          renderItem={({ item: bank }) => (
-            <CustomRadioButton
-              checked={bank.value === selectedBank?.value}
-              text1={bank.label}
-              text2=""
-              onSelect={() => handleBankSelect(bank)}
-            />
-          )}
-        />
-      </CustomModal>
+      {modalOpen && (
+        <CustomModal animationType="slide" mode="plain" visible={modalOpen}>
+          <FlatList
+            data={registeredBanks}
+            keyExtractor={({ value }) => value}
+            renderItem={({ item: bank }) => (
+              <CustomRadioButton
+                checked={bank.value === selectedBank?.value}
+                text1={bank.label}
+                text2=""
+                onSelect={() => handleBankSelect(bank)}
+              />
+            )}
+          />
+        </CustomModal>
+      )}
     </>
   );
 };

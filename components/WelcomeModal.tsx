@@ -24,7 +24,7 @@ const Welcome: React.FC<Props> = ({
 
   return (
     <Modal
-      animationType="fade"
+      animationType="none"
       transparent
       visible={visible}
       style={{ flex: 1 }}

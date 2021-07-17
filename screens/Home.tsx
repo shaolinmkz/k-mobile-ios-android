@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -11,7 +11,6 @@ import colors from "../constants/colors";
 import { LinkSvg, UnlinkSvg, TransferSvg } from "../assets/icons/svgs";
 import fonts from "../constants/fonts";
 
-
 const Home = ({ navigation, selectedBank }: React.ComponentProps<any>) => {
   const [modalVisible, setModalVisible] = useState(true);
 
@@ -19,17 +18,17 @@ const Home = ({ navigation, selectedBank }: React.ComponentProps<any>) => {
     {
       name: "Send Money",
       Icon: TransferSvg,
-      screen: 'AccountNumberList'
+      screen: "AccountNumberList",
     },
     {
       name: "Link Alias",
       Icon: LinkSvg,
-      screen: 'AccountNumberList'
+      screen: "AccountNumberList",
     },
     {
       name: "Unlink Alias",
       Icon: UnlinkSvg,
-      screen: 'AccountNumberList'
+      screen: "AccountNumberList",
     },
   ];
 
@@ -40,16 +39,28 @@ const Home = ({ navigation, selectedBank }: React.ComponentProps<any>) => {
   };
 
   const handleNavigation = (nextScreen: string, triggerBtn: string) => {
-      const isLinkUnlink = nextScreen === 'AccountNumberList' && triggerBtn === 'Link / Unlink';
+    const isLinkUnlink =
+      nextScreen === "AccountNumberList" && triggerBtn === "Link / Unlink";
 
-      navigation.navigate({
-        name: nextScreen,
-        params: {
-          isFirstTime: isLinkUnlink ? true : false,
-          isLinking: isLinkUnlink
-        }
-      });
+    navigation.navigate({
+      name: nextScreen,
+      params: {
+        isFirstTime: isLinkUnlink ? true : false,
+        isLinking: isLinkUnlink,
+      },
+    });
   };
+
+  if (modalVisible && !!selectedBank) {
+    return (
+      <WelcomeModal
+        data={selectedBank}
+        mode="dark"
+        visible
+        handleModal={handleModal}
+      />
+    );
+  }
 
   return (
     <>
@@ -60,7 +71,12 @@ const Home = ({ navigation, selectedBank }: React.ComponentProps<any>) => {
 
         <View style={styles.cardContainer}>
           {menuCollection.map(({ name, Icon, screen }) => (
-            <TouchableOpacity activeOpacity={0.5} style={styles.card} key={name} onPress={() => handleNavigation(screen, name)}>
+            <TouchableOpacity
+              activeOpacity={0.5}
+              style={styles.card}
+              key={name}
+              onPress={() => handleNavigation(screen, name)}
+            >
               <View style={styles.cardIcon}>
                 <Icon width={iconSize} height={iconSize} />
               </View>
@@ -69,7 +85,6 @@ const Home = ({ navigation, selectedBank }: React.ComponentProps<any>) => {
           ))}
         </View>
       </View>
-      <WelcomeModal data={selectedBank} mode="light" visible={modalVisible} handleModal={handleModal} />
     </>
   );
 };
@@ -105,7 +120,7 @@ const styles = StyleSheet.create({
   },
   cardIcon: {
     overflow: "visible",
-    marginRight: Dimensions.get("window").width / 10
+    marginRight: Dimensions.get("window").width / 10,
   },
   cardText: {
     color: colors.textColor,
