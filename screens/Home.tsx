@@ -14,7 +14,11 @@ import fonts from "../constants/fonts";
 import { handleVerifyUser } from "../redux/actions";
 import PageLoader from "../components/PageLoader";
 
-const Home = ({ navigation, selectedBank, pageLoading }: React.ComponentProps<any>) => {
+const Home = ({
+  navigation,
+  selectedBank,
+  pageLoading,
+}: React.ComponentProps<any>) => {
   const [modalVisible, setModalVisible] = useState(true);
 
   const dispatch = useDispatch();
@@ -57,10 +61,12 @@ const Home = ({ navigation, selectedBank, pageLoading }: React.ComponentProps<an
   };
 
   useEffect(() => {
-    handleVerifyUser(dispatch)()
-  }, [])
+    handleVerifyUser(dispatch)();
+  }, []);
 
-  return pageLoading ? <PageLoader /> : (
+  return pageLoading ? (
+    <PageLoader />
+  ) : (
     <>
       <View style={styles.container}>
         <View style={styles.header}>
@@ -83,14 +89,14 @@ const Home = ({ navigation, selectedBank, pageLoading }: React.ComponentProps<an
           ))}
         </View>
       </View>
-      {
-         modalVisible && !!selectedBank && <WelcomeModal
-         data={selectedBank}
-         mode="dark"
-         visible
-         handleModal={handleModal}
-       />
-      }
+      {modalVisible && !!selectedBank && (
+        <WelcomeModal
+          data={selectedBank}
+          mode="dark"
+          visible
+          handleModal={handleModal}
+        />
+      )}
     </>
   );
 };
