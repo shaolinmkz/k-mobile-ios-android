@@ -7,6 +7,7 @@ import {
   HIDE_FIELD_ERRORS,
   LOGIN_LOADING,
   STOP_LOGIN_LOADING,
+  APP_STATE_UPDATE,
 } from '../types';
 import { registeredBanks } from '../../db';
 import { IAction, IInitialState } from '../../Interfaces/index';
@@ -67,6 +68,11 @@ const rootReducer = (state = initialState, action: IAction) => {
       return {
         ...state,
         showFieldError: false,
+      };
+    case APP_STATE_UPDATE:
+      return {
+        ...state,
+        ...payload,
       };
     case RESET_STATE:
       return initialState

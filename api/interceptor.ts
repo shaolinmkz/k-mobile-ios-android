@@ -1,11 +1,11 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { navigate } from "../helpers/navigationRef";
+import { replace } from "../helpers/navigationRef";
 
 const clearStorage = async () => {
   try {
     await AsyncStorage.clear();
-    navigate("SetupBankApp");
+    replace("SetupBankApp");
   } catch (e) {
     return e;
   }

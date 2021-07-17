@@ -23,3 +23,7 @@ export const replace = (routeName?: any, params?: any) => {
     NavigationRef?.navigationRef?.replace(routeName, params);
   }
 };
+
+export const navigation = () => {
+  return NavigationRef?.navigationRef
+};

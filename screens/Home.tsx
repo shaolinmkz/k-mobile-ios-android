@@ -12,7 +12,7 @@ import { LinkSvg, UnlinkSvg, TransferSvg } from "../assets/icons/svgs";
 import fonts from "../constants/fonts";
 
 
-const Home = ({ navigation }: React.ComponentProps<any>) => {
+const Home = ({ navigation, selectedBank }: React.ComponentProps<any>) => {
   const [modalVisible, setModalVisible] = useState(true);
 
   const menuCollection = [
@@ -69,7 +69,7 @@ const Home = ({ navigation }: React.ComponentProps<any>) => {
           ))}
         </View>
       </View>
-      <WelcomeModal mode="light" visible={modalVisible} handleModal={handleModal} />
+      <WelcomeModal data={selectedBank} mode="light" visible={modalVisible} handleModal={handleModal} />
     </>
   );
 };

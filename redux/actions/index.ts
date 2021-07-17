@@ -5,7 +5,7 @@ import { replace, navigate } from "../../helpers/navigationRef";
 import { LOGIN, LOGIN_LOADING, STOP_LOGIN_LOADING } from "../types";
 
 
-export const loginAction = (dispatch: (data: any) => void) => async (payload: any, navigation: any) => {
+export const loginAction = (dispatch: (data: any) => void) => async (payload: any, selectedBank: any) => {
   dispatch({ type: LOGIN_LOADING });
 
   try {
@@ -22,9 +22,9 @@ export const loginAction = (dispatch: (data: any) => void) => async (payload: an
 
     await AsyncStorage.setItem('token', data.token);
     await AsyncStorage.setItem('userData', JSON.stringify(data));
+    await AsyncStorage.setItem('selectedBank', JSON.stringify(selectedBank));
 
     replace("Home");
-    // navigation.replace("Home");
   }
   catch (error) {
     toastError(error?.response?.data?.message)

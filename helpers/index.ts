@@ -1,4 +1,4 @@
-import colors from '../constants/colors';
+import jwt_decode from "jwt-decode";
 import { phonePrefix as phoneNumberPrefix, telcoPrefixes } from "./phoneNumberPrefixes";
 export { navigate } from "./navigationRef";
 
@@ -126,4 +126,14 @@ export const toastSuccess = (message: string) => {
 
 export const showError = (...values: any) => {
   return values.map((value: any) => Boolean(value)).includes(true);
+}
+
+export const validateToken = async (token: any) => {
+  try {
+    const currentTimeInSeconds = Date.now();
+    const expirationTimeInSeconds = jwt_decode<any>(token)?.exp * 1000;
+    return expirationTimeInSeconds > currentTimeInSeconds;
+  } catch (err) {
+    return false;
+  }
 }

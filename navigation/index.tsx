@@ -12,6 +12,7 @@ import SelectAlias from "../screens/SelectAlias";
 import SendMoney from "../screens/SendMoney";
 import OtpScreen from "../screens/OtpScreen";
 import BankAppSetup from "../screens/BankAppSetup";
+
 import fonts from "../constants/fonts";
 import HocNavRefSetter from "../components/HocNavRefSetter";
 import { ternaryResolver } from "../helpers";
@@ -19,23 +20,6 @@ import { navigationRef } from "../helpers/navigationRef";
 
 const Stack = createStackNavigator();
 
-const headerStyle = {
-  backgroundColor: colors.headerBg,
-  height: Dimensions.get("screen").height / 9,
-};
-
-const headerTitleContainerStyle = {
-  top: 0,
-  bottom: 0,
-  left: 0,
-  right: 0,
-  position: "absolute",
-  flexDirection: "row",
-  alignItems: "center",
-  paddingLeft:
-    Dimensions.get("window").width /
-    ternaryResolver(Platform.OS === "android", 15, 30),
-};
 
 const components = {
   BankAppSetup: (props) => <HocNavRefSetter {...props} component={BankAppSetup} />,
@@ -47,7 +31,27 @@ const components = {
   SendMoney: (props) => <HocNavRefSetter {...props} component={SendMoney} />,
 }
 
+
 const Routes = () => {
+
+  const headerStyle = {
+    backgroundColor: colors.headerBg,
+    height: Dimensions.get("screen").height / 9,
+  };
+
+  const headerTitleContainerStyle = {
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    position: "absolute",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingLeft:
+      Dimensions.get("window").width /
+      ternaryResolver(Platform.OS === "android", 15, 30),
+  };
+
   return (
     <NavigationContainer ref={navigationRef}>
       <Stack.Navigator initialRouteName="BankAppSetup">
