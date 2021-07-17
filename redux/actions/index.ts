@@ -434,9 +434,6 @@ export const handleTransfer = (dispatch: (data: any) => void) => async ({ amount
   }
 };
 
-/**
- * Checks users account forwarding status
- */
 export const handleFetchMaxTransferAmount = async (dispatch: (data: any) => void) => {
   try {
     const { token } = await getApiAndToken();
