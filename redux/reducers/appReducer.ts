@@ -23,6 +23,7 @@ import {
   SET_REVERSAL_DURATION,
   SET_MAX_TRANSFER_AMOUNT,
   LOGOUT,
+  SET_WELCOME_MODAL,
 } from '../types';
 import { registeredBanks } from '../../db';
 import { IAction, IInitialState } from '../../Interfaces/index';
@@ -65,7 +66,8 @@ const initialState: IInitialState = {
   isLinked: false,
   maxAmount: 0,
   reversalDuration: "0",
-  pageLoading: false,
+  pageLoading: true,
+  showWelcomeModal: true,
 };
 
 
@@ -73,6 +75,11 @@ const rootReducer = (state = initialState, action: IAction) => {
   const { type, payload } = action;
 
   switch (type) {
+    case SET_WELCOME_MODAL:
+      return {
+        ...state,
+        showWelcomeModal: payload,
+      };
     case SET_MAX_TRANSFER_AMOUNT:
       return {
         ...state,
@@ -186,6 +193,14 @@ const rootReducer = (state = initialState, action: IAction) => {
         ...payload,
       };
     case LOGOUT:
+      return {
+        ...initialState,
+        senderFullName: state.senderFullName,
+        accountNumber: state.accountNumber,
+        phoneNumber: state.phoneNumber,
+        bvn: state.bvn,
+        pageLoading: true,
+      }
     case RESET_STATE:
       return initialState
     default:

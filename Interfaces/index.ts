@@ -49,6 +49,7 @@ export interface IInitialState {
   maxAmount?: string | number,
   reversalDuration?: string | number,
   pageLoading?: boolean,
+  showWelcomeModal?: boolean,
 }
 
 export interface IAppState {

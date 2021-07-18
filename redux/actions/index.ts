@@ -80,8 +80,8 @@ export const loginAction = (dispatch: (data: any) => void) => async (payload: an
 
 export const logoutAction = async (dispatch: (data: any) => void) => {
   await AsyncStorage.clear();
-  dispatch({ type: LOGOUT });
   replace("BankAppSetup");
+  dispatch({ type: LOGOUT });
 }
 
 export const fetchUserIdLinkedToBVNAction = (dispatch: (data: any) => void) => async (payload: any) => {
@@ -174,7 +174,7 @@ export const handleVerifyUser = (dispatch: (data: any) => void) => async () => {
           appKey,
         },
       });
-      console.log(data)
+
     fetchUserIdLinkedToBVNAction(dispatch)({ bankCode: selectedBank?.bankCode, bvn }); // fetches users linked aliases
     dispatch({ type: SET_USER_EXIST, payload: data?.userExist });
 

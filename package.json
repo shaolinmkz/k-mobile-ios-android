@@ -31,6 +31,7 @@
     "react-native-screens": "2.15.2",
     "react-native-svg": "12.1.0",
     "react-native-web": "~0.13.12",
+    "react-navigation-header-buttons": "^7.0.2",
     "react-redux": "^7.2.4",
     "redux": "^4.1.0",
     "redux-thunk": "^2.3.0"

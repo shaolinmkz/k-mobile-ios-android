@@ -7,13 +7,13 @@ interface Props {
   mode: "dark" | "light";
   data?: any;
   visible: boolean;
-  handleModal: () => void;
+  onClose: () => void;
 }
 
 const Welcome: React.FC<Props> = ({
   mode,
   visible,
-  handleModal,
+  onClose,
   data,
 }: Props) => {
   const backgroundColor =
@@ -74,13 +74,13 @@ const Welcome: React.FC<Props> = ({
               text="Accept"
               focus
               mode={mode}
-              onPress={handleModal}
+              onPress={onClose}
             />
             <CustomButton
               text="Decline"
               focus={false}
               mode={mode}
-              onPress={handleModal}
+              onPress={onClose}
             />
           </View>
         </View>

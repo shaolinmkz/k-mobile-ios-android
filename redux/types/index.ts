@@ -6,6 +6,8 @@ export const HIDE_FIELD_ERRORS = "HIDE_FIELD_ERRORS";
 
 export const APP_STATE_UPDATE = "APP_STATE_UPDATE";
 
+export const SET_WELCOME_MODAL = "SET_WELCOME_MODAL";
+
 export const LOGOUT = "LOGOUT";
 export const RESET_STATE = "RESET_STATE";
 

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   View,
   StyleSheet,
@@ -18,7 +17,6 @@ import {
   SELECT_BANK,
   SHOW_FIELD_ERRORS,
   HIDE_FIELD_ERRORS,
-  APP_STATE_UPDATE,
 } from "../redux/types";
 import { loginAction } from "../redux/actions";
 import CustomTextInput from "../components/CustomTextInput";
@@ -28,19 +26,22 @@ import {
   isValidAlphabet,
   showError,
   ternaryResolver,
-  validateToken,
+  isAuthenticated,
 } from "../helpers";
 import CustomButton from "../components/CustomButton";
 import CustomRadioButton from "../components/CustomRadioButton";
 import CustomModal from "../components/CustomModal";
 import CustomSelect from "../components/CustomSelect";
 import PageLoader from "../components/PageLoader";
-
+import useSaveAppState from "../hooks/useSaveAppState";
 
 const BankAppSetup = ({ navigation }: any) => {
   const dispatch = useDispatch();
   const [initializing, setInitializing] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
+
+  // Save app state hook
+  useSaveAppState();
 
   const appState: IInitialState = useSelector(
     (state: IAppState) => state.appState
@@ -95,47 +96,15 @@ const BankAppSetup = ({ navigation }: any) => {
     selectedBank: !selectedBank,
   };
 
-  const isAuthenticated = async () => {
-    try {
-      // await AsyncStorage.clear(); // logout
-      const token = await AsyncStorage.getItem("token");
-      const prevAppState = await AsyncStorage.getItem("appState");
-      const authenticated = await validateToken(token);
-
-      if (authenticated) {
-        if (prevAppState) {
-          dispatch({
-            type: APP_STATE_UPDATE,
-            payload: JSON.parse(prevAppState),
-          });
-          navigation.replace("Home");
-        }
-      }
-      return authenticated;
-    } catch (e) {
-      return false;
-    }
-  };
-
-  const setAppState = async (state: IInitialState) => {
-    try {
-      await AsyncStorage.setItem("appState", JSON.stringify(state));
-    } catch (err) {
-      return err;
-    }
-  };
-
   useEffect(() => {
-    isAuthenticated().finally(() => setInitializing(false));
-  }, []);
-
-  useEffect(() => {
-    isAuthenticated().then((isAuth) => {
-      if (!isAuth) {
-        setAppState(appState);
+    isAuthenticated(dispatch).then((isAuth) => {
+      if (isAuth) {
+        navigation.replace("Home");
+      } else {
+        setInitializing(false);
       }
     });
-  }, [accountNumber, bvn, phoneNumber, selectedBank, senderFullName]);
+  }, []);
 
   return initializing ? (
     <PageLoader />
@@ -300,6 +269,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
     justifyContent: "space-between",
+    overflow: "scroll",
   },
   inputContainer: {
     paddingHorizontal: Dimensions.get("window").width / 15,

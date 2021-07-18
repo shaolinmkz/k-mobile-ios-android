@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import {
   View,
@@ -9,17 +9,24 @@ import {
 } from "react-native";
 import WelcomeModal from "../components/WelcomeModal";
 import colors from "../constants/colors";
-import { LinkSvg, UnlinkSvg, TransferSvg } from "../assets/icons/svgs";
+import {
+  LinkBoldSvg,
+  UnlinkSvg,
+  TransferSvg,
+  RefreshSvg,
+} from "../assets/icons/svgs";
 import fonts from "../constants/fonts";
 import { handleVerifyUser } from "../redux/actions";
 import PageLoader from "../components/PageLoader";
+import { SET_WELCOME_MODAL } from "../redux/types";
 
 const Home = ({
   navigation,
   selectedBank,
+  userExist,
   pageLoading,
+  showWelcomeModal,
 }: React.ComponentProps<any>) => {
-  const [modalVisible, setModalVisible] = useState(true);
 
   const dispatch = useDispatch();
 
@@ -31,7 +38,7 @@ const Home = ({
     },
     {
       name: "Link Alias",
-      Icon: LinkSvg,
+      Icon: LinkBoldSvg,
       screen: "AccountNumberList",
     },
     {
@@ -43,8 +50,8 @@ const Home = ({
 
   const iconSize = Dimensions.get("window").height / 30;
 
-  const handleModal = () => {
-    setModalVisible((prevState) => !prevState);
+  const handleModal = (value = false) => {
+    dispatch({ type: SET_WELCOME_MODAL, payload: value });
   };
 
   const handleNavigation = (nextScreen: string, triggerBtn: string) => {
@@ -64,41 +71,63 @@ const Home = ({
     handleVerifyUser(dispatch)();
   }, []);
 
-  return pageLoading ? (
-    <PageLoader />
-  ) : (
-    <>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.headerText}>Quick actions</Text>
+  if (pageLoading) {
+    return <PageLoader />;
+  } else if (!pageLoading) {
+    return (
+      <>
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <Text style={styles.headerText}>Quick actions</Text>
+          </View>
+
+          <View style={styles.cardContainer}>
+            {userExist !== null && (
+              <>
+                {menuCollection.map(({ name, Icon, screen }) => (
+                  <TouchableOpacity
+                    activeOpacity={0.5}
+                    style={styles.card}
+                    key={name}
+                    onPress={() => handleNavigation(screen, name)}
+                  >
+                    <View style={styles.cardIcon}>
+                      <Icon width={iconSize} height={iconSize} />
+                    </View>
+                    <Text style={styles.cardText}>{name}</Text>
+                  </TouchableOpacity>
+                ))}
+              </>
+            )}
+
+            {userExist === null && (
+              <TouchableOpacity
+                activeOpacity={0.5}
+                style={styles.card}
+                key="refresh"
+                onPress={() => handleVerifyUser(dispatch)()}
+              >
+                <View style={styles.cardIcon}>
+                  <RefreshSvg width={iconSize} height={iconSize} />
+                </View>
+                <Text style={styles.cardText}>Tap To Refresh</Text>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
 
-        <View style={styles.cardContainer}>
-          {menuCollection.map(({ name, Icon, screen }) => (
-            <TouchableOpacity
-              activeOpacity={0.5}
-              style={styles.card}
-              key={name}
-              onPress={() => handleNavigation(screen, name)}
-            >
-              <View style={styles.cardIcon}>
-                <Icon width={iconSize} height={iconSize} />
-              </View>
-              <Text style={styles.cardText}>{name}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </View>
-      {modalVisible && !!selectedBank && (
-        <WelcomeModal
-          data={selectedBank}
-          mode="dark"
-          visible
-          handleModal={handleModal}
-        />
-      )}
-    </>
-  );
+        {showWelcomeModal && !!selectedBank && (
+          <WelcomeModal
+            data={selectedBank}
+            mode="light"
+            visible
+            onClose={() => handleModal(false)}
+          />
+        )}
+      </>
+    );
+  }
+
 };
 
 const styles = StyleSheet.create({

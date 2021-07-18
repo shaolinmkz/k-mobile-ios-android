@@ -15,6 +15,22 @@ export const LinkSvg = (props: React.ComponentProps<any>) => {
   return <SvgXml xml={props.white ? svgString2 : svgString1} {...props} />;
 };
 
+export const LinkBoldSvg = (props: React.ComponentProps<any>) => {
+  const svgString1 = `<svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M11.1216 17.9518C10.5183 19.2247 9.43577 20.2072 8.11042 20.6846C6.78508 21.1619 5.32468 21.0954 4.04825 20.4995V20.4995C2.77528 19.8962 1.79282 18.8136 1.31546 17.4883C0.838096 16.1629 0.904642 14.7025 1.50056 13.4261L3.11714 9.99056C3.72021 8.71769 4.80256 7.73524 6.12771 7.25786C7.45287 6.78049 8.91309 6.84701 10.1894 7.44288V7.44288C10.9349 7.7946 11.5884 8.31495 12.0982 8.96278C12.608 9.61061 12.96 10.3682 13.1266 11.1755" stroke="#D01C5D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M10.1756 4.04825C10.7789 2.77528 11.8615 1.79282 13.1868 1.31546C14.5121 0.838095 15.9725 0.904643 17.249 1.50056C18.5216 2.10387 19.5039 3.18623 19.9812 4.5113C20.4586 5.83636 20.3922 7.29647 19.7967 8.57279L18.1801 12.0083C17.5768 13.2813 16.4942 14.2637 15.1689 14.7411C13.8435 15.2184 12.3831 15.1519 11.1067 14.556V14.556C10.467 14.2546 9.89405 13.8283 9.42156 13.3022C8.94908 12.7761 8.5866 12.1607 8.35547 11.4924" stroke="#D01C5D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  `;
+
+  const svgString2 = `<svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M11.1216 17.9518C10.5183 19.2247 9.43577 20.2072 8.11042 20.6845C6.78508 21.1619 5.32468 21.0954 4.04825 20.4994V20.4994C2.77528 19.8961 1.79282 18.8136 1.31546 17.4882C0.838096 16.1629 0.904642 14.7025 1.50056 13.426L3.11714 9.99053C3.72021 8.71765 4.80256 7.7352 6.12771 7.25783C7.45287 6.78046 8.91309 6.84698 10.1894 7.44285V7.44285C10.9349 7.79457 11.5884 8.31492 12.0982 8.96275C12.608 9.61057 12.96 10.3681 13.1266 11.1755" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M10.1756 4.04825C10.7789 2.77528 11.8615 1.79282 13.1868 1.31546C14.5121 0.838095 15.9725 0.904643 17.249 1.50056C18.5216 2.10387 19.5039 3.18623 19.9812 4.5113C20.4586 5.83636 20.3922 7.29647 19.7967 8.57279L18.1801 12.0083C17.5768 13.2813 16.4942 14.2637 15.1689 14.7411C13.8435 15.2184 12.3831 15.1519 11.1067 14.556V14.556C10.467 14.2546 9.89405 13.8283 9.42156 13.3022C8.94908 12.7761 8.5866 12.1607 8.35547 11.4924" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  `;
+
+  return <SvgXml xml={props.white ? svgString2 : svgString1} {...props} />;
+};
+
 export const TransactionSvg = (props: React.ComponentProps<any>) => {
   const svgString = `<svg width="24" height="22" viewBox="0 0 24 22" fill="none" xmlns="http://www.w3.org/2000/svg">
   <g clip-path="url(#clip0)">
@@ -32,10 +48,29 @@ export const TransactionSvg = (props: React.ComponentProps<any>) => {
   return <SvgXml xml={svgString} {...props} />;
 };
 
+export const RefreshSvg = (props: React.ComponentProps<any>) => {
+  const svgString = `<svg
+  xmlns="http://www.w3.org/2000/svg"
+  fill="none"
+  viewBox="0 0 24 24"
+  stroke="currentColor"
+>
+  <path
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    strokeWidth="2"
+    stroke="#D01C5D"
+    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+  />
+</svg>`;
+
+  return <SvgXml xml={svgString} {...props} />;
+};
+
 export const TransferSvg = (props: React.ComponentProps<any>) => {
   const svgString = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M23.5 0.5L9 15" stroke="#D01C5D" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M13.5 23.5L9 15L0.5 10.5L23.5 0.5L13.5 23.5Z" stroke="#D01C5D" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M23.5 0.5L9 15" strokeWidth="2" stroke="#D01C5D" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M13.5 23.5L9 15L0.5 10.5L23.5 0.5L13.5 23.5Z" strokeWidth="2" stroke="#D01C5D" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>`;
 
   return <SvgXml xml={svgString} {...props} />;

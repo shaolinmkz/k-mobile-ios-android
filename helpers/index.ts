@@ -1,4 +1,6 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import jwt_decode from "jwt-decode";
+import { APP_STATE_UPDATE } from "../redux/types";
 import { phonePrefix as phoneNumberPrefix, telcoPrefixes } from "./phoneNumberPrefixes";
 export { navigate } from "./navigationRef";
 
@@ -137,3 +139,23 @@ export const validateToken = async (token: any) => {
     return false;
   }
 }
+
+export const isAuthenticated = async (dispatch: (data: any) => void) => {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const prevAppState = await AsyncStorage.getItem("appState");
+    const authenticated = await validateToken(token);
+
+    if (authenticated) {
+      if (prevAppState) {
+        dispatch({
+          type: APP_STATE_UPDATE,
+          payload: JSON.parse(prevAppState),
+        });
+      }
+    }
+    return authenticated;
+  } catch (e) {
+    return false;
+  }
+};

@@ -2,7 +2,8 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { Dimensions, Platform } from "react-native";
+import { Dimensions, Platform, Alert } from "react-native";
+import { HeaderButtons, Item } from "react-navigation-header-buttons";
 
 import Home from "../screens/Home";
 import AccountNumberList from "../screens/AccountNumberList";
@@ -15,24 +16,32 @@ import BankAppSetup from "../screens/BankAppSetup";
 
 import fonts from "../constants/fonts";
 import HocNavRefSetter from "../components/HocNavRefSetter";
-import { ternaryResolver } from "../helpers";
+import { anonymousFunc, fallbackResolver, ternaryResolver } from "../helpers";
 import { navigationRef } from "../helpers/navigationRef";
+import CustomHeaderButton from "../components/CustomHeaderBtn";
+import { logoutAction } from "../redux/actions";
+import useAppState from "../hooks/useAppState";
 
 const Stack = createStackNavigator();
 
-
 const components = {
-  BankAppSetup: (props) => <HocNavRefSetter {...props} component={BankAppSetup} />,
+  BankAppSetup: (props) => (
+    <HocNavRefSetter {...props} component={BankAppSetup} />
+  ),
   Home: (props) => <HocNavRefSetter {...props} component={Home} />,
-  AccountNumberList: (props) => <HocNavRefSetter {...props} component={AccountNumberList} />,
+  AccountNumberList: (props) => (
+    <HocNavRefSetter {...props} component={AccountNumberList} />
+  ),
   LinkAlias: (props) => <HocNavRefSetter {...props} component={LinkAlias} />,
   OtpScreen: (props) => <HocNavRefSetter {...props} component={OtpScreen} />,
-  SelectAlias: (props) => <HocNavRefSetter {...props} component={SelectAlias} />,
+  SelectAlias: (props) => (
+    <HocNavRefSetter {...props} component={SelectAlias} />
+  ),
   SendMoney: (props) => <HocNavRefSetter {...props} component={SendMoney} />,
-}
-
+};
 
 const Routes = () => {
+  const { dispatch, selectedBank } = useAppState();
 
   const headerStyle = {
     backgroundColor: colors.headerBg,
@@ -73,7 +82,34 @@ const Routes = () => {
           name="Home"
           component={components.Home}
           options={{
-            title: "Home",
+            title: fallbackResolver(selectedBank?.label, "Home"),
+            headerRight: () => (
+              <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+                <Item
+                  title="Cart"
+                  iconName={
+                    Platform.OS === "android"
+                      ? "md-exit-outline"
+                      : "ios-exit-outline"
+                  }
+                  onPress={() => {
+                    Alert.alert(
+                      "Logout",
+                      "Are you sure?",
+                      [
+                        {
+                          text: "Cancel",
+                          onPress: anonymousFunc,
+                          style: "cancel"
+                        },
+                        { text: "Yes", onPress: () => logoutAction(dispatch) }
+                      ],
+                      { cancelable: false }
+                    );
+                  }}
+                />
+              </HeaderButtons>
+            ),
             headerTitleStyle: {
               fontSize: Dimensions.get("window").width / 18,
               fontFamily: fonts.bold,
