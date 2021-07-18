@@ -5,6 +5,22 @@ const loginCredentials = {
   password: "123456",
 };
 
+// taj bank logo
+// https://res.cloudinary.com/shaolinmkz/image/upload/v1612356666/Random-Icons/taj-bank.png
+
+// Zenith Bank logo
+// https://res.cloudinary.com/shaolinmkz/image/upload/v1626638042/Random-Icons/zenith-bank.png
+
+// First Bank logo
+// https://res.cloudinary.com/shaolinmkz/image/upload/v1626638109/Random-Icons/FirstBank.png
+
+// GTBank logo
+// https://res.cloudinary.com/shaolinmkz/image/upload/v1626638304/Random-Icons/gtb-logo.png
+
+// Access bank logo
+// https://res.cloudinary.com/shaolinmkz/image/upload/v1626638585/Random-Icons/access-bank.png
+
+
 export const registeredBanks: Array<IBank> = [
   {
     appName: "Select a bank",
@@ -18,7 +34,7 @@ export const registeredBanks: Array<IBank> = [
   },
   {
     appName: "Zenith Bank",
-    appIcon: "https://upload.wikimedia.org/wikipedia/commons/0/04/Zenith-Bank-logo.png",
+    appIcon: "https://res.cloudinary.com/shaolinmkz/image/upload/v1626638042/Random-Icons/zenith-bank.png",
     apiKey: "MWW-iuTrA.c619fc23-3d57-49cf-a048-6fe07d7c93e0",
     bankCode: "000015",
     label: "Zenith Bank",

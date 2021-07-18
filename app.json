@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "kwiklli-mobile-sdk",
-    "slug": "kwiklli-mobile-sdk",
+    "name": "kwiklli-mobile",
+    "slug": "kwiklli-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
