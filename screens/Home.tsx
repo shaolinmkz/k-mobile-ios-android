@@ -18,7 +18,9 @@ import {
 import fonts from "../constants/fonts";
 import { handleVerifyUser } from "../redux/actions";
 import PageLoader from "../components/PageLoader";
-import { SET_WELCOME_MODAL } from "../redux/types";
+import { SET_SPLASH_SCREEN, SET_WELCOME_MODAL } from "../redux/types";
+import { ternaryResolver } from "../helpers";
+import SplashScreen from "../components/SplashScreen";
 
 const Home = ({
   navigation,
@@ -26,22 +28,25 @@ const Home = ({
   userExist,
   pageLoading,
   showWelcomeModal,
+  splashScreenOpen,
 }: React.ComponentProps<any>) => {
-
   const dispatch = useDispatch();
 
   const menuCollection = [
     {
+      action: ternaryResolver(userExist, "SEND_MONEY", "INITIAL_LINKING"),
       name: "Send Money",
       Icon: TransferSvg,
       screen: "AccountNumberList",
     },
     {
+      action: "INDEPENDENT_LINKING",
       name: "Link Alias",
       Icon: LinkBoldSvg,
       screen: "AccountNumberList",
     },
     {
+      action: "INDEPENDENT_UNLINKING",
       name: "Unlink Alias",
       Icon: UnlinkSvg,
       screen: "AccountNumberList",
@@ -54,24 +59,36 @@ const Home = ({
     dispatch({ type: SET_WELCOME_MODAL, payload: value });
   };
 
-  const handleNavigation = (nextScreen: string, triggerBtn: string) => {
-    const isLinkUnlink =
-      nextScreen === "AccountNumberList" && triggerBtn === "Link / Unlink";
-
+  const handleNavigation = ({ screen, action }: any) => {
     navigation.navigate({
-      name: nextScreen,
+      name: screen,
       params: {
-        isFirstTime: isLinkUnlink ? true : false,
-        isLinking: isLinkUnlink,
+        action,
       },
     });
   };
 
+  const handleSplashScreen = (time: number) => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(true);
+      }, time);
+    })
+  }
+
   useEffect(() => {
     handleVerifyUser(dispatch)();
+
+    handleSplashScreen(2000).finally(() => {
+      dispatch({ type: SET_SPLASH_SCREEN, payload: false })
+    });
   }, []);
 
-  if (pageLoading) {
+  if (splashScreenOpen) {
+    return (
+      <SplashScreen logo={selectedBank?.appIcon} />
+    );
+  } else if (pageLoading) {
     return <PageLoader />;
   } else if (!pageLoading) {
     return (
@@ -84,12 +101,12 @@ const Home = ({
           <View style={styles.cardContainer}>
             {userExist !== null && (
               <>
-                {menuCollection.map(({ name, Icon, screen }) => (
+                {menuCollection.map(({ name, Icon, screen, action }) => (
                   <TouchableOpacity
                     activeOpacity={0.5}
                     style={styles.card}
                     key={name}
-                    onPress={() => handleNavigation(screen, name)}
+                    onPress={() => handleNavigation({ screen, name, action })}
                   >
                     <View style={styles.cardIcon}>
                       <Icon width={iconSize} height={iconSize} />
@@ -127,7 +144,6 @@ const Home = ({
       </>
     );
   }
-
 };
 
 const styles = StyleSheet.create({

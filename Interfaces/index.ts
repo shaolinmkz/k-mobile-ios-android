@@ -50,6 +50,8 @@ export interface IInitialState {
   reversalDuration?: string | number,
   pageLoading?: boolean,
   showWelcomeModal?: boolean,
+  splashScreenOpen?: boolean,
+  allContacts?: any[],
 }
 
 export interface IAppState {

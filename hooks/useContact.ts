@@ -1,7 +1,9 @@
 // @ts-nocheck
 import { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import randomColor from "randomcolor";
 import * as Contacts from "expo-contacts";
+import { SET_ALL_CONTACTS } from "../redux/types";
 
 export interface ContactType {
   emails: Contacts.Email[];
@@ -17,7 +19,7 @@ export interface ContactType {
 
 export const useContact = () => {
   const [contacts, setContacts] = useState<ContactType[]>([]);
-
+  const dispatch = useDispatch();
   const [contactSearchTerm, setContactSearchTerm] = useState("");
 
   const handleContactSearch = (value: string) => {
@@ -44,7 +46,7 @@ export const useContact = () => {
           contactType: contactTypeOverride,
           name,
           displayColor: randomColor({ luminosity: 'dark'}),
-          initials: `${`${firstName}`.toUpperCase().slice(0, 1)}${`${lastName}`.toUpperCase().slice(0, 1)}`
+          initials: `${`${name}`.split(" ")[0].toUpperCase().slice(0, 1)}${`${name}`.split(" ")[`${name}`.split(" ").length - 1].toUpperCase().slice(0, 1)}`
         })
       ).sort((a, b) => `${a.name}`.toLowerCase().localeCompare(`${b.name}`.toLowerCase()));
 
@@ -62,6 +64,7 @@ export const useContact = () => {
           if (data?.length) {
             unPackContacts(data).then(contactData => {
               setContacts(contactData);
+              dispatch({ type: SET_ALL_CONTACTS, payload: contactData });
             });
             return data;
           }

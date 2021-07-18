@@ -20,9 +20,11 @@ import {
   SET_MAX_TRANSFER_AMOUNT,
   SET_REVERSAL_DURATION,
   LOGOUT,
+  SET_SPLASH_SCREEN,
 } from "../types";
 import { IInitialState } from "../../Interfaces";
 import { telcoPrefixes } from "../../helpers/phoneNumberPrefixes";
+import { initialState } from "../reducers/appReducer";
 
 const getApiAndToken = async (): Promise<IInitialState> => {
   try {
@@ -41,10 +43,7 @@ const getApiAndToken = async (): Promise<IInitialState> => {
     }
   }
   catch (error) {
-    return {
-      token: "",
-      appKey: ""
-    }
+    return initialState;
   }
 }
 
@@ -63,6 +62,8 @@ export const loginAction = (dispatch: (data: any) => void) => async (payload: an
         userData: data,
       }
     });
+
+    dispatch({ type: SET_SPLASH_SCREEN, payload: true })
 
     await AsyncStorage.setItem('token', data.token);
     await AsyncStorage.setItem('userData', JSON.stringify(data));

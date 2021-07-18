@@ -15,12 +15,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { useContact, ContactType } from "../hooks/useContact";
 import CustomButton2 from "../components/CustomButton2";
 import colors from "../constants/colors";
-import { combinedValidators, sanitizePhoneNumber } from "../helpers";
+import { combinedValidators, sanitizePhoneNumber, ternaryResolver } from "../helpers";
 import fonts from "../constants/fonts";
+import useAppState from "../hooks/useAppState";
 
 const SelectAlias = ({ route, navigation }: React.ComponentProps<any>) => {
   const { account } = route.params;
-
+  const { allContacts } = useAppState();
   const [inputFocus, setInputFocus] = useState(false);
   const [phoneOrEmail, setPhoneOrEmail] = useState("");
   const [selectedPhoneOrEmail, setSelectedPhoneOrEmail] = useState("");
@@ -164,7 +165,7 @@ const SelectAlias = ({ route, navigation }: React.ComponentProps<any>) => {
         </View>
 
         <FlatList
-          data={contactSearchTerm?.length ? searchedContacts : contacts}
+          data={contactSearchTerm?.length ? searchedContacts : ternaryResolver(contacts.length, contacts, allContacts)}
           keyExtractor={({ id }) => id}
           style={{
             padding: Dimensions.get("window").width / 15,

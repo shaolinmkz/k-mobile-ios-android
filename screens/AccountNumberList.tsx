@@ -1,89 +1,88 @@
 import React, { useState } from "react";
-import {
-  View,
-  StyleSheet,
-  Text,
-  Dimensions,
-  ScrollView,
-} from "react-native";
+import { View, StyleSheet, Text, Dimensions, ScrollView } from "react-native";
 import CustomRadioButton from "../components/CustomRadioButton";
 import CustomButton2 from "../components/CustomButton2";
 import colors from "../constants/colors";
 import LinkInfoModal from "../components/LinkInfoModal";
+import useAppState from "../hooks/useAppState";
+import { resolveActions } from "../constants/actions";
 
-const availableAccountNumbers = "*"
-  .repeat(3)
-  .split("*")
-  .map((val, index) => ({
-    id: `${index + 1}`,
-    name: `ADAEZE MOJI IBRAHIM ${index + 1}`,
-    accountNumber: `320459789${index}`,
-  }));
-
-interface Account {
-  id: string;
-  name: string;
-  accountNumber: string;
+interface IAccount {
+  senderFullName: any;
+  accountNumber: any;
 }
 
-const AccountNumberList = ({ navigation, route }: React.ComponentProps<any>) => {
-  const isLinking = route.params.isLinking;
-  const [isFirstTime, setIsFirstTime] = useState(route.params.isFirstTime);
-  const [selectedAccount, setSelectedAccount] = useState({
-    id: "",
-    name: "",
+const AccountNumberList = ({
+  navigation,
+  route,
+}: React.ComponentProps<any>) => {
+  const { userExist, accountNumber, senderFullName } = useAppState();
+
+  const actions = resolveActions(route?.params?.action);
+  const isLinking = actions.isInitialLinking || actions.isInitialLinking;
+
+  const [isModalOpen, setIsModalOpen] = useState(true);
+  const [selectedAccount, setSelectedAccount] = useState<IAccount>({
+    senderFullName: "",
     accountNumber: "",
   });
 
-  const handleCheck = (value: Account) => {
+  const handleCheck = (value: IAccount) => {
     setSelectedAccount(value);
   };
 
-  const handleIsFirstTime = () => {
-    setIsFirstTime(false);
+  const handleModal = () => {
+    setIsModalOpen(false);
   };
 
-  return (
-    <>
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>{isLinking ? 'Select account to link' : 'Select account to debit'}</Text>
-      </View>
+  if (!userExist && isModalOpen) {
+    return (
+      <>
+        <LinkInfoModal mode="dark" visible handleModal={handleModal} />
+      </>
+    );
+  } else {
+    return (
+      <>
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <Text style={styles.headerText}>
+              {isLinking ? "Select account to link" : "Select account to debit"}
+            </Text>
+          </View>
 
-      <ScrollView style={styles.list}>
-        {availableAccountNumbers.map(({ name, accountNumber, id }) => (
-          <CustomRadioButton
-            checked={selectedAccount.id === id}
-            text1={name}
-            text2={accountNumber}
-            key={id}
-            onSelect={() => handleCheck({ name, accountNumber, id })}
-          />
-        ))}
-      </ScrollView>
-      <View
-        style={{
-          paddingVertical: Dimensions.get("window").width / 10,
-          paddingHorizontal: Dimensions.get("window").width / 15,
-        }}
-      >
-        <CustomButton2
-          onPress={() => {
-            navigation.navigate({
-              name: isLinking ? 'LinkAlias' : 'SelectAlias',
-              params: {
-                account: selectedAccount
-              }
-            })
-          }}
-          text="Proceed"
-          disabled={!selectedAccount.id}
-        />
-      </View>
-    </View>
-    <LinkInfoModal mode="dark" visible={isFirstTime} handleModal={handleIsFirstTime} />
-    </>
-  );
+          <ScrollView style={styles.list}>
+            <CustomRadioButton
+              checked={selectedAccount.accountNumber === accountNumber}
+              text1={`${senderFullName}`.toUpperCase()}
+              text2={`${accountNumber}`}
+              key={accountNumber}
+              onSelect={() => handleCheck({ senderFullName, accountNumber })}
+            />
+          </ScrollView>
+          <View
+            style={{
+              paddingVertical: Dimensions.get("window").width / 10,
+              paddingHorizontal: Dimensions.get("window").width / 15,
+            }}
+          >
+            <CustomButton2
+              onPress={() => {
+                navigation.navigate({
+                  name: isLinking ? "LinkAlias" : "SelectAlias",
+                  params: {
+                    account: selectedAccount,
+                  },
+                });
+              }}
+              text="Proceed"
+              disabled={!selectedAccount.accountNumber}
+            />
+          </View>
+        </View>
+      </>
+    );
+  }
 };
 
 const styles = StyleSheet.create({

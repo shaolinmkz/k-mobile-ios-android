@@ -93,7 +93,7 @@ const BankAppSetup = ({ navigation }: any) => {
     accountNumber: accountNumber?.length !== 10,
     bvn: bvn?.length !== 11,
     phoneNumber: !combinedValidators.phoneAndEmail(phoneNumber),
-    selectedBank: !selectedBank,
+    selectedBank: !selectedBank?.value,
   };
 
   useEffect(() => {

@@ -24,6 +24,8 @@ import {
   SET_MAX_TRANSFER_AMOUNT,
   LOGOUT,
   SET_WELCOME_MODAL,
+  SET_ALL_CONTACTS,
+  SET_SPLASH_SCREEN,
 } from '../types';
 import { registeredBanks } from '../../db';
 import { IAction, IInitialState } from '../../Interfaces/index';
@@ -37,7 +39,7 @@ const initialChars = {
   char6: "",
 };
 
-const initialState: IInitialState = {
+export const initialState: IInitialState = {
   kwiklliLogo: "https://res.cloudinary.com/shaolinmkz/image/upload/v1605358954/softcom/kwiklli/npay-logo.svg",
   registeredBanks,
   loginLoading: false,
@@ -68,6 +70,8 @@ const initialState: IInitialState = {
   reversalDuration: "0",
   pageLoading: true,
   showWelcomeModal: true,
+  splashScreenOpen: true,
+  allContacts: [],
 };
 
 
@@ -75,6 +79,16 @@ const rootReducer = (state = initialState, action: IAction) => {
   const { type, payload } = action;
 
   switch (type) {
+    case SET_SPLASH_SCREEN:
+      return {
+        ...state,
+        splashScreenOpen: payload,
+      };
+    case SET_ALL_CONTACTS:
+      return {
+        ...state,
+        allContacts: payload,
+      };
     case SET_WELCOME_MODAL:
       return {
         ...state,
