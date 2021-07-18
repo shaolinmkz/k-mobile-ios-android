@@ -8,6 +8,7 @@ import {
   Text,
   Keyboard,
   TouchableWithoutFeedback,
+  Image,
 } from "react-native";
 import colors from "../constants/colors";
 import fonts from "../constants/fonts";
@@ -105,6 +106,13 @@ const BankAppSetup = ({ navigation }: any) => {
       }
     });
   }, []);
+
+  useEffect(() => {
+    // Preload bank logo
+    if (typeof selectedBank?.appIcon === "string" && selectedBank?.appIcon?.length > 10) {
+      Image.prefetch(selectedBank?.appIcon);
+    }
+  }, [selectedBank?.appIcon]);
 
   return initializing ? (
     <PageLoader />

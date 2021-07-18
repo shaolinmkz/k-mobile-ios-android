@@ -19,6 +19,7 @@ const loadFonts = () => {
   });
 };
 
+
 export default function App() {
   const [loaded, setLoaded] = useState(false);
 
