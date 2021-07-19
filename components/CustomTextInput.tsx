@@ -18,9 +18,22 @@ const CustomTextInput = (props: IInputProps) => {
     keyboardType,
     error,
     disabled,
+    clearButtonMode,
+    labelSize,
+    labelColor,
+    inputStyleOveride,
   } = props;
 
   const inputRef = useRef<any>(null);
+
+  const labelStyleProps: any = {};
+
+  if(labelSize) {
+    labelStyleProps.fontSize = labelSize
+  }
+  if(labelColor) {
+    labelStyleProps.color = labelColor;
+  }
 
   return (
     <View
@@ -36,7 +49,7 @@ const CustomTextInput = (props: IInputProps) => {
     >
       <View style={styles.inputContainer}>
         <View style={styles.labelContainer}>
-          <Text style={styles.label}>{label}</Text>
+          <Text style={{ ...styles.label, ...labelStyleProps }}>{label}</Text>
         </View>
         <TextInput
           value={value}
@@ -48,8 +61,9 @@ const CustomTextInput = (props: IInputProps) => {
           editable={!disabled}
           onChangeText={onChangeText}
           keyboardType={keyboardType}
-          style={styles.inputStyle}
+          style={{ ...styles.inputStyle, ...inputStyleOveride }}
           ref={inputRef}
+          clearButtonMode={clearButtonMode}
           onSubmitEditing={() => Keyboard.dismiss()}
         />
       </View>
@@ -67,8 +81,10 @@ CustomTextInput.defaultProps = {
   maxLength: 100,
   error: "",
   keyboardType: undefined,
+  clearButtonMode: undefined,
   disabled: false,
   onChangeText: () => {},
+  inputStyleOveride: {},
 };
 
 const styles = StyleSheet.create({
@@ -90,9 +106,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   inputStyle: {
+    fontFamily: fonts.regular,
     fontSize: Dimensions.get("window").width / 25,
     flex: 1,
     minWidth: "60%",
+    color: colors.secondary,
   },
   label: {
     fontSize: Dimensions.get("window").width / 25,

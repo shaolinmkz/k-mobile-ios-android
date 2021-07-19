@@ -5,21 +5,17 @@ import CustomButton2 from "../components/CustomButton2";
 import colors from "../constants/colors";
 import LinkInfoModal from "../components/LinkInfoModal";
 import useAppState from "../hooks/useAppState";
-import { resolveActions } from "../constants/actions";
-
-interface IAccount {
-  senderFullName: any;
-  accountNumber: any;
-}
+import useNavJourney from "../hooks/useNavJourney";
+import { IAccount } from "../Interfaces";
 
 const AccountNumberList = ({
   navigation,
   route,
 }: React.ComponentProps<any>) => {
   const { userExist, accountNumber, senderFullName } = useAppState();
+  const action = route?.params?.action;
 
-  const actions = resolveActions(route?.params?.action);
-  const isLinking = actions.isInitialLinking || actions.isInitialLinking;
+  const { activeJourney } = useNavJourney({ action });
 
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [selectedAccount, setSelectedAccount] = useState<IAccount>({
@@ -47,7 +43,7 @@ const AccountNumberList = ({
         <View style={styles.container}>
           <View style={styles.header}>
             <Text style={styles.headerText}>
-              {isLinking ? "Select account to link" : "Select account to debit"}
+              {activeJourney?.text}
             </Text>
           </View>
 
@@ -69,9 +65,10 @@ const AccountNumberList = ({
             <CustomButton2
               onPress={() => {
                 navigation.navigate({
-                  name: isLinking ? "LinkAlias" : "SelectAlias",
+                  name: activeJourney?.nextScreen,
                   params: {
                     account: selectedAccount,
+                    action,
                   },
                 });
               }}

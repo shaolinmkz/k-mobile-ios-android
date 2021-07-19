@@ -7,6 +7,7 @@ export const phonePrefix = [
   "0902",
   "0907",
   "0901",
+  "0915",
   "0904",
   "0705",
   "0805",
@@ -40,6 +41,9 @@ export const phonePrefix = [
   "0709",
   "07027",
   "0702",
+  "0916",
+  "0912",
+  "0913",
 ];
 
 export interface TelcoType {
@@ -77,6 +81,10 @@ export const telcoPrefixes = [
     name: "Airtel",
   },
   {
+    prefix: "0912",
+    name: "Airtel",
+  },
+  {
     prefix: "0901",
     name: "Airtel",
   },
@@ -101,6 +109,10 @@ export const telcoPrefixes = [
     name: "Glo",
   },
   {
+    prefix: "0915",
+    name: "Glo",
+  },
+  {
     prefix: "0815",
     name: "Glo",
   },
@@ -113,7 +125,15 @@ export const telcoPrefixes = [
     name: "MTN",
   },
   {
+    prefix: "0913",
+    name: "MTN",
+  },
+  {
     prefix: "0706",
+    name: "MTN",
+  },
+  {
+    prefix: "0916",
     name: "MTN",
   },
   {

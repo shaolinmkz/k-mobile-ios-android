@@ -1,4 +1,4 @@
-import api from "../../api";
+import kwiklliApi from "../../api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { findTelco, isValidPhoneNumber, ternaryResolver, toastError, toastSuccess } from "../../helpers";
 import { replace, navigate } from "../../helpers/navigationRef";
@@ -52,7 +52,7 @@ export const loginAction = (dispatch: (data: any) => void) => async (payload: an
   dispatch({ type: LOGIN_LOADING });
 
   try {
-    const { data: { data, message } } = await api.post('/users/auth/login', payload);
+    const { data: { data, message } } = await kwiklliApi.post('/users/auth/login', payload);
     toastSuccess(message);
 
     dispatch({
@@ -63,7 +63,7 @@ export const loginAction = (dispatch: (data: any) => void) => async (payload: an
       }
     });
 
-    dispatch({ type: SET_SPLASH_SCREEN, payload: true })
+    dispatch({ type: SET_SPLASH_SCREEN, payload: true });
 
     await AsyncStorage.setItem('token', data.token);
     await AsyncStorage.setItem('userData', JSON.stringify(data));
@@ -85,11 +85,11 @@ export const logoutAction = async (dispatch: (data: any) => void) => {
   dispatch({ type: LOGOUT });
 }
 
-export const fetchUserIdLinkedToBVNAction = (dispatch: (data: any) => void) => async (payload: any) => {
+export const fetchUserIdLinkedToBVNAction = async (dispatch: (data: any) => void) => {
   try {
-    const { appKey } = await getApiAndToken();
-    const { data: { data: linkedAliases } } = await api
-      .get(`/banks/alias/numbers/${payload.bankCode}?bvn=${payload.bvn}&limit=100`,
+    const { appKey, selectedBank, bvn } = await getApiAndToken();
+    const { data: { data: linkedAliases } } = await kwiklliApi
+      .get(`/banks/alias/numbers/${selectedBank?.bankCode}?bvn=${bvn}&limit=100`,
         {
           headers: {
             appKey,
@@ -109,7 +109,7 @@ export const validatePhoneNumber = (dispatch: (data: any) => void) => async (val
   try {
     dispatch({ type: VALIDATING_PHONE_NUMBER, payload: true });
 
-    const { appKey, token } = await getApiAndToken();
+    const { appKey, token, selectedBank } = await getApiAndToken();
 
     const userId = ternaryResolver(
       isValidPhoneNumber(value),
@@ -120,29 +120,23 @@ export const validatePhoneNumber = (dispatch: (data: any) => void) => async (val
     const customErrorMessage =
       "We are unable to validate this phone number (or email address). Kindly confirm that the phone number (or email address) is correct before you complete the transfer";
 
-    const { data: { data } } = await api.get(`/kyc/phone_number?phone_number=${userId}`, {
+    const { data: { data } } = await kwiklliApi.get(`/kyc/phone_number?phone_number=${userId}&bankCode=${selectedBank?.bankCode}`, {
       headers: {
         Authorization: `Bearer ${token}`,
         appKey,
       },
-    })
+    });
 
     if (data?.accountName && !Array.isArray(data?.accountName)) {
       dispatch({
-        type: VALIDATED_PHONE_NUMBER, payload: {
-          ...data,
-          accountName: data.accountName.trim().replace(/undefined/gim, ""),
-        }
+        type: VALIDATED_PHONE_NUMBER,
+        payload: data.accountName.trim().replace(/undefined/gim, ""),
       });
 
     } else if (data?.accountName && Array.isArray(data?.accountName)) {
       dispatch({
-        type: VALIDATED_OPTIONS_PHONE_NUMBER, payload: {
-          ...data,
-          accountName: data.accountName.map((val: any) =>
-            val.trim().replace(/undefined/gim, "")
-          ),
-        }
+        type: VALIDATED_OPTIONS_PHONE_NUMBER,
+        payload: data.accountName.map((val: any) => val.trim().replace(/undefined/gim, "")),
       });
     }
 
@@ -169,14 +163,14 @@ export const handleVerifyUser = (dispatch: (data: any) => void) => async () => {
       bvn,
     };
 
-    const { data: { data } } = await api
+    const { data: { data } } = await kwiklliApi
       .post('/banks/enroll-user', payload, {
         headers: {
           appKey,
         },
       });
 
-    fetchUserIdLinkedToBVNAction(dispatch)({ bankCode: selectedBank?.bankCode, bvn }); // fetches users linked aliases
+    fetchUserIdLinkedToBVNAction(dispatch); // fetches users linked aliases
     dispatch({ type: SET_USER_EXIST, payload: data?.userExist });
 
   }
@@ -189,7 +183,7 @@ export const handleVerifyUser = (dispatch: (data: any) => void) => async () => {
   }
 };
 
-export const handleInitiateUnlink = (dispatch: (data: any) => void, resend = false) => async ({ userId }: any) => {
+export const initiateUnlink = (dispatch: (data: any) => void, resend = false) => async ({ userId }: any) => {
 
   try {
     if (!resend) {
@@ -203,7 +197,7 @@ export const handleInitiateUnlink = (dispatch: (data: any) => void, resend = fal
       bankCode: selectedBank?.bankCode,
     };
 
-    await api
+    await kwiklliApi
       .post('/banks/unlink/account/otp', payload, {
         headers: {
           appKey,
@@ -225,10 +219,10 @@ export const handleInitiateUnlink = (dispatch: (data: any) => void, resend = fal
   }
 };
 
-export const handleUnlink = (dispatch: (data: any) => void) => async ({ userId, otp }: any) => {
+export const confirmUnlink = (dispatch: (data: any) => void) => async ({ userId, otp }: any) => {
 
   try {
-    const { appKey, bvn, selectedBank } = await getApiAndToken();
+    const { appKey, selectedBank } = await getApiAndToken();
 
     const payload = {
       userId,
@@ -238,7 +232,7 @@ export const handleUnlink = (dispatch: (data: any) => void) => async ({ userId, 
 
     dispatch({ type: SET_ACTION_LOADING, payload: true });
 
-    await api
+    await kwiklliApi
       .post('/banks/activate/unlink/account', payload, {
         headers: {
           appKey,
@@ -248,7 +242,7 @@ export const handleUnlink = (dispatch: (data: any) => void) => async ({ userId, 
     toastSuccess(`${payload.userId} has been unlinked successfully`);
     dispatch({ type: SET_UNLINK_SUCCESSFUL, payload: true })
     handleVerifyUser(dispatch)();
-    fetchUserIdLinkedToBVNAction(dispatch)({ bankCode: selectedBank?.bankCode, bvn });
+    fetchUserIdLinkedToBVNAction(dispatch);
   }
   catch (error) {
     toastError(error?.response?.data?.message);
@@ -258,10 +252,7 @@ export const handleUnlink = (dispatch: (data: any) => void) => async ({ userId, 
   }
 };
 
-/**
- * This will initiate linking by sending an OTP to the user
- */
-export const handleInitiateLinking = (dispatch: (data: any) => void, resend = false) => async ({ userId }: any) => {
+export const initiateIndependentLinking = (dispatch: (data: any) => void, resend = false) => async ({ userId }: any) => {
   try {
     const { accountNumber, appKey, selectedBank } = await getApiAndToken();
 
@@ -275,7 +266,7 @@ export const handleInitiateLinking = (dispatch: (data: any) => void, resend = fa
       dispatch({ type: SET_ACTION_LOADING, payload: true });
     }
 
-    const { data: { message } } = await api
+    const { data: { message } } = await kwiklliApi
       .post('/banks/link-account-otp', payload, {
         headers: {
           appKey,
@@ -297,11 +288,11 @@ export const handleInitiateLinking = (dispatch: (data: any) => void, resend = fa
   }
 };
 
-export const handleIndependentLinking = (dispatch: (data: any) => void) => async ({ userId, otp }: any) => {
+export const confirmIndependentLinking = (dispatch: (data: any) => void) => async ({ userId, otp }: any) => {
   try {
     dispatch({ type: SET_ACTION_LOADING, payload: true });
 
-    const { senderFullName, accountNumber, appKey, bvn, selectedBank } = await getApiAndToken();
+    const { senderFullName, appKey, bvn, selectedBank } = await getApiAndToken();
 
     const payload = {
       phoneNumber: userId,
@@ -311,7 +302,7 @@ export const handleIndependentLinking = (dispatch: (data: any) => void) => async
       bvn,
     };
 
-    const { data: { message } } = await api
+    const { data: { message } } = await kwiklliApi
       .post('/banks/link-account', payload, {
         headers: {
           appKey,
@@ -335,7 +326,7 @@ export const handleIndependentLinking = (dispatch: (data: any) => void) => async
  * Initial Linking (When a user wants to send money and is not enrolled yet)
  *
  **/
-export const handleSendOTP = (dispatch: (data: any) => void, resend = false) => async () => {
+export const initiateInitialLinking = (dispatch: (data: any) => void, resend = false) => async () => {
   try {
     const { phoneNumber, accountNumber, appKey, selectedBank } = await getApiAndToken();
 
@@ -347,7 +338,7 @@ export const handleSendOTP = (dispatch: (data: any) => void, resend = false) => 
 
     dispatch({ type: SET_ACTION_LOADING, payload: true });
 
-    const { data: { message } } = await api
+    const { data: { message } } = await kwiklliApi
       .post('/banks/link-status', payload, {
         headers: {
           appKey,
@@ -368,7 +359,7 @@ export const handleSendOTP = (dispatch: (data: any) => void, resend = false) => 
   }
 };
 
-export const handleLinking = (dispatch: (data: any) => void) => async ({ otp }: any) => {
+export const confirmInitialLinking = (dispatch: (data: any) => void) => async ({ otp }: any) => {
   try {
     const { phoneNumber, senderFullName, bvn, appKey, selectedBank } = await getApiAndToken();
 
@@ -382,7 +373,7 @@ export const handleLinking = (dispatch: (data: any) => void) => async ({ otp }: 
 
     dispatch({ type: SET_ACTION_LOADING, payload: true });
 
-    const { data: { message } } = await api
+    const { data: { message } } = await kwiklliApi
       .post('/banks/activate/link-status', payload, {
         headers: {
           appKey,
@@ -404,30 +395,30 @@ export const handleTransfer = (dispatch: (data: any) => void) => async ({ amount
   try {
     const { accountNumber, senderFullName, appKey, selectedBank } = await getApiAndToken();
 
-  const payload = {
-    senderAccountNumber: accountNumber,
-    originBankCode: selectedBank?.bankCode,
-    amount: Number(amount) * 100,
-    receiverId,
-    paymentChannel: "MOBILE_APP",
-    telcoName: findTelco(receiverId, telcoPrefixes)?.toUpperCase?.() || "N/A",
-    senderFullName,
-  };
+    const payload = {
+      senderAccountNumber: accountNumber,
+      originBankCode: selectedBank?.bankCode,
+      amount: Number(amount) * 100,
+      receiverId,
+      paymentChannel: "MOBILE_APP",
+      telcoName: findTelco(receiverId, telcoPrefixes)?.toUpperCase?.() || "N/A",
+      senderFullName,
+    };
 
-  dispatch({ type: SET_ACTION_LOADING, payload: true });
+    dispatch({ type: SET_ACTION_LOADING, payload: true });
 
-  const { data } = await api
-    .post('/banks/transactions/transfer/bank_kwiklli', payload, {
-      headers: {
-        appKey,
-      },
-    });
-
+    const { data } = await kwiklliApi
+      .post('/banks/transactions/transfer/bank_kwiklli', payload, {
+        headers: {
+          appKey,
+        },
+      });
+      console.log("====GOOD=", data)
     toastSuccess(data?.message);
     dispatch({ type: SET_TRANSFER_SUCCESSFUL, payload: true });
-    replace("Home");
   }
   catch (error) {
+    console.log("=====", error?.response?.data)
     toastError(error?.response?.data?.message);
   }
   finally {
@@ -438,16 +429,16 @@ export const handleTransfer = (dispatch: (data: any) => void) => async ({ amount
 export const handleFetchMaxTransferAmount = async (dispatch: (data: any) => void) => {
   try {
     const { token } = await getApiAndToken();
-    const { data: { data } } = await api
-    .get('/transactions/maximum-transfer-amount', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const { data: { data } } = await kwiklliApi
+      .get('/transactions/maximum-transfer-amount', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
     dispatch({ type: SET_MAX_TRANSFER_AMOUNT, payload: Number(data?.value) / 100 });
   }
-  catch(error){
+  catch (error) {
     dispatch({ type: SET_MAX_TRANSFER_AMOUNT, payload: "0" });
   }
 };
@@ -455,21 +446,21 @@ export const handleFetchMaxTransferAmount = async (dispatch: (data: any) => void
 /**
  * Gets the reversal duration for a transaction
  */
-export const handleFetchMaxTransfer = async (dispatch: (data: any) => void) => {
+export const handleFetchReversalDuration = async (dispatch: (data: any) => void) => {
   try {
     const { token } = await getApiAndToken();
 
-    const { data: { data } } = await api
-    .get('/transactions/reversal-time', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const { data: { data } } = await kwiklliApi
+      .get('/transactions/reversal-time', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
     dispatch({ type: SET_REVERSAL_DURATION, payload: data?.value });
 
   }
-  catch(error){
+  catch (error) {
     dispatch({ type: SET_REVERSAL_DURATION, payload: "0" });
   }
 };

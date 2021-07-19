@@ -9,31 +9,54 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   FlatList,
-  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useContact, ContactType } from "../hooks/useContact";
-import CustomButton2 from "../components/CustomButton2";
 import colors from "../constants/colors";
-import { combinedValidators, sanitizePhoneNumber, ternaryResolver } from "../helpers";
+import {
+  combinedValidators,
+  sanitizePhoneNumber,
+  ternaryResolver,
+} from "../helpers";
 import fonts from "../constants/fonts";
 import useAppState from "../hooks/useAppState";
+import PageLoader from "../components/PageLoader";
+import useNavJourney from "../hooks/useNavJourney";
 
 const SelectAlias = ({ route, navigation }: React.ComponentProps<any>) => {
   const { account } = route.params;
   const { allContacts } = useAppState();
-  const [inputFocus, setInputFocus] = useState(false);
   const [phoneOrEmail, setPhoneOrEmail] = useState("");
   const [selectedPhoneOrEmail, setSelectedPhoneOrEmail] = useState("");
   // @ts-ignore
   const [selectedContact, setSelectedContact] = useState<ContactType>(null);
+
+  const { activeJourney } = useNavJourney();
 
   const {
     contactSearchTerm,
     contacts,
     searchedContacts,
     handleContactSearch,
+    loadingContact,
   } = useContact();
+
+  const contactData = contactSearchTerm?.length
+    ? searchedContacts
+    : ternaryResolver(contacts.length, contacts, allContacts);
+
+  const handleNavigation = (contactSelected?: ContactType) => {
+    navigation.navigate({
+      name: "SendMoney",
+      params: {
+        selectedPhoneOrEmail: sanitizePhoneNumber(selectedPhoneOrEmail) || "",
+        selectedContact: contactSelected,
+        account,
+        action: activeJourney?.action,
+      },
+    });
+  };
 
   const handleSelect = (item: ContactType, value: string) => {
     if (combinedValidators.phoneAndEmail(sanitizePhoneNumber(value))) {
@@ -44,72 +67,41 @@ const SelectAlias = ({ route, navigation }: React.ComponentProps<any>) => {
     }
   };
 
-  const handlePhoneOrEmail = (value: string) => {
-    setPhoneOrEmail(value);
-    if (combinedValidators.phoneAndEmail(value)) {
-      setSelectedPhoneOrEmail(value);
-    } else {
-      setSelectedPhoneOrEmail("");
-    }
-  };
-
-  const handleNavigation = (sContact?: ContactType) => {
-    navigation.navigate({
-      name: "SendMoney",
-      params: {
-        selectedPhoneOrEmail: sanitizePhoneNumber(selectedPhoneOrEmail),
-        selectedContact: sContact || selectedContact,
-        account,
-      },
-    });
-  };
-
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={styles.container}>
-        {!inputFocus && (
-          <View style={styles.phonebook}>
+        <View style={styles.phonebook}>
+          <TouchableOpacity
+            onPress={() => handleNavigation(undefined)}
+            activeOpacity={0.5}
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              paddingVertical:  Dimensions.get("window").width / 15,
+              paddingHorizontal: Dimensions.get("window").width / 15,
+            }}
+          >
+            <Ionicons
+              name="add-circle-outline"
+              size={Dimensions.get("window").width / 12}
+              style={{
+                marginRight: Dimensions.get("window").width / 15,
+                color: "#847DAB",
+              }}
+            />
+
             <Text
               style={{
-                ...styles.accountHeading,
-                marginBottom: Dimensions.get("window").width / 30,
+                fontSize: Dimensions.get("window").width / 25,
+                maxWidth: "80%",
+                minWidth: "60%",
+                color: "#847DAB",
               }}
             >
-              Enter email or phone number
+              Enter new Alias or choose below
             </Text>
-            <KeyboardAvoidingView
-              behavior="padding"
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-              }}
-            >
-              <Ionicons
-                name="add-circle-outline"
-                size={Dimensions.get("window").width / 13}
-                style={{
-                  marginRight: Dimensions.get("window").width / 15,
-                  color: combinedValidators.phoneAndEmail(phoneOrEmail)
-                    ? colors.primary
-                    : colors.textColor,
-                }}
-              />
-              <TextInput
-                value={phoneOrEmail}
-                placeholder="Phone number or email"
-                autoCorrect={false}
-                autoCompleteType="off"
-                autoCapitalize="none"
-                onChangeText={handlePhoneOrEmail}
-                style={{
-                  fontSize: Dimensions.get("window").width / 25,
-                  maxWidth: "80%",
-                  minWidth: "60%",
-                }}
-              />
-            </KeyboardAvoidingView>
-          </View>
-        )}
+          </TouchableOpacity>
+        </View>
 
         <View style={styles.list}>
           <Text
@@ -144,8 +136,6 @@ const SelectAlias = ({ route, navigation }: React.ComponentProps<any>) => {
                 style={{ marginRight: Dimensions.get("window").width / 15 }}
               />
               <TextInput
-                onFocus={() => setInputFocus(true)}
-                onBlur={() => setInputFocus(false)}
                 value={contactSearchTerm}
                 placeholder="Search contact"
                 autoCorrect={false}
@@ -164,84 +154,90 @@ const SelectAlias = ({ route, navigation }: React.ComponentProps<any>) => {
           </View>
         </View>
 
-        <FlatList
-          data={contactSearchTerm?.length ? searchedContacts : ternaryResolver(contacts.length, contacts, allContacts)}
-          keyExtractor={({ id }) => id}
-          style={{
-            padding: Dimensions.get("window").width / 15,
-          }}
-          renderItem={({ item }) => {
-            return item.phoneNumbers?.[0]?.number ? (
-              <TouchableOpacity
-              activeOpacity={0.5}
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginBottom: Dimensions.get("window").width / 20,
-              }}
-              onPress={() =>
-                handleSelect(item, `${item.phoneNumbers?.[0]?.number}`)
-              }
-            >
-              <View
+        {loadingContact && <PageLoader />}
+
+        {!loadingContact && !!contactData?.length && (
+          <FlatList
+            data={contactData}
+            keyExtractor={({ id }) => id}
+            style={{
+              padding: Dimensions.get("window").width / 15,
+            }}
+            renderItem={({ item }) => {
+              return item.phoneNumbers?.[0]?.number ? (
+                <TouchableOpacity
+                  activeOpacity={0.5}
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    marginBottom: Dimensions.get("window").width / 20,
+                  }}
+                  onPress={() =>
+                    handleSelect(item, `${item.phoneNumbers?.[0]?.number}`)
+                  }
+                >
+                  <View
+                    style={{
+                      width: Dimensions.get("window").width / 10,
+                      height: Dimensions.get("window").width / 10,
+                      borderRadius: 100,
+                      backgroundColor: item.displayColor,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      marginRight: Dimensions.get("window").width / 30,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: colors.white,
+                        fontFamily: fonts.regular,
+                        fontSize: Dimensions.get("window").width / 25,
+                      }}
+                    >
+                      {item.initials}
+                    </Text>
+                  </View>
+
+                  <View>
+                    <Text
+                      style={{
+                        color: colors.secondary,
+                        fontFamily: fonts.bold,
+                        fontSize: Dimensions.get("window").width / 25,
+                      }}
+                    >
+                      {item.name}
+                    </Text>
+                    <Text style={{ color: colors.secondary }}>
+                      {item.phoneNumbers?.[0]?.number}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              ) : null;
+            }}
+          />
+        )}
+
+        {!contactData?.length && !loadingContact && (
+          <View
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          >
+            <View style={{ justifyContent: "center", alignItems: "center" }}>
+              <Ionicons
+                name={Platform.OS === "ios" ? "ios-people-sharp" : "md-people"}
+                size={Dimensions.get("window").width / 6}
+                color={colors.primary}
+              />
+              <Text
                 style={{
-                  width: Dimensions.get("window").width / 10,
-                  height: Dimensions.get("window").width / 10,
-                  borderRadius: 100,
-                  backgroundColor: item.displayColor,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginRight: Dimensions.get("window").width / 30,
+                  color: colors.secondary,
+                  fontSize: Dimensions.get("window").width / 22,
+                  fontFamily: fonts.bold,
                 }}
               >
-                <Text
-                  style={{
-                    color: colors.white,
-                    fontFamily: fonts.regular,
-                    fontSize: Dimensions.get("window").width / 25,
-                  }}
-                >
-                  {item.initials}
-                </Text>
-              </View>
-
-              <View>
-                <Text
-                  style={{
-                    color: colors.secondary,
-                    fontFamily: fonts.bold,
-                    fontSize: Dimensions.get("window").width / 25,
-                  }}
-                >
-                  {item.name}
-                </Text>
-                <Text style={{ color: colors.secondary }}>
-                  {item.phoneNumbers?.[0]?.number}
-                </Text>
-              </View>
-            </TouchableOpacity>
-            ) : null;
-          }}
-        />
-
-        {combinedValidators.phoneAndEmail(
-          sanitizePhoneNumber(selectedPhoneOrEmail)
-        ) && (
-          <View
-            style={{
-              paddingVertical: Dimensions.get("window").width / 20,
-              paddingHorizontal: Dimensions.get("window").width / 15,
-            }}
-          >
-            <CustomButton2
-              onPress={() => handleNavigation(selectedContact)}
-              text="Proceed"
-              disabled={
-                !combinedValidators.phoneAndEmail(
-                  sanitizePhoneNumber(selectedPhoneOrEmail)
-                )
-              }
-            />
+                No Contacts
+              </Text>
+            </View>
           </View>
         )}
       </View>
@@ -266,7 +262,6 @@ const styles = StyleSheet.create({
   },
   phonebook: {
     width: "100%",
-    padding: Dimensions.get("window").width / 15,
     borderBottomWidth: 1,
     borderBottomColor: colors.line,
   },

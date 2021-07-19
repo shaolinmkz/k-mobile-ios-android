@@ -18,6 +18,7 @@ import {
   SELECT_BANK,
   SHOW_FIELD_ERRORS,
   HIDE_FIELD_ERRORS,
+  SET_SPLASH_SCREEN,
 } from "../redux/types";
 import { loginAction } from "../redux/actions";
 import CustomTextInput from "../components/CustomTextInput";
@@ -98,6 +99,7 @@ const BankAppSetup = ({ navigation }: any) => {
   };
 
   useEffect(() => {
+    dispatch({ type: SET_SPLASH_SCREEN, payload: true });
     isAuthenticated(dispatch).then((isAuth) => {
       if (isAuth) {
         navigation.replace("Home");

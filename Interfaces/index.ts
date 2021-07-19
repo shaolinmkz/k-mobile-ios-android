@@ -11,6 +11,20 @@ export interface IBank {
   password: string;
 }
 
+export interface IAccount {
+  senderFullName: any;
+  accountNumber: any;
+}
+
+export interface IParamRoute {
+  key: string;
+  name: string;
+  params: {
+    action?: string,
+    account?: IAccount,
+  };
+}
+
 export interface IInitialState {
   kwiklliLogo?: string;
   registeredBanks?: Array<IBank>;
@@ -89,4 +103,8 @@ export interface IInputProps {
   maxLength: number;
   error?: string | undefined;
   keyboardType?: KeyboardTypeOptions | undefined;
+  clearButtonMode?: "while-editing" | "never" | "unless-editing" | "always" | undefined;
+  labelSize?: number | undefined;
+  labelColor?: string | undefined;
+  inputStyleOveride?: any;
 }

@@ -16,21 +16,29 @@ import {
   RefreshSvg,
 } from "../assets/icons/svgs";
 import fonts from "../constants/fonts";
-import { handleVerifyUser } from "../redux/actions";
+import {
+  fetchUserIdLinkedToBVNAction,
+  handleFetchMaxTransferAmount,
+  handleFetchReversalDuration,
+  handleVerifyUser,
+} from "../redux/actions";
 import PageLoader from "../components/PageLoader";
 import { SET_SPLASH_SCREEN, SET_WELCOME_MODAL } from "../redux/types";
 import { ternaryResolver } from "../helpers";
 import SplashScreen from "../components/SplashScreen";
+import useAppState from "../hooks/useAppState";
 
 const Home = ({
   navigation,
-  selectedBank,
-  userExist,
-  pageLoading,
-  showWelcomeModal,
-  splashScreenOpen,
 }: React.ComponentProps<any>) => {
-  const dispatch = useDispatch();
+  const {
+    dispatch,
+    selectedBank,
+    userExist,
+    pageLoading,
+    showWelcomeModal,
+    splashScreenOpen,
+  } = useAppState();
 
   const menuCollection = [
     {
@@ -68,26 +76,24 @@ const Home = ({
     });
   };
 
-  const handleSplashScreen = (time: number) => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(true);
-      }, time);
-    })
-  }
+  const initializeDataFetch = () => {
+    handleVerifyUser(dispatch)();
+    handleFetchMaxTransferAmount(dispatch);
+    fetchUserIdLinkedToBVNAction(dispatch);
+    handleFetchReversalDuration(dispatch);
+  };
+
+  const reloadApp = () => {
+    dispatch({ type: SET_SPLASH_SCREEN, payload: true });
+    initializeDataFetch();
+  };
 
   useEffect(() => {
-    handleVerifyUser(dispatch)();
-
-    handleSplashScreen(2000).finally(() => {
-      dispatch({ type: SET_SPLASH_SCREEN, payload: false })
-    });
+    initializeDataFetch();
   }, []);
 
   if (splashScreenOpen) {
-    return (
-      <SplashScreen logo={selectedBank?.appIcon} />
-    );
+    return <SplashScreen logo={selectedBank?.appIcon} />;
   } else if (pageLoading) {
     return <PageLoader />;
   } else if (!pageLoading) {
@@ -120,14 +126,37 @@ const Home = ({
             {userExist === null && (
               <TouchableOpacity
                 activeOpacity={0.5}
-                style={styles.card}
+                style={{
+                  flexDirection: "column",
+                  paddingHorizontal: Dimensions.get("window").width / 40,
+                  paddingVertical: Dimensions.get("window").width / 10,
+                  width: "100%",
+                  borderBottomWidth: 1,
+                  borderColor: colors.line,
+                  alignItems: "center",
+                }}
                 key="refresh"
-                onPress={() => handleVerifyUser(dispatch)()}
+                onPress={reloadApp}
               >
-                <View style={styles.cardIcon}>
-                  <RefreshSvg width={iconSize} height={iconSize} />
+                <View style={{ overflow: "visible", alignItems: "center" }}>
+                  <RefreshSvg
+                    width={Dimensions.get("window").width / 10}
+                    height={Dimensions.get("window").width / 10}
+                  />
                 </View>
-                <Text style={styles.cardText}>Tap To Refresh</Text>
+                <Text style={{ ...styles.cardText, textAlign: "center" }}>
+                  Please Tap Here
+                </Text>
+                <Text
+                  style={{
+                    ...styles.cardText,
+                    textAlign: "center",
+                    fontSize: 14,
+                    color: colors.primary,
+                  }}
+                >
+                  Something went wrong!
+                </Text>
               </TouchableOpacity>
             )}
           </View>
@@ -180,7 +209,7 @@ const styles = StyleSheet.create({
     marginRight: Dimensions.get("window").width / 10,
   },
   cardText: {
-    color: colors.textColor,
+    color: colors.secondary,
     marginTop: 10,
     fontSize: Dimensions.get("window").width / 20,
     fontFamily: fonts.regular,
