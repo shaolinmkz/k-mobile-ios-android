@@ -9,6 +9,7 @@ import colors from "./constants/colors";
 enableScreens();
 
 import Routes from "./navigation";
+import ToastProvider from "./components/ToastProvider";
 
 const loadFonts = () => {
   return Font.loadAsync({
@@ -31,9 +32,11 @@ export default function App() {
 
   return !loaded ? null : (
     <Provider store={store}>
-      <View style={styles.container}>
-        <Routes />
-      </View>
+      <ToastProvider>
+        <View style={styles.container}>
+          <Routes />
+        </View>
+      </ToastProvider>
     </Provider>
   );
 }

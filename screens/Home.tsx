@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import { useDispatch } from "react-redux";
 import {
   View,
   StyleSheet,
@@ -23,6 +22,7 @@ import {
   handleVerifyUser,
 } from "../redux/actions";
 import PageLoader from "../components/PageLoader";
+import DialogAlert from "../components/LogutAlert";
 import { SET_SPLASH_SCREEN, SET_WELCOME_MODAL } from "../redux/types";
 import { ternaryResolver } from "../helpers";
 import SplashScreen from "../components/SplashScreen";
@@ -122,7 +122,7 @@ const Home = ({
                 ))}
               </>
             )}
-
+            <DialogAlert />
             {userExist === null && (
               <TouchableOpacity
                 activeOpacity={0.5}

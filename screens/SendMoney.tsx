@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -7,32 +7,44 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   ActivityIndicator,
+  Platform,
 } from "react-native";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
+import { Input, Icon, Box } from "native-base";
+import { Ionicons } from "@expo/vector-icons";
 import AccountItem from "../components/AccountItem";
 import CustomButton2 from "../components/CustomButton2";
+import CustomModal from "../components/CustomModal";
 import CustomTextInput from "../components/CustomTextInput";
 import TransferSuccessModal from "../components/TransferSuccessModal";
 import colors from "../constants/colors";
 import fonts from "../constants/fonts";
 import {
+  authenticateUserViaHardware,
   combinedValidators,
   fallbackResolver,
   sanitizePhoneNumber,
   ternaryResolver,
 } from "../helpers";
 import useAppState from "../hooks/useAppState";
-import { handleTransfer, validatePhoneNumber } from "../redux/actions";
+import {
+  handleFetchMaxTransferAmount,
+  handleFetchReversalDuration,
+  handleTransfer,
+  validatePhoneNumber,
+} from "../redux/actions";
 import {
   CHANGE_SETUP_INPUT,
+  SET_GLOBAL_ERROR,
   SET_TRANSFER_SUCCESSFUL,
   VALIDATED_OPTIONS_PHONE_NUMBER,
   VALIDATED_PHONE_NUMBER,
 } from "../redux/types";
 
 const SendMoney = ({ route, navigation }: React.ComponentProps<any>) => {
-  const { selectedPhoneOrEmail, selectedContact } = route.params;
-
+  const { selectedContact } = route.params;
+  const modlRef1 = useRef(null);
+  const modlRef2 = useRef(null);
   const {
     isValidatingPhoneNumber,
     maxAmount,
@@ -43,21 +55,29 @@ const SendMoney = ({ route, navigation }: React.ComponentProps<any>) => {
     actionLoading,
     transferSuccessful,
     reversalDuration,
+    globalErrorMessage,
   } = useAppState();
 
+  const [localIsValidatingPhoneNumber, setLocalIsValidatingPhoneNumber] =
+    useState(false);
+  const [localActionLoading, setLocalActionLoading] = useState(false);
+  const [confirmationModalOpen, setComfirmationModalOpen] = useState(false);
   const [selectedValidationOption, setSelectedValidationOption] = useState("");
   const [localState, setLocalState] = useState({
+    password: "",
     amount: "",
     remark: "",
     receiverId: "",
     charge: "0.00",
   });
 
+  const PASSWORD = "123456";
+
   const { amount, remark, receiverId, charge } = localState;
 
   const MIN_AMOUNT = 10;
 
-  type Tfields = "amount" | "remark" | "receiverId" | "charge";
+  type Tfields = "amount" | "remark" | "receiverId" | "charge" | "password";
 
   const handleInputChange = (field: Tfields) => (value: string) => {
     setLocalState((prevState) => ({
@@ -70,9 +90,16 @@ const SendMoney = ({ route, navigation }: React.ComponentProps<any>) => {
       dispatch({ type: VALIDATED_OPTIONS_PHONE_NUMBER, payload: [] });
       setSelectedValidationOption("");
 
-      if (combinedValidators.phoneAndEmail(value) && !isValidatingPhoneNumber) {
+      if (
+        combinedValidators.phoneAndEmail(value) &&
+        !isValidatingPhoneNumber &&
+        !localIsValidatingPhoneNumber
+      ) {
+        setLocalIsValidatingPhoneNumber(true);
         Keyboard.dismiss();
-        validatePhoneNumber(dispatch)(value);
+        validatePhoneNumber(dispatch)(value).finally(() => {
+          setLocalIsValidatingPhoneNumber(false);
+        });
       }
     }
   };
@@ -91,14 +118,44 @@ const SendMoney = ({ route, navigation }: React.ComponentProps<any>) => {
     dispatch({ type: VALIDATED_OPTIONS_PHONE_NUMBER, payload: [] });
   };
 
-  const handleSendMoney = () => {
-    handleTransfer(dispatch)({
-      amount,
-      receiverId: fallbackResolver(
-        receiverId,
-        sanitizePhoneNumber(`${selectedContact?.phoneNumbers?.[0]?.number}`)
-      ),
-    });
+  const closeConfirmationModalAndCleanup = () => {
+    setComfirmationModalOpen(false);
+    handleInputChange("password")("");
+  }
+
+  const handleSendMoney = async (auth: boolean) => {
+    if (auth) {
+      closeConfirmationModalAndCleanup();
+      setLocalActionLoading(true);
+      handleTransfer(dispatch)({
+        amount,
+        receiverId: fallbackResolver(
+          receiverId,
+          sanitizePhoneNumber(`${selectedContact?.phoneNumbers?.[0]?.number}`)
+        ),
+      }).finally(() => {
+        setLocalActionLoading(false);
+      });
+    }
+  };
+
+  const handleBiometricTransfer = () => {
+    authenticateUserViaHardware({ promptMessage: "Biometric Confirmation" })
+    .then(result => {
+      if(result) {
+        handleSendMoney(result.success);
+      } else {
+        dispatch({ type: SET_GLOBAL_ERROR, payload: "Biometric confirmation failed..." })
+      }
+    })
+  };
+
+  const handlePasswordTransfer = () => {
+    if(localState.password === PASSWORD) {
+      handleSendMoney(localState.password === PASSWORD);
+    } else {
+      dispatch({ type: SET_GLOBAL_ERROR, payload: "Invalid password, please try again..." });
+    }
   };
 
   const closeTransactionModal = () => {
@@ -130,6 +187,13 @@ const SendMoney = ({ route, navigation }: React.ComponentProps<any>) => {
 
     handleInputChange("charge")(charge);
   }, [amount]);
+
+  useEffect(() => {
+    handleFetchMaxTransferAmount(dispatch);
+    handleFetchReversalDuration(dispatch);
+  }, []);
+
+  const winDi = Dimensions.get("window");
 
   return (
     <>
@@ -242,9 +306,6 @@ const SendMoney = ({ route, navigation }: React.ComponentProps<any>) => {
                   maxLength={100}
                   onChangeText={handleInputChange("amount")}
                   labelColor={colors.labelColor}
-                  inputStyleOveride={{
-                    fontSize: Dimensions.get("window").width / 20,
-                  }}
                   error={
                     +amount > 0 && +amount > Number(maxAmount)
                       ? `Maximum transferable amount is ${maxAmount}`
@@ -283,7 +344,10 @@ const SendMoney = ({ route, navigation }: React.ComponentProps<any>) => {
                   this transaction
                 </Text>
 
-                {isValidatingPhoneNumber && (
+                {[
+                  localIsValidatingPhoneNumber,
+                  isValidatingPhoneNumber,
+                ].includes(true) && (
                   <View
                     style={{
                       position: "relative",
@@ -341,8 +405,8 @@ const SendMoney = ({ route, navigation }: React.ComponentProps<any>) => {
                 }}
               >
                 <CustomButton2
-                  onPress={handleSendMoney}
-                  loading={actionLoading}
+                  onPress={() => setComfirmationModalOpen(true)}
+                  loading={localActionLoading || actionLoading}
                   text="Send Money"
                   disabled={[
                     validator.amount,
@@ -364,10 +428,134 @@ const SendMoney = ({ route, navigation }: React.ComponentProps<any>) => {
             sanitizePhoneNumber(`${selectedContact?.phoneNumbers?.[0]?.number}`)
           )}
           amount={amount}
-          receiversName={fallbackResolver(selectedContact?.name, fallbackResolver(validatedData, selectedValidationOption))}
+          receiversName={fallbackResolver(
+            selectedContact?.name,
+            fallbackResolver(validatedData, selectedValidationOption)
+          )}
           onClose={closeTransactionModal}
           reversalDuration={reversalDuration}
         />
+      )}
+
+
+      {confirmationModalOpen && (
+        <TouchableWithoutFeedback
+          onPress={(e) => {
+            if (e.target === modlRef1.current || e.target === modlRef2.current) {
+              closeConfirmationModalAndCleanup();
+            }
+          }}
+        >
+          <View
+            ref={modlRef1}
+            style={{
+              position: "absolute",
+              backgroundColor: colors.transparent,
+              top: 0,
+              bottom: 0,
+              width: "100%",
+              flex: 1,
+            }}
+          >
+            <View
+            ref={modlRef2}
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <View
+                style={{
+                  backgroundColor: colors.white,
+                  height: ternaryResolver(
+                    winDi.height / 2 < 400,
+                    400,
+                    winDi.height / 2.1
+                  ),
+                  width: winDi.width / 1.1,
+                  justifyContent: "center",
+                  paddingHorizontal: winDi.width / 15,
+                }}
+              >
+                <View
+                  style={{
+                    paddingBottom: 20,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Ionicons
+                    style={{ marginBottom: 20 }}
+                    name={ternaryResolver(
+                      Platform.OS === "android",
+                      "md-lock-closed-outline",
+                      "ios-lock-closed-outline"
+                    )}
+                    size={winDi.height / 20}
+                    color={colors.primary}
+                  />
+                  <Text
+                    style={{
+                      textAlign: "center",
+                      color: colors.secondary,
+                      fontFamily: fonts.regular,
+                      fontSize: winDi.width / 20,
+                    }}
+                  >
+                    Enter your password to confirm this transaction
+                  </Text>
+                </View>
+                <Box w="100%" style={{ marginBottom: 30 }}>
+                  <Input
+                    style={{ padding: 10 }}
+                    onChangeText={handleInputChange("password")}
+                    value={localState.password}
+                    secureTextEntry
+                    keyboardType="numeric"
+                    InputRightElement={
+                      <TouchableOpacity
+                        onPress={handleBiometricTransfer}
+                        activeOpacity={0.7}
+                      >
+                        <Icon
+                          as={
+                            <Ionicons
+                              name={ternaryResolver(
+                                Platform.OS === "android",
+                                "md-finger-print",
+                                "ios-finger-print"
+                              )}
+                            />
+                          }
+                          size="md"
+                          m={2}
+                          _light={{
+                            color: colors.primary,
+                          }}
+                        />
+                      </TouchableOpacity>
+                    }
+                    placeholder="Password" // mx={4}
+                    _light={{
+                      placeholderTextColor: "blueGray.400",
+                    }}
+                    _dark={{
+                      placeholderTextColor: "blueGray.50",
+                    }}
+                  />
+                </Box>
+
+                <CustomButton2
+                  onPress={handlePasswordTransfer}
+                  text="Confirm"
+                  loading={localActionLoading}
+                  disabled={!localState.password}
+                />
+              </View>
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
       )}
     </>
   );

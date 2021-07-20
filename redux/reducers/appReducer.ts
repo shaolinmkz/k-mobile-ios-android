@@ -26,6 +26,9 @@ import {
   SET_WELCOME_MODAL,
   SET_ALL_CONTACTS,
   SET_SPLASH_SCREEN,
+  SET_GLOBAL_SUCCESS,
+  SET_GLOBAL_ERROR,
+  SET_LOGOUT_MODAL,
 } from '../types';
 import { registeredBanks } from '../../db';
 import { IAction, IInitialState } from '../../Interfaces/index';
@@ -72,6 +75,9 @@ export const initialState: IInitialState = {
   showWelcomeModal: true,
   splashScreenOpen: true,
   allContacts: [],
+  globalErrorMessage: undefined,
+  globalSuccessMessage: undefined,
+  logoutModalOpen: false,
 };
 
 
@@ -79,6 +85,21 @@ const rootReducer = (state = initialState, action: IAction) => {
   const { type, payload } = action;
 
   switch (type) {
+    case SET_LOGOUT_MODAL:
+      return {
+        ...state,
+        logoutModalOpen: payload,
+      };
+    case SET_GLOBAL_SUCCESS:
+      return {
+        ...state,
+        globalSuccessMessage: payload,
+      };
+    case SET_GLOBAL_ERROR:
+      return {
+        ...state,
+        globalErrorMessage: payload,
+      };
     case SET_SPLASH_SCREEN:
       return {
         ...state,

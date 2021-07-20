@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -14,30 +13,31 @@ import SendMoney from "../screens/SendMoney";
 import OtpScreen from "../screens/OtpScreen";
 import BankAppSetup from "../screens/BankAppSetup";
 
-import fonts from "../constants/fonts";
 import HocNavRefSetter from "../components/HocNavRefSetter";
-import { anonymousFunc, fallbackResolver, ternaryResolver } from "../helpers";
-import { navigationRef } from "../helpers/navigationRef";
 import CustomHeaderButton from "../components/CustomHeaderBtn";
-import { logoutAction } from "../redux/actions";
+
+import fonts from "../constants/fonts";
+import { fallbackResolver, ternaryResolver } from "../helpers";
+import { navigationRef } from "../helpers/navigationRef";
 import useAppState from "../hooks/useAppState";
+import { SET_LOGOUT_MODAL } from "../redux/types";
 
 const Stack = createStackNavigator();
 
 const components = {
-  BankAppSetup: (props) => (
+  BankAppSetup: (props: any) => (
     <HocNavRefSetter {...props} component={BankAppSetup} />
   ),
-  Home: (props) => <HocNavRefSetter {...props} component={Home} />,
-  AccountNumberList: (props) => (
+  Home: (props: any) => <HocNavRefSetter {...props} component={Home} />,
+  AccountNumberList: (props: any) => (
     <HocNavRefSetter {...props} component={AccountNumberList} />
   ),
-  LinkAlias: (props) => <HocNavRefSetter {...props} component={LinkAlias} />,
-  OtpScreen: (props) => <HocNavRefSetter {...props} component={OtpScreen} />,
-  SelectAlias: (props) => (
+  LinkAlias: (props: any) => <HocNavRefSetter {...props} component={LinkAlias} />,
+  OtpScreen: (props: any) => <HocNavRefSetter {...props} component={OtpScreen} />,
+  SelectAlias: (props: any) => (
     <HocNavRefSetter {...props} component={SelectAlias} />
   ),
-  SendMoney: (props) => <HocNavRefSetter {...props} component={SendMoney} />,
+  SendMoney: (props: any) => <HocNavRefSetter {...props} component={SendMoney} />,
 };
 
 const Routes = () => {
@@ -75,6 +75,7 @@ const Routes = () => {
               color: colors.secondary,
             },
             headerStyle,
+            // @ts-ignore
             headerTitleContainerStyle,
           }}
         />
@@ -93,19 +94,7 @@ const Routes = () => {
                       : "ios-exit-outline"
                   }
                   onPress={() => {
-                    Alert.alert(
-                      "Logout",
-                      "Are you sure?",
-                      [
-                        {
-                          text: "Cancel",
-                          onPress: anonymousFunc,
-                          style: "cancel"
-                        },
-                        { text: "Yes", onPress: () => logoutAction(dispatch) }
-                      ],
-                      { cancelable: false }
-                    );
+                    dispatch({ type: SET_LOGOUT_MODAL, payload: true });
                   }}
                 />
               </HeaderButtons>
@@ -116,6 +105,7 @@ const Routes = () => {
               color: colors.secondary,
             },
             headerStyle,
+            // @ts-ignore
             headerTitleContainerStyle,
           }}
         />

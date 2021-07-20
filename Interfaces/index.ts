@@ -20,8 +20,8 @@ export interface IParamRoute {
   key: string;
   name: string;
   params: {
-    action?: string,
-    account?: IAccount,
+    action?: string;
+    account?: IAccount;
   };
 }
 
@@ -36,36 +36,39 @@ export interface IInitialState {
   loginLoading?: boolean;
   showFieldError?: boolean;
   token?: string;
-  appKey?: string,
+  appKey?: string;
   userData?: any;
   linkedAliases?: any[];
   isValidatingPhoneNumber?: boolean;
-  receiverId?: string,
-  amount?: string,
-  unlinkSuccessful?: boolean,
-  linkSuccessful?: boolean,
-  transferSuccessful?: boolean,
-  userExist?: null | boolean,
-  hasChecked?: boolean,
-  actionLoading?: boolean,
+  receiverId?: string;
+  amount?: string;
+  unlinkSuccessful?: boolean;
+  linkSuccessful?: boolean;
+  transferSuccessful?: boolean;
+  userExist?: null | boolean;
+  hasChecked?: boolean;
+  actionLoading?: boolean;
   otp?: {
-    char1?: string,
-    char2?: string,
-    char3?: string,
-    char4?: string,
-    char5?: string,
-    char6?: string,
-  },
-  userId?: string,
-  validatedDataOptions?: [] | null,
-  validatedData?: any,
-  isLinked?: boolean,
-  maxAmount?: string | number,
-  reversalDuration?: string | number,
-  pageLoading?: boolean,
-  showWelcomeModal?: boolean,
-  splashScreenOpen?: boolean,
-  allContacts?: any[],
+    char1?: string;
+    char2?: string;
+    char3?: string;
+    char4?: string;
+    char5?: string;
+    char6?: string;
+  };
+  userId?: string;
+  validatedDataOptions?: [] | null;
+  validatedData?: any;
+  isLinked?: boolean;
+  maxAmount?: string | number;
+  reversalDuration?: string | number;
+  pageLoading?: boolean;
+  showWelcomeModal?: boolean;
+  splashScreenOpen?: boolean;
+  logoutModalOpen?: boolean;
+  allContacts?: any[];
+  globalErrorMessage?: string;
+  globalSuccessMessage?: string;
 }
 
 export interface IAppState {

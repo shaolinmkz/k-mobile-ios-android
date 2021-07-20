@@ -29,6 +29,8 @@ import {
   showError,
   ternaryResolver,
   isAuthenticated,
+  authenticateUserViaHardware,
+  toastError,
 } from "../helpers";
 import CustomButton from "../components/CustomButton";
 import CustomRadioButton from "../components/CustomRadioButton";
@@ -83,8 +85,14 @@ const BankAppSetup = ({ navigation }: any) => {
       username: selectedBank?.username,
       password: selectedBank?.password,
     };
+    const result = await authenticateUserViaHardware({ dispatch, promptMessage: "Biometric Sign In" });
 
-    await loginAction(dispatch)(payload, selectedBank);
+    if(!result || !result?.success) {
+      toastError("Alternative Login Sequence...", dispatch);
+      await loginAction(dispatch)(payload, selectedBank);
+    } else {
+      await loginAction(dispatch)(payload, selectedBank);
+    }
   };
 
   const validator = {

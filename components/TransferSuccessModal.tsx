@@ -58,7 +58,7 @@ const LinkModalInfo: React.FC<Props> = ({
 
   return (
     <Modal
-      animationType="fade"
+      animationType="slide"
       transparent
       visible={visible}
       style={{ flex: 1 }}

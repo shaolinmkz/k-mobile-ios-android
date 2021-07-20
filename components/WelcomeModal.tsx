@@ -1,7 +1,9 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import { View, StyleSheet, Text, Dimensions, Modal } from "react-native";
 import colors from "../constants/colors";
 import CustomButton from "./CustomButton";
+import { logoutAction } from "../redux/actions";
 
 interface Props {
   mode: "dark" | "light";
@@ -10,17 +12,17 @@ interface Props {
   onClose: () => void;
 }
 
-const Welcome: React.FC<Props> = ({
-  mode,
-  visible,
-  onClose,
-  data,
-}: Props) => {
+const Welcome: React.FC<Props> = ({ mode, visible, onClose, data }: Props) => {
+  const dispatch = useDispatch();
   const backgroundColor =
     mode === "dark" ? colors.secondary : colors.transparent;
   const contentBackgroundColor =
     mode === "dark" ? colors.secondary : colors.white;
   const textColor = mode === "dark" ? colors.white : colors.textColor;
+
+  const handleDecline = () => {
+    logoutAction(dispatch);
+  };
 
   return (
     <Modal
@@ -51,7 +53,10 @@ const Welcome: React.FC<Props> = ({
           </Text>
           <View>
             <Text style={{ ...styles.bodyText, color: textColor }}>
-              “<Text style={{ textTransform: "uppercase" }}>{`${data?.label} `}</Text>
+              “
+              <Text
+                style={{ textTransform: "uppercase" }}
+              >{`${data?.label} `}</Text>
               is not liable for transfers to a wrong beneficiary Phone number or
               Email address.
             </Text>
@@ -61,26 +66,25 @@ const Welcome: React.FC<Props> = ({
             <Text style={{ ...styles.bodyText, color: textColor }}>
               <Text style={styles.innerText}>
                 We hereby hold harmless and free as well as indemnify{" "}
-                <Text style={{ textTransform: "uppercase" }}>{`${data?.label} `}</Text>
+                <Text
+                  style={{ textTransform: "uppercase" }}
+                >{`${data?.label} `}</Text>
                 from any loss or liability which{" "}
-                <Text style={{ textTransform: "uppercase" }}>{`${data?.label} `}</Text> may face or incur
-                as a result of such wrongful transfers.”
+                <Text
+                  style={{ textTransform: "uppercase" }}
+                >{`${data?.label} `}</Text>{" "}
+                may face or incur as a result of such wrongful transfers.”
               </Text>
             </Text>
           </View>
 
           <View style={styles.btnContainer}>
-            <CustomButton
-              text="Accept"
-              focus
-              mode={mode}
-              onPress={onClose}
-            />
+            <CustomButton text="Accept" focus mode={mode} onPress={onClose} />
             <CustomButton
               text="Decline"
               focus={false}
               mode={mode}
-              onPress={onClose}
+              onPress={handleDecline}
             />
           </View>
         </View>

@@ -53,7 +53,7 @@ export const loginAction = (dispatch: (data: any) => void) => async (payload: an
 
   try {
     const { data: { data, message } } = await kwiklliApi.post('/users/auth/login', payload);
-    toastSuccess(message);
+    toastSuccess(message, dispatch);
 
     dispatch({
       type: LOGIN,
@@ -72,7 +72,7 @@ export const loginAction = (dispatch: (data: any) => void) => async (payload: an
     replace("Home");
   }
   catch (error) {
-    toastError(error?.response?.data?.message)
+    toastError(error?.response?.data?.message, dispatch);
   }
   finally {
     dispatch({ type: STOP_LOGIN_LOADING });
@@ -141,7 +141,7 @@ export const validatePhoneNumber = (dispatch: (data: any) => void) => async (val
     }
 
     if (!data.accountName) {
-      toastError(customErrorMessage);
+      toastError(customErrorMessage, dispatch);
     }
   }
   catch (error) {
@@ -176,7 +176,7 @@ export const handleVerifyUser = (dispatch: (data: any) => void) => async () => {
   }
   catch (error) {
     dispatch({ type: SET_USER_EXIST, payload: null });
-    toastError(error?.response?.data?.message);
+    toastError(error?.response?.data?.message, dispatch);
   }
   finally {
     dispatch({ type: SET_PAGE_LOADING, payload: false });
@@ -204,7 +204,7 @@ export const initiateUnlink = (dispatch: (data: any) => void, resend = false) =>
         },
       });
 
-    toastSuccess(`OTP sent to ${payload.userId}`);
+    toastSuccess(`OTP sent to ${payload.userId}`, dispatch);
 
     if (!resend) {
       navigate("OtpScreen");
@@ -212,7 +212,7 @@ export const initiateUnlink = (dispatch: (data: any) => void, resend = false) =>
 
   }
   catch (error) {
-    toastError(error?.response?.data?.message);
+    toastError(error?.response?.data?.message, dispatch);
   }
   finally {
     dispatch({ type: SET_ACTION_LOADING, payload: false });
@@ -239,13 +239,13 @@ export const confirmUnlink = (dispatch: (data: any) => void) => async ({ userId,
         },
       });
 
-    toastSuccess(`${payload.userId} has been unlinked successfully`);
+    toastSuccess(`${payload.userId} has been unlinked successfully`, dispatch);
     dispatch({ type: SET_UNLINK_SUCCESSFUL, payload: true })
     handleVerifyUser(dispatch)();
     fetchUserIdLinkedToBVNAction(dispatch);
   }
   catch (error) {
-    toastError(error?.response?.data?.message);
+    toastError(error?.response?.data?.message, dispatch);
   }
   finally {
     dispatch({ type: SET_ACTION_LOADING, payload: false });
@@ -273,7 +273,7 @@ export const initiateIndependentLinking = (dispatch: (data: any) => void, resend
         },
       });
 
-    toastSuccess(message);
+    toastSuccess(message, dispatch);
 
     if (resend === false) {
       navigate("OtpScreen");
@@ -281,7 +281,7 @@ export const initiateIndependentLinking = (dispatch: (data: any) => void, resend
 
 
   } catch (error) {
-    toastError(error?.response?.data?.message)
+    toastError(error?.response?.data?.message, dispatch);
   }
   finally {
     dispatch({ type: SET_ACTION_LOADING, payload: false });
@@ -309,13 +309,13 @@ export const confirmIndependentLinking = (dispatch: (data: any) => void) => asyn
         },
       });
 
-    toastSuccess(message);
+    toastSuccess(message, dispatch);
     dispatch({ type: RESET_OTP_FIELDS });
     dispatch({ type: SET_LINK_SUCCESSFUL, payload: true });
     handleVerifyUser(dispatch)();
     replace("Home");
   } catch (error) {
-    toastError(error?.response?.data?.message);
+    toastError(error?.response?.data?.message, dispatch);
   }
   finally {
     dispatch({ type: SET_ACTION_LOADING, payload: false });
@@ -345,14 +345,14 @@ export const initiateInitialLinking = (dispatch: (data: any) => void, resend = f
         },
       });
 
-    toastSuccess(message);
+    toastSuccess(message, dispatch);
 
     if (resend === false) {
       navigate("OtpScreen");
     }
   }
   catch (error) {
-    toastError(error?.response?.data?.message)
+    toastError(error?.response?.data?.message, dispatch)
   }
   finally {
     dispatch({ type: SET_ACTION_LOADING, payload: false });
@@ -380,11 +380,11 @@ export const confirmInitialLinking = (dispatch: (data: any) => void) => async ({
         },
       });
 
-    toastSuccess(message);
+    toastSuccess(message, dispatch);
     dispatch({ type: SET_LINK_SUCCESSFUL, payload: true });
     handleVerifyUser(dispatch)();
   } catch (error) {
-    toastError(error?.response?.data?.message)
+    toastError(error?.response?.data?.message, dispatch);
   } finally {
     dispatch({ type: SET_ACTION_LOADING, payload: false });
   }
@@ -413,13 +413,12 @@ export const handleTransfer = (dispatch: (data: any) => void) => async ({ amount
           appKey,
         },
       });
-      console.log("====GOOD=", data)
-    toastSuccess(data?.message);
+
+    toastSuccess(data?.message, dispatch);
     dispatch({ type: SET_TRANSFER_SUCCESSFUL, payload: true });
   }
   catch (error) {
-    console.log("=====", error?.response?.data)
-    toastError(error?.response?.data?.message);
+    toastError(error?.response?.data?.message, dispatch);
   }
   finally {
     dispatch({ type: SET_ACTION_LOADING, payload: false });
