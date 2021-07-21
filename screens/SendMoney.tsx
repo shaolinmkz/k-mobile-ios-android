@@ -60,7 +60,7 @@ const SendMoney = ({ route, navigation }: React.ComponentProps<any>) => {
   } = useAppState();
 
   const [localIsValidatingPhoneNumber, setLocalIsValidatingPhoneNumber] = useState(false);
-  const [hasValidatedAlias, setHasvalidatedAlias] = useState(false);
+  const [hasValidatedAlias, setHasvalidatedAlias] = useState(!!selectedContact);
   const [localActionLoading, setLocalActionLoading] = useState(false);
   const [confirmationModalOpen, setComfirmationModalOpen] = useState(false);
   const [selectedValidationOption, setSelectedValidationOption] = useState("");
@@ -207,6 +207,9 @@ const SendMoney = ({ route, navigation }: React.ComponentProps<any>) => {
   }, []);
 
   const winDi = Dimensions.get("window");
+  const winHeightByThree = winDi.height / 3;
+  // @ts-ignore
+  const filterVidatedDataOptions = [...new Set(validatedDataOptions)];
 
   return (
     <>
@@ -251,12 +254,11 @@ const SendMoney = ({ route, navigation }: React.ComponentProps<any>) => {
               />
             )}
 
-            {!!validatedDataOptions?.length &&
-              Array.isArray(validatedDataOptions) &&
+            {!!filterVidatedDataOptions?.length &&
+              Array.isArray(filterVidatedDataOptions) &&
               !!receiverId && (
-                <ScrollView style={{ maxHeight: 250 }}>
-                  {/* @ts-ignore */}
-                  {[...new Set(validatedDataOptions)].map(
+                <ScrollView style={{ maxHeight: (filterVidatedDataOptions.length > 2 && winHeightByThree > 250) ? winHeightByThree : 250 }}>
+                  {filterVidatedDataOptions.map(
                     (accountName, index) => (
                       <TouchableOpacity
                         activeOpacity={0.7}
