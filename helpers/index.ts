@@ -149,6 +149,10 @@ export const showError = (...values: any) => {
   return values.map((value: any) => Boolean(value)).includes(true);
 }
 
+export const validateImageUrl = (value: string) => {
+  return /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png|jpeg)/gm.test(`${value}`);
+}
+
 export const validateToken = async (token: any) => {
   try {
     const currentTimeInSeconds = Date.now();
