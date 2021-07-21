@@ -1,4 +1,5 @@
 import React from "react";
+import { CSSProperties } from "react";
 import {
   StyleSheet,
   Text,
@@ -10,24 +11,26 @@ import colors from "../constants/colors";
 import fonts from "../constants/fonts";
 
 interface Props {
-  text1: string;
-  text2: string;
+  text1?: string;
+  text2?: string;
   checked: boolean;
   onSelect: () => void;
+  customParentStyle?: any;
+  customText1Style?: any;
+  customText2Style?: any;
 }
 
-const CustomRadioButton = ({ text1, text2, onSelect, checked }: Props) => {
+const CustomRadioButton = ({ text1, text2, onSelect, checked, customParentStyle, customText1Style, customText2Style }: Props) => {
   return (
-    <TouchableOpacity activeOpacity={0.5} style={styles.radioBtn} onPress={onSelect}>
+    <TouchableOpacity activeOpacity={0.5} style={{ ...styles.radioBtn, ...customParentStyle }} onPress={onSelect}>
       <View>
         {!!text1 && (
           <Text
             style={{
               ...styles.radioTextName,
               color: checked ? colors.primary : colors.textColor,
-              fontFamily: checked
-                ? fonts.bold
-                : styles.radioTextName.fontFamily,
+              fontFamily: checked ? fonts.bold : styles.radioTextName.fontFamily,
+              ...customText1Style,
             }}
           >
             {text1}
@@ -38,9 +41,8 @@ const CustomRadioButton = ({ text1, text2, onSelect, checked }: Props) => {
             style={{
               ...styles.radioTextNumber,
               color: checked ? colors.primary : colors.textColor,
-              fontFamily: checked
-              ? fonts.bold
-              : styles.radioTextName.fontFamily,
+              fontFamily: checked ? fonts.bold : styles.radioTextName.fontFamily,
+              ...customText2Style,
             }}
           >
             {text2}
@@ -63,6 +65,12 @@ const CustomRadioButton = ({ text1, text2, onSelect, checked }: Props) => {
       </View>
     </TouchableOpacity>
   );
+};
+
+CustomRadioButton.defaultProps = {
+  customParentStyle: {},
+  customText1Style: {},
+  customText2Style: {},
 };
 
 const styles = StyleSheet.create({

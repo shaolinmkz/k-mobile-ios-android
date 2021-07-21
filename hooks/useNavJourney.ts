@@ -1,19 +1,13 @@
 import { useRoute } from "@react-navigation/native";
-import { useDispatch } from "react-redux";
-import { resolveActions } from "../constants/actions";
+import {
+  resolveActions,
+  INDEPENDENT_LINKING,
+  INDEPENDENT_UNLINKING,
+  INITIAL_LINKING,
+  SEND_MONEY,
+ } from "../constants/actions";
 import { fallbackResolver } from "../helpers";
 import { IParamRoute } from "../Interfaces";
-import {
-  confirmIndependentLinking,
-  initiateInitialLinking,
-  initiateUnlink,
-  confirmUnlink,
-  handleVerifyUser,
-  validatePhoneNumber,
-  initiateIndependentLinking,
-  confirmInitialLinking,
-  handleTransfer,
-} from "../redux/actions";
 
 interface IHavHook {
   action?: string;
@@ -21,12 +15,10 @@ interface IHavHook {
 
 
 const useNavJourney = (args?: IHavHook) => {
-  const action = args?.action;
-
-  const dispatch = useDispatch();
   const route = useRoute<IParamRoute>();
+  const action = fallbackResolver(args?.action, route.params.action);
 
-  const actions = resolveActions(fallbackResolver(action, route.params.action));
+  const actions = resolveActions(action);
 
   const isLinking = actions.isInitialLinking;
   const isSendMoney = actions.isSendMoney;
@@ -36,55 +28,43 @@ const useNavJourney = (args?: IHavHook) => {
   const screenJourneyData = [
     {
       text: "Select an account to link an alias to",
+      actionText: "Link",
       action,
       active: isLinking,
       nextScreen: "LinkAlias",
       description: "link a phone number or email to an bank account number for the first time",
-      apiActions: {
-        handleVerifyUser: handleVerifyUser(dispatch),
-        initiateInitialLinking: (resend = false) => initiateInitialLinking(dispatch, resend),
-        confirmInitialLinking: confirmInitialLinking(dispatch),
-      },
+      activeAction: INITIAL_LINKING,
     },
     {
       text: "Select an account to debit",
+      actionText: "Send",
       action,
       active: isSendMoney,
       nextScreen: "SelectAlias",
       description: "send money to phone number or email from your bank account",
-      apiActions: {
-        validatePhoneNumber: validatePhoneNumber(dispatch),
-        handleTransfer: handleTransfer(dispatch),
-      },
+      activeAction: SEND_MONEY,
     },
     {
       text: "Select an account to link an alias to",
+      actionText: "Link",
       action,
       active: isIndependentLinking,
       nextScreen: "LinkAlias",
       description: "link another phone number or email to a bank account number",
-      apiActions: {
-        handleVerifyUser: handleVerifyUser(dispatch),
-        initiateIndependentLinking: (resend = false) => initiateIndependentLinking(dispatch, resend),
-        confirmIndependentLinking: confirmIndependentLinking(dispatch)
-      },
+      activeAction: INDEPENDENT_LINKING,
     },
     {
       text: "Select an account to unlink an alias from",
+      actionText: "Unlink",
       action,
       active: isUnLinking,
-      nextScreen: "OtpScreen",
+      nextScreen: "UnlinkAlias",
       description: "unlink phone number or email from your account number",
-      apiActions: {
-        handleVerifyUser: handleVerifyUser(dispatch),
-        initiateUnlink: (resend = false) => initiateUnlink(dispatch, resend),
-        confirmUnlink: confirmUnlink(dispatch),
-      },
+      activeAction: INDEPENDENT_UNLINKING
     },
   ];
 
   const activeJourney = screenJourneyData.find(({ active }) => active === true);
-
 
   return {
     screenJourneyData,

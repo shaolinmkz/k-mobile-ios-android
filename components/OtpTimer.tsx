@@ -35,11 +35,6 @@ const OtpTimer = ({
 
   const { min, sec, percentage, finished } = state;
 
-  /**
-   * @function handleCallback
-   * @description calls the callback prop function
-   * @returns {void}
-   */
   const handleCallback = () => {
     callback();
     setState(initialState.state);

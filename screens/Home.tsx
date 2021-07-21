@@ -27,6 +27,12 @@ import { SET_SPLASH_SCREEN, SET_WELCOME_MODAL } from "../redux/types";
 import { ternaryResolver } from "../helpers";
 import SplashScreen from "../components/SplashScreen";
 import useAppState from "../hooks/useAppState";
+import {
+  INDEPENDENT_LINKING,
+  INDEPENDENT_UNLINKING,
+  INITIAL_LINKING,
+  SEND_MONEY,
+} from "../constants/actions";
 
 const Home = ({
   navigation,
@@ -42,19 +48,19 @@ const Home = ({
 
   const menuCollection = [
     {
-      action: ternaryResolver(userExist, "SEND_MONEY", "INITIAL_LINKING"),
+      action: ternaryResolver(userExist, SEND_MONEY, INITIAL_LINKING),
       name: "Send Money",
       Icon: TransferSvg,
       screen: "AccountNumberList",
     },
     {
-      action: "INDEPENDENT_LINKING",
+      action: INDEPENDENT_LINKING,
       name: "Link Alias",
       Icon: LinkBoldSvg,
       screen: "AccountNumberList",
     },
     {
-      action: "INDEPENDENT_UNLINKING",
+      action: INDEPENDENT_UNLINKING,
       name: "Unlink Alias",
       Icon: UnlinkSvg,
       screen: "AccountNumberList",

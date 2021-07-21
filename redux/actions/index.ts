@@ -206,10 +206,7 @@ export const initiateUnlink = (dispatch: (data: any) => void, resend = false) =>
 
     toastSuccess(`OTP sent to ${payload.userId}`, dispatch);
 
-    if (!resend) {
-      navigate("OtpScreen");
-    }
-
+    return true;
   }
   catch (error) {
     toastError(error?.response?.data?.message, dispatch);
@@ -243,6 +240,7 @@ export const confirmUnlink = (dispatch: (data: any) => void) => async ({ userId,
     dispatch({ type: SET_UNLINK_SUCCESSFUL, payload: true })
     handleVerifyUser(dispatch)();
     fetchUserIdLinkedToBVNAction(dispatch);
+    return true;
   }
   catch (error) {
     toastError(error?.response?.data?.message, dispatch);
@@ -274,11 +272,6 @@ export const initiateIndependentLinking = (dispatch: (data: any) => void, resend
       });
 
     toastSuccess(message, dispatch);
-
-    if (resend === false) {
-      navigate("OtpScreen");
-    }
-
 
   } catch (error) {
     toastError(error?.response?.data?.message, dispatch);
@@ -313,7 +306,7 @@ export const confirmIndependentLinking = (dispatch: (data: any) => void) => asyn
     dispatch({ type: RESET_OTP_FIELDS });
     dispatch({ type: SET_LINK_SUCCESSFUL, payload: true });
     handleVerifyUser(dispatch)();
-    replace("Home");
+    return true;
   } catch (error) {
     toastError(error?.response?.data?.message, dispatch);
   }
@@ -346,10 +339,6 @@ export const initiateInitialLinking = (dispatch: (data: any) => void, resend = f
       });
 
     toastSuccess(message, dispatch);
-
-    if (resend === false) {
-      navigate("OtpScreen");
-    }
   }
   catch (error) {
     toastError(error?.response?.data?.message, dispatch)
@@ -383,6 +372,7 @@ export const confirmInitialLinking = (dispatch: (data: any) => void) => async ({
     toastSuccess(message, dispatch);
     dispatch({ type: SET_LINK_SUCCESSFUL, payload: true });
     handleVerifyUser(dispatch)();
+    return true;
   } catch (error) {
     toastError(error?.response?.data?.message, dispatch);
   } finally {

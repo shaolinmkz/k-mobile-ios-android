@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, StyleSheet, Text, Dimensions, ScrollView } from "react-native";
 import CustomRadioButton from "../components/CustomRadioButton";
 import CustomButton2 from "../components/CustomButton2";
@@ -7,12 +7,14 @@ import LinkInfoModal from "../components/LinkInfoModal";
 import useAppState from "../hooks/useAppState";
 import useNavJourney from "../hooks/useNavJourney";
 import { IAccount } from "../Interfaces";
+import { fetchUserIdLinkedToBVNAction } from "../redux/actions";
+import { INDEPENDENT_UNLINKING } from "../constants/actions";
 
 const AccountNumberList = ({
   navigation,
   route,
 }: React.ComponentProps<any>) => {
-  const { userExist, accountNumber, senderFullName } = useAppState();
+  const { userExist, accountNumber, senderFullName, dispatch } = useAppState();
   const action = route?.params?.action;
 
   const { activeJourney } = useNavJourney({ action });
@@ -31,7 +33,11 @@ const AccountNumberList = ({
     setIsModalOpen(false);
   };
 
-  if (!userExist && isModalOpen) {
+  useEffect(() => {
+    fetchUserIdLinkedToBVNAction(dispatch);
+  }, [])
+
+  if (!userExist && isModalOpen && activeJourney?.activeAction !== INDEPENDENT_UNLINKING) {
     return (
       <>
         <LinkInfoModal mode="dark" visible handleModal={handleModal} />

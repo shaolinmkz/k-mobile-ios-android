@@ -1,7 +1,7 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { Dimensions, Platform, Alert } from "react-native";
+import { Dimensions, Platform } from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 
 import Home from "../screens/Home";
@@ -9,6 +9,7 @@ import AccountNumberList from "../screens/AccountNumberList";
 import colors from "../constants/colors";
 import LinkAlias from "../screens/LinkAlias";
 import SelectAlias from "../screens/SelectAlias";
+import UnlinkAlias from "../screens/UnlinkAlias";
 import SendMoney from "../screens/SendMoney";
 import OtpScreen from "../screens/OtpScreen";
 import BankAppSetup from "../screens/BankAppSetup";
@@ -32,12 +33,21 @@ const components = {
   AccountNumberList: (props: any) => (
     <HocNavRefSetter {...props} component={AccountNumberList} />
   ),
-  LinkAlias: (props: any) => <HocNavRefSetter {...props} component={LinkAlias} />,
-  OtpScreen: (props: any) => <HocNavRefSetter {...props} component={OtpScreen} />,
+  LinkAlias: (props: any) => (
+    <HocNavRefSetter {...props} component={LinkAlias} />
+  ),
+  OtpScreen: (props: any) => (
+    <HocNavRefSetter {...props} component={OtpScreen} />
+  ),
   SelectAlias: (props: any) => (
     <HocNavRefSetter {...props} component={SelectAlias} />
   ),
-  SendMoney: (props: any) => <HocNavRefSetter {...props} component={SendMoney} />,
+  UnlinkAlias: (props: any) => (
+    <HocNavRefSetter {...props} component={UnlinkAlias} />
+  ),
+  SendMoney: (props: any) => (
+    <HocNavRefSetter {...props} component={SendMoney} />
+  ),
 };
 
 const Routes = () => {
@@ -152,6 +162,19 @@ const Routes = () => {
           component={components.SelectAlias}
           options={{
             title: "Select Alias",
+            headerTitleStyle: {
+              fontSize: Dimensions.get("window").width / 20,
+              fontFamily: fonts.bold,
+            },
+            headerStyle,
+          }}
+        />
+
+        <Stack.Screen
+          name="UnlinkAlias"
+          component={components.UnlinkAlias}
+          options={{
+            title: "Unlink Alias",
             headerTitleStyle: {
               fontSize: Dimensions.get("window").width / 20,
               fontFamily: fonts.bold,
