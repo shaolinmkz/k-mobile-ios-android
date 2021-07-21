@@ -70,6 +70,7 @@ export const loginAction = (dispatch: (data: any) => void) => async (payload: an
     await AsyncStorage.setItem('selectedBank', JSON.stringify(selectedBank));
 
     replace("Home");
+    return true;
   }
   catch (error) {
     toastError(error?.response?.data?.message, dispatch);

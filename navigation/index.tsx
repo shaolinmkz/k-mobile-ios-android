@@ -78,7 +78,7 @@ const Routes = () => {
           name="BankAppSetup"
           component={components.BankAppSetup}
           options={{
-            title: "Bank Setup",
+            title: "Setup",
             headerTitleStyle: {
               fontSize: Dimensions.get("window").width / 18,
               fontFamily: fonts.bold,

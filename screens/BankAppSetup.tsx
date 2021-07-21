@@ -9,6 +9,7 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   Image,
+  Platform,
 } from "react-native";
 import colors from "../constants/colors";
 import fonts from "../constants/fonts";
@@ -19,6 +20,9 @@ import {
   SHOW_FIELD_ERRORS,
   HIDE_FIELD_ERRORS,
   SET_SPLASH_SCREEN,
+  STOP_LOGIN_LOADING,
+  LOGIN_LOADING,
+  SET_GLOBAL_ERROR,
 } from "../redux/types";
 import { loginAction } from "../redux/actions";
 import CustomTextInput from "../components/CustomTextInput";
@@ -31,6 +35,7 @@ import {
   isAuthenticated,
   authenticateUserViaHardware,
   toastError,
+  validateImageUrl,
 } from "../helpers";
 import CustomButton from "../components/CustomButton";
 import CustomRadioButton from "../components/CustomRadioButton";
@@ -38,11 +43,13 @@ import CustomModal from "../components/CustomModal";
 import CustomSelect from "../components/CustomSelect";
 import PageLoader from "../components/PageLoader";
 import useSaveAppState from "../hooks/useSaveAppState";
+import ManualLoginModal from "../components/ManualLoginModal";
 
 const BankAppSetup = ({ navigation }: any) => {
   const dispatch = useDispatch();
   const [initializing, setInitializing] = useState(true);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [bankSelectionModalOpen, setBankSelectionModalOpen] = useState(false);
+  const [isLoginModal, setIsLoginModal] = useState(false);
 
   // Save app state hook
   useSaveAppState();
@@ -68,7 +75,7 @@ const BankAppSetup = ({ navigation }: any) => {
   };
 
   const handleBankSelectModal = () => {
-    setModalOpen((prevState) => !prevState);
+    setBankSelectionModalOpen((prevState) => !prevState);
   };
 
   const handleBankSelect = (bank: IBank | undefined) => {
@@ -80,18 +87,33 @@ const BankAppSetup = ({ navigation }: any) => {
     }
   };
 
-  const handleLogin = async () => {
-    const payload = {
-      username: selectedBank?.username,
-      password: selectedBank?.password,
-    };
-    const result = await authenticateUserViaHardware({ dispatch, promptMessage: "Biometric Sign In" });
+  const openManualLoginModal = () => {
+    setIsLoginModal((prevState) => !prevState);
+  };
 
-    if(!result || !result?.success) {
-      toastError("Alternative Login Sequence...", dispatch);
-      await loginAction(dispatch)(payload, selectedBank);
-    } else {
-      await loginAction(dispatch)(payload, selectedBank);
+  const handleLogin = async () => {
+    try {
+      dispatch({ type: LOGIN_LOADING });
+
+      const payload = {
+        username: selectedBank?.username,
+        password: selectedBank?.password,
+      };
+      const result = await authenticateUserViaHardware({
+        dispatch,
+        promptMessage: "Biometric Sign In",
+      });
+
+      if (!result || !result?.success) {
+        toastError("Biometric login failed, login manually...", dispatch);
+        openManualLoginModal();
+      } else {
+        await loginAction(dispatch)(payload, selectedBank);
+      }
+    } catch(error) {
+      dispatch({ type: SET_GLOBAL_ERROR, payload: error?.message });
+    } finally {
+      dispatch({ type: STOP_LOGIN_LOADING });
     }
   };
 
@@ -119,7 +141,11 @@ const BankAppSetup = ({ navigation }: any) => {
 
   useEffect(() => {
     // Preload bank logo
-    if (typeof selectedBank?.appIcon === "string" && selectedBank?.appIcon?.length > 10) {
+    if (
+      typeof selectedBank?.appIcon === "string" &&
+      selectedBank?.appIcon?.length &&
+      validateImageUrl(`${selectedBank?.appIcon}`)
+    ) {
       Image.prefetch(selectedBank?.appIcon);
     }
   }, [selectedBank?.appIcon]);
@@ -128,142 +154,148 @@ const BankAppSetup = ({ navigation }: any) => {
     <PageLoader />
   ) : (
     <>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-        <>
-          <View style={styles.container}>
-            <View style={styles.inputContainer}>
-              <View style={styles.btnContainer}>
-                <CustomSelect
-                  text={fallbackResolver(selectedBank?.label, "Select a bank")}
-                  onPress={handleBankSelectModal}
-                  customParentStyle={{
-                    width: "100%",
-                    marginBottom: ternaryResolver(
-                      validator.selectedBank && showFieldError,
-                      Dimensions.get("window").height / 50,
-                      undefined
-                    ),
-                  }}
-                  customChildStyle={{}}
-                />
-              </View>
-
-              <View>
-                {validator.selectedBank && showFieldError && (
-                  <Text
-                    style={{
-                      textAlign: "center",
-                      color: colors.primary,
-                      fontSize: 15,
-                    }}
-                  >
-                    Please select a bank
-                  </Text>
-                )}
-              </View>
-
-              <CustomTextInput
-                value={senderFullName}
-                label="Name:"
-                placeholder="Firstname Lastname"
-                autoCorrect={false}
-                autoCompleteType="off"
-                autoCapitalize="none"
-                maxLength={100}
-                onChangeText={handleInputChange("senderFullName")}
-                error={
-                  showError(senderFullName, showFieldError) &&
-                  validator.senderFullName
-                    ? "Enter a valid name"
-                    : ""
-                }
-              />
-
-              <CustomTextInput
-                value={accountNumber}
-                label="Account No:"
-                placeholder="Account number"
-                autoCorrect={false}
-                autoCompleteType="off"
-                autoCapitalize="none"
-                keyboardType="numeric"
-                maxLength={100}
-                onChangeText={handleInputChange("accountNumber")}
-                error={
-                  showError(accountNumber, showFieldError) &&
-                  validator.accountNumber
-                    ? "Enter a valid account number"
-                    : ""
-                }
-              />
-
-              <CustomTextInput
-                value={bvn}
-                label="BVN:"
-                placeholder="Bank verification number"
-                autoCorrect={false}
-                autoCompleteType="off"
-                autoCapitalize="none"
-                keyboardType="numeric"
-                maxLength={100}
-                onChangeText={handleInputChange("bvn")}
-                error={
-                  showError(bvn, showFieldError) && validator.bvn
-                    ? "Enter a valid bank verification number"
-                    : ""
-                }
-              />
-
-              <CustomTextInput
-                value={phoneNumber}
-                label="Alias:"
-                placeholder="Phone number or email"
-                autoCorrect={false}
-                autoCompleteType="off"
-                autoCapitalize="none"
-                maxLength={100}
-                onChangeText={handleInputChange("phoneNumber")}
-                error={
-                  showError(phoneNumber, showFieldError) &&
-                  validator.phoneNumber
-                    ? "Enter a valid phone number or email"
-                    : ""
-                }
-              />
-            </View>
-
-            <View
-              style={{
-                ...styles.inputContainer,
-                marginBottom: Dimensions.get("window").height / 20,
-              }}
-            >
-              <CustomButton
-                text="Login"
-                focus
-                mode="light"
-                onPress={handleLogin}
-                callback={() => dispatch({ type: SHOW_FIELD_ERRORS })}
-                loading={loginLoading}
-                disabled={Object.values(validator).includes(true)}
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.container}>
+          <View style={styles.inputContainer}>
+            <View style={styles.btnContainer}>
+              <CustomSelect
+                text={fallbackResolver(selectedBank?.label, "Select a bank")}
+                onPress={handleBankSelectModal}
                 customParentStyle={{
                   width: "100%",
-                  backgroundColor: colors.primary,
-                  borderColor: colors.primary,
-                  height: Dimensions.get("window").height / 15,
-                  marginBottom: Dimensions.get("window").height / 50,
+                  marginBottom: ternaryResolver(
+                    validator.selectedBank && showFieldError,
+                    Dimensions.get("window").height / 50,
+                    undefined
+                  ),
                 }}
-                customChildStyle={{
-                  fontSize: Dimensions.get("window").height / 40,
-                }}
+                customChildStyle={{}}
               />
             </View>
+
+            <View>
+              {validator.selectedBank && showFieldError && (
+                <Text
+                  style={{
+                    textAlign: "center",
+                    color: colors.primary,
+                    fontSize: 15,
+                  }}
+                >
+                  Please select a bank
+                </Text>
+              )}
+            </View>
+
+            <CustomTextInput
+              value={senderFullName}
+              label="Name:"
+              placeholder="Firstname Lastname"
+              autoCorrect={false}
+              autoCompleteType="off"
+              autoCapitalize="none"
+              maxLength={100}
+              onChangeText={handleInputChange("senderFullName")}
+              error={
+                showError(senderFullName, showFieldError) &&
+                validator.senderFullName
+                  ? "Enter a valid name"
+                  : ""
+              }
+            />
+
+            <CustomTextInput
+              value={accountNumber}
+              label="Account No:"
+              placeholder="Account number"
+              autoCorrect={false}
+              autoCompleteType="off"
+              autoCapitalize="none"
+              keyboardType="numeric"
+              maxLength={100}
+              onChangeText={handleInputChange("accountNumber")}
+              error={
+                showError(accountNumber, showFieldError) &&
+                validator.accountNumber
+                  ? "Enter a valid account number"
+                  : ""
+              }
+            />
+
+            <CustomTextInput
+              value={bvn}
+              label="BVN:"
+              placeholder="Bank verification number"
+              autoCorrect={false}
+              autoCompleteType="off"
+              autoCapitalize="none"
+              keyboardType="numeric"
+              maxLength={100}
+              onChangeText={handleInputChange("bvn")}
+              error={
+                showError(bvn, showFieldError) && validator.bvn
+                  ? "Enter a valid bank verification number"
+                  : ""
+              }
+            />
+
+            <CustomTextInput
+              value={phoneNumber}
+              label="Alias:"
+              placeholder="Phone number or email"
+              autoCorrect={false}
+              autoCompleteType="off"
+              autoCapitalize="none"
+              maxLength={100}
+              onChangeText={handleInputChange("phoneNumber")}
+              error={
+                showError(phoneNumber, showFieldError) && validator.phoneNumber
+                  ? "Enter a valid phone number or email"
+                  : ""
+              }
+            />
           </View>
-        </>
+
+          {!isLoginModal && <View
+            style={{
+              ...styles.inputContainer,
+              marginBottom: Dimensions.get("window").height / 20,
+            }}
+          >
+            <CustomButton
+              text=""
+              focus
+              mode="light"
+              onPress={handleLogin}
+              callback={() => dispatch({ type: SHOW_FIELD_ERRORS })}
+              loading={loginLoading}
+              disabled={Object.values(validator).includes(true)}
+              customParentStyle={{
+                width: "100%",
+                backgroundColor: colors.primary,
+                borderColor: colors.primary,
+                marginBottom: Dimensions.get("window").height / 50,
+              }}
+              customChildStyle={{
+                fontSize: Dimensions.get("window").height / 40,
+              }}
+              iconName={ternaryResolver(
+                Platform.OS === "android",
+                "md-finger-print",
+                "ios-finger-print"
+              )}
+              iconColor={colors.white}
+            />
+          </View>}
+        </View>
       </TouchableWithoutFeedback>
 
-      {modalOpen && (
-        <CustomModal animationType="slide" mode="plain" visible={modalOpen}>
+      {bankSelectionModalOpen && (
+        <CustomModal
+          animationType="slide"
+          mode="plain"
+          visible={bankSelectionModalOpen}
+        >
           <FlatList
             data={registeredBanks}
             keyExtractor={({ value }) => value}
@@ -278,6 +310,8 @@ const BankAppSetup = ({ navigation }: any) => {
           />
         </CustomModal>
       )}
+
+      {isLoginModal && <ManualLoginModal onClose={openManualLoginModal} />}
     </>
   );
 };
