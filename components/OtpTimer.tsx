@@ -35,11 +35,6 @@ const OtpTimer = ({
 
   const { min, sec, percentage, finished } = state;
 
-  /**
-   * @function handleCallback
-   * @description calls the callback prop function
-   * @returns {void}
-   */
   const handleCallback = () => {
     callback();
     setState(initialState.state);
@@ -83,7 +78,7 @@ const OtpTimer = ({
         {!finished && (
           <Text
             style={{ fontSize: 15, color: colors.textColor, fontFamily: 'lato-regular' }}
-          >{`Resend OTP (${min}:${sec})`}</Text>
+          >{`Resend code in (${min}:${sec})`}</Text>
         )}
         {finished && (
           <TouchableOpacity onPress={handleCallback} style={{ flexDirection: 'row', alignItems: 'center'}}>

@@ -1,4 +1,9 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import jwt_decode from "jwt-decode";
+import * as LocalAuthentication from 'expo-local-authentication';
+import { APP_STATE_UPDATE, SET_GLOBAL_ERROR, SET_GLOBAL_SUCCESS } from "../redux/types";
 import { phonePrefix as phoneNumberPrefix, telcoPrefixes } from "./phoneNumberPrefixes";
+export { navigate } from "./navigationRef";
 
 export const anonymousFunc = () => null;
 
@@ -6,7 +11,7 @@ export const anonymousFunc = () => null;
  * @function timerConverter
  * @description formats milliseconds into a (minute : seconds) timer clock
  */
- export const timerConverter = {
+export const timerConverter = {
   sec: (minuteValue: string, secondsValue: number) => {
     if (minuteValue === "00") {
       return "00";
@@ -39,7 +44,7 @@ export const fallbackResolver = (actualValue: any, fallbackValue: any) => {
   return actualValue || fallbackValue;
 };
 
-export const isValidEmail = (email: string) => {
+export const isValidEmail = (email: any) => {
   const pattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
   return pattern.test(email);
 };
@@ -53,14 +58,14 @@ export const currencyConverter = {
     amount = Number(amount);
 
     return amount.toLocaleString('en-NG', {
-    style: "currency",
-    currency: 'NGN',
-  })
-},
+      style: "currency",
+      currency: 'NGN',
+    })
+  },
   strip: (value: (string | number)) => `${value}`
-      .split("")
-      .filter((val) => Number.isInteger(+`${val}`) && val !== " ")
-      .join(""),
+    .split("")
+    .filter((val) => Number.isInteger(+`${val}`) && val !== " ")
+    .join(""),
 };
 
 export const findTelco = (phoneNumber: string, telcos = telcoPrefixes) => {
@@ -69,29 +74,29 @@ export const findTelco = (phoneNumber: string, telcos = telcoPrefixes) => {
   )?.name;
 };
 
-export const isValidAlphabet = (text: string) => /^[a-zA-Z -]*$/.test(text);
+export const isValidAlphabet = (text: any) => /^[a-zA-Z -]*$/.test(text);
 
-export const isValidPhoneNumber = (value: string) => {
+export const isValidPhoneNumber = (value: any) => {
 
   value = value?.replace(/\s/gm, '')
 
-  if(`${value}`.slice(0, 4) === '+234') {
+  if (`${value}`.slice(0, 4) === '+234') {
     value = `0${`${value}`.slice(4)}`
-  } else if(`${value}`.slice(0, 3) === '234') {
+  } else if (`${value}`.slice(0, 3) === '234') {
     value = `0${`${value}`.slice(3)}`
   }
 
   return !!phoneNumberPrefix.find(
     (prefix) => prefix === `${value}`.slice(0, prefix.length)
   ) &&
-  `${value}`.length === 11 &&
-  /^[0-9]*$/.test(value);
+    `${value}`.length === 11 &&
+    /^[0-9]*$/.test(value);
 };
 
-export const sanitizePhoneNumber = (value: string) => {
-  if(`${value}`.slice(0, 4) === '+234') {
+export const sanitizePhoneNumber = (value: any) => {
+  if (`${value}`.slice(0, 4) === '+234') {
     value = `0${`${value}`.slice(4)}`
-  } else if(`${value}`.slice(0, 3) === '234') {
+  } else if (`${value}`.slice(0, 3) === '234') {
     value = `0${`${value}`.slice(3)}`
   }
 
@@ -103,12 +108,117 @@ export const sanitizePhoneNumber = (value: string) => {
  * @description combines different validatiors used in the app
  */
 export const combinedValidators = {
-  phoneAndEmail: (value: string) =>
-    !(
+  phoneAndEmail: (value: any) => {
+    return !(
       (!isValidEmail(value) &&
         !/^[0-9]*$/.test(value) &&
         `${value}`.length !== 11) ||
       (/^[0-9]*$/.test(value) && !isValidPhoneNumber(value)) ||
       (!Number.isInteger(+`${value}`) && !isValidEmail(value))
-    ),
+    )
+  }
 };
+
+const MAX_TIME = 5000;
+
+interface IAction { type: string, payload: any };
+
+const clearNotification = ({ dispatch, timeout }: any) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      dispatch({ type: SET_GLOBAL_SUCCESS, payload: "" });
+      dispatch({ type: SET_GLOBAL_ERROR, payload: "" });
+      resolve(true);
+    }, timeout);
+  })
+};
+
+export const toastError = (message: string, dispatch: (action: IAction) => void, timeout = MAX_TIME) => {
+  dispatch({ type: SET_GLOBAL_ERROR, payload: message });
+
+  return clearNotification({ dispatch, timeout });
+};
+
+export const toastSuccess = (message: string, dispatch: (action: IAction) => void, timeout = MAX_TIME) => {
+  dispatch({ type: SET_GLOBAL_SUCCESS, payload: message });
+
+  return clearNotification({ dispatch, timeout });
+}
+
+export const showError = (...values: any) => {
+  return values.map((value: any) => Boolean(value)).includes(true);
+}
+
+export const validateToken = async (token: any) => {
+  try {
+    const currentTimeInSeconds = Date.now();
+    const expirationTimeInSeconds = jwt_decode<any>(token)?.exp * 1000;
+    return expirationTimeInSeconds > currentTimeInSeconds;
+  } catch (err) {
+    return false;
+  }
+}
+
+export const isAuthenticated = async (dispatch: (data: any) => void) => {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const prevAppState = await AsyncStorage.getItem("appState");
+    const authenticated = await validateToken(token);
+
+    if (authenticated) {
+      if (prevAppState) {
+        dispatch({
+          type: APP_STATE_UPDATE,
+          payload: JSON.parse(prevAppState),
+        });
+      }
+    }
+    return authenticated;
+  } catch (e) {
+    return false;
+  }
+};
+
+interface IHardwareAuth {
+  dispatch?: (data: any) => void;
+  promptMessage?: string;
+}
+
+export const authenticateUserViaHardware = async ({ dispatch, promptMessage }: IHardwareAuth) => {
+
+  try {
+    const hashardWare = await LocalAuthentication.hasHardwareAsync();
+    if(hashardWare) {
+     // What type of auth is available
+     // 1 - reps finger print ID
+     // 2 - reps facial ID
+     // [1, 2] - reps both finger and faicial ID
+     const supportAuth = await LocalAuthentication.supportedAuthenticationTypesAsync();
+     const supportsFingerPrintAuth = Array.isArray(supportAuth) && supportAuth.includes(1);
+
+     if(supportsFingerPrintAuth) {
+       // has device saved auth data for use
+       const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+
+       if(isEnrolled) {
+         const authenicated = await LocalAuthentication.authenticateAsync({
+          promptMessage: fallbackResolver(promptMessage, "Biometric Confirmation"),
+         });
+
+         if(!authenicated.success) {
+           // @ts-ignore
+           throw Error(fallbackResolver(authenicated?.message, "Oops! Authentication Failed..."));
+         }
+
+         dispatch?.({ type: SET_GLOBAL_SUCCESS, payload: "Authentication Passed..." });
+         return authenicated;
+       }
+        return false;
+     }
+     return false;
+    }
+  } catch (error) {
+    dispatch?.({ type: SET_GLOBAL_ERROR, payload: error?.message });
+    return false;
+  }
+}

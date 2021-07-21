@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import * as Font from "expo-font";
+import { Provider } from "react-redux";
 import { enableScreens } from "react-native-screens";
+import store from "./redux";
+import colors from "./constants/colors";
 
 enableScreens();
 
 import Routes from "./navigation";
-import colors from "./constants/colors";
+import ToastProvider from "./components/ToastProvider";
 
 const loadFonts = () => {
   return Font.loadAsync({
@@ -16,6 +19,7 @@ const loadFonts = () => {
     "lato-bold": require("./assets/fonts/Lato-Bold.ttf"),
   });
 };
+
 
 export default function App() {
   const [loaded, setLoaded] = useState(false);
@@ -27,9 +31,13 @@ export default function App() {
   }, []);
 
   return !loaded ? null : (
-    <View style={styles.container}>
-      <Routes />
-    </View>
+    <Provider store={store}>
+      <ToastProvider>
+        <View style={styles.container}>
+          <Routes />
+        </View>
+      </ToastProvider>
+    </Provider>
   );
 }
 

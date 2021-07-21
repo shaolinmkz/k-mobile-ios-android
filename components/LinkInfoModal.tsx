@@ -3,6 +3,7 @@ import { View, StyleSheet, Text, Dimensions, Modal } from "react-native";
 import colors from "../constants/colors";
 import CustomButton from "./CustomButton";
 import { WaveSvg } from "../assets/icons/svgs";
+import fonts from "../constants/fonts";
 
 interface Props {
   mode: "dark" | "light";
@@ -21,7 +22,7 @@ const LinkModalInfo: React.FC<Props> = ({ mode, visible, handleModal }: Props) =
 
   return (
     <Modal
-      animationType="fade"
+      animationType="none"
       transparent
       visible={visible}
       style={{ flex: 1 }}
@@ -89,8 +90,8 @@ const styles = StyleSheet.create({
     marginBottom: Dimensions.get("window").height / 20,
   },
   bodyText: {
-    fontFamily: "lato-regular",
-    fontSize: Dimensions.get("window").width / 26,
+    fontFamily: fonts.light,
+    fontSize: Dimensions.get("window").width / 20,
     lineHeight: Dimensions.get("window").height / 30,
     marginBottom: Dimensions.get("window").height / 20,
     textAlign: "center",

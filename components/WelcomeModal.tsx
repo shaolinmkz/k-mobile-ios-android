@@ -1,23 +1,36 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import { View, StyleSheet, Text, Dimensions, Modal } from "react-native";
 import colors from "../constants/colors";
 import CustomButton from "./CustomButton";
+import { logoutAction } from "../redux/actions";
 
 interface Props {
-  mode: "dark" | "light",
-  visible: boolean,
-  handleModal: () => void
+  mode: "dark" | "light";
+  data?: any;
+  visible: boolean;
+  onClose: () => void;
 }
 
-const Welcome: React.FC<Props> = ({ mode, visible, handleModal }: Props) => {
+const Welcome: React.FC<Props> = ({ mode, visible, onClose, data }: Props) => {
+  const dispatch = useDispatch();
   const backgroundColor =
     mode === "dark" ? colors.secondary : colors.transparent;
   const contentBackgroundColor =
     mode === "dark" ? colors.secondary : colors.white;
   const textColor = mode === "dark" ? colors.white : colors.textColor;
 
+  const handleDecline = () => {
+    logoutAction(dispatch);
+  };
+
   return (
-    <Modal animationType="fade" transparent visible={visible} style={{ flex: 1 }}>
+    <Modal
+      animationType="none"
+      transparent
+      visible={visible}
+      style={{ flex: 1 }}
+    >
       <View style={{ ...styles.modal, backgroundColor }}>
         <View
           style={{ ...styles.content, backgroundColor: contentBackgroundColor }}
@@ -27,7 +40,7 @@ const Welcome: React.FC<Props> = ({ mode, visible, handleModal }: Props) => {
               ...styles.title,
               color: textColor,
               ...styles["bold-uppercase"],
-              fontSize: Dimensions.get("window").width / 18
+              fontSize: Dimensions.get("window").width / 18,
             }}
           >
             WELCOME!
@@ -35,29 +48,44 @@ const Welcome: React.FC<Props> = ({ mode, visible, handleModal }: Props) => {
 
           <Text style={{ ...styles.bodyText, color: textColor }}>
             <Text style={{ ...styles["bold-uppercase"] }}>
-            A FEW TERMS AND CONDITIONS BEFORE YOU PROCEED
+              A FEW TERMS AND CONDITIONS BEFORE YOU PROCEED
             </Text>
           </Text>
           <View>
             <Text style={{ ...styles.bodyText, color: textColor }}>
-              “(BANK NAME) is not liable for transfers to a wrong beneficiary
-              Phone Number/Email Address/Name.
+              “
+              <Text
+                style={{ textTransform: "uppercase" }}
+              >{`${data?.label} `}</Text>
+              is not liable for transfers to a wrong beneficiary Phone number or
+              Email address.
             </Text>
           </View>
 
           <View>
             <Text style={{ ...styles.bodyText, color: textColor }}>
               <Text style={styles.innerText}>
-                We hereby hold harmless and free as well as indemnify (BANK
-                NAME) from any loss or liability which (BANK NAME) may face or
-                incur as a result of such wrongful transfers.”
+                We hereby hold harmless and free as well as indemnify{" "}
+                <Text
+                  style={{ textTransform: "uppercase" }}
+                >{`${data?.label} `}</Text>
+                from any loss or liability which{" "}
+                <Text
+                  style={{ textTransform: "uppercase" }}
+                >{`${data?.label} `}</Text>{" "}
+                may face or incur as a result of such wrongful transfers.”
               </Text>
             </Text>
           </View>
 
           <View style={styles.btnContainer}>
-            <CustomButton text="Accept" focus mode={mode} onPress={handleModal} />
-            <CustomButton text="Decline" focus={false} mode={mode} onPress={handleModal} />
+            <CustomButton text="Accept" focus mode={mode} onPress={onClose} />
+            <CustomButton
+              text="Decline"
+              focus={false}
+              mode={mode}
+              onPress={handleDecline}
+            />
           </View>
         </View>
       </View>
@@ -76,7 +104,7 @@ const styles = StyleSheet.create({
     height: Dimensions.get("window").height / 1.25,
     paddingHorizontal: Dimensions.get("window").width / 20,
     paddingVertical: Dimensions.get("window").height / 20,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   title: {
     textAlign: "center",
@@ -87,11 +115,11 @@ const styles = StyleSheet.create({
     fontSize: Dimensions.get("window").width / 26,
     lineHeight: Dimensions.get("window").height / 30,
     marginBottom: Dimensions.get("window").height / 20,
-    textAlign: 'center',
+    textAlign: "center",
   },
   innerText: {
     paddingTop: Dimensions.get("window").height / 2,
-    textAlign: 'center',
+    textAlign: "center",
   },
   "bold-uppercase": {
     fontFamily: "lato-bold",
@@ -101,7 +129,7 @@ const styles = StyleSheet.create({
   btnContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
-    marginTop: Dimensions.get('window').height / 20
+    marginTop: Dimensions.get("window").height / 20,
   },
 });
 
