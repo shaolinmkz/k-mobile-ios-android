@@ -5,7 +5,9 @@ import {
   Dimensions,
   TouchableOpacity,
   ActivityIndicator,
+  Platform,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import colors from "../constants/colors";
 import { ternaryResolver } from "../helpers";
 import { anonymousFunc } from "../helpers/index";
@@ -20,6 +22,8 @@ interface Props {
   callback?: () => void;
   customParentStyle?: any;
   customChildStyle?: any;
+  iconName?: any;
+  iconColor?: any;
 }
 
 const CustomButton = ({
@@ -32,6 +36,8 @@ const CustomButton = ({
   customChildStyle,
   loading,
   disabled,
+  iconName,
+  iconColor,
 }: Props) => {
   let backgroundColor;
   let textColor;
@@ -55,6 +61,8 @@ const CustomButton = ({
     textColor = colors.primary;
   }
 
+  const winDi = Dimensions.get("window");
+
   return (
     <TouchableOpacity
       activeOpacity={0.8}
@@ -67,6 +75,7 @@ const CustomButton = ({
       onPress={ternaryResolver(disabled, callback, onPress)}
       disabled={loading}
     >
+      <>
       {loading && (
         <ActivityIndicator
           animating={loading}
@@ -75,11 +84,14 @@ const CustomButton = ({
         />
       )}
 
-      {!loading && (
+      {!loading && !!text && (
         <Text style={{ ...styles.text, color: textColor, ...customChildStyle }}>
           {text}
         </Text>
       )}
+
+      {!!iconName && !loading && <Ionicons name={iconName} color={iconColor} size={winDi.width / 15} />}
+      </>
     </TouchableOpacity>
   );
 };
@@ -90,6 +102,7 @@ CustomButton.defaultProps = {
   callback: anonymousFunc,
   loading: false,
   disabled: false,
+  iconName: ""
 };
 
 const styles = StyleSheet.create({
