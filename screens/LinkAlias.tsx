@@ -6,22 +6,30 @@ import {
   Dimensions,
   ScrollView,
   TextInput,
-  TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
-  KeyboardAvoidingView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import CustomRadioButton from "../components/CustomRadioButton";
 import CustomButton2 from "../components/CustomButton2";
 import colors from "../constants/colors";
 import { combinedValidators, sanitizePhoneNumber } from "../helpers";
+import fonts from "../constants/fonts";
+import useAppState from "../hooks/useAppState";
+import {
+  initiateIndependentLinking,
+  initiateInitialLinking,
+} from "../redux/actions";
+import useNavJourney from "../hooks/useNavJourney";
+import { INDEPENDENT_LINKING, INITIAL_LINKING } from "../constants/actions";
 
 const LinkAlias = ({ route, navigation }: React.ComponentProps<any>) => {
-  const { account } = route.params;
+  const { account, action } = route.params;
 
   const [phoneOrEmail, setPhoneOrEmail] = useState("");
   const [selectedPhoneOrEmail, setSelectedPhoneOrEmail] = useState("");
+  const { phoneNumber, dispatch, actionLoading } = useAppState();
+  const { activeJourney } = useNavJourney();
 
   const handleCheck = (value: string) => {
     setSelectedPhoneOrEmail(value);
@@ -37,67 +45,89 @@ const LinkAlias = ({ route, navigation }: React.ComponentProps<any>) => {
     }
   };
 
-  const availablePhoneNumbers = "*"
-    .repeat(1)
-    .split("*")
-    .map((val, index) => `+234806${90 - index}2${40 + index}8${index}`)
-    .concat("xyz@example.com");
+  const handleProceedToNextScreen = () => {
+    navigation.navigate({
+      name: "OtpScreen",
+      params: {
+        action,
+        account,
+        selectedPhoneOrEmail: sanitizePhoneNumber(selectedPhoneOrEmail),
+      },
+    });
+  };
+
+  const handleSendOTP = () => {
+    if (activeJourney?.activeAction === INITIAL_LINKING) {
+      initiateInitialLinking(dispatch)().then((result) => {
+        if (result) {
+          handleProceedToNextScreen();
+        }
+      });
+    } else if (activeJourney?.activeAction === INDEPENDENT_LINKING) {
+      initiateIndependentLinking(dispatch)({
+        userId: selectedPhoneOrEmail,
+      }).then((result) => {
+        if (result) {
+          handleProceedToNextScreen();
+        }
+      });
+    }
+  };
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <KeyboardAvoidingView behavior="padding" style={styles.container}>
+      <View style={styles.container}>
         <View style={styles.account}>
           <Text style={styles.accountHeading}>Linking alias to:</Text>
           <Text style={styles.accountText}>
-            {account?.name ?? "Not Available"}
+            {account?.senderFullName ?? "Not Available"}
           </Text>
           <Text style={styles.accountText}>
             {account?.accountNumber ?? "Not Available"}
           </Text>
         </View>
-
-        <View style={styles.phonebook}>
-          <Text
-            style={{
-              ...styles.accountHeading,
-              marginBottom: Dimensions.get("window").width / 30,
-            }}
-          >
-            Enter new Alias or choose below
-          </Text>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-            }}
-          >
-            <Ionicons
-              name="add-circle-outline"
-              size={Dimensions.get("window").width / 13}
-              style={{
-                marginRight: Dimensions.get("window").width / 15,
-                color: combinedValidators.phoneAndEmail(phoneOrEmail)
-                  ? colors.primary
-                  : colors.textColor,
-              }}
-            />
-            <TextInput
-              value={phoneOrEmail}
-              placeholder="Phone number or email"
-              autoCorrect={false}
-              autoCompleteType="off"
-              autoCapitalize="none"
-              onChangeText={handlePhoneOrEmail}
-              style={{
-                fontSize: Dimensions.get("window").width / 25,
-                maxWidth: "80%",
-                minWidth: "60%",
-              }}
-            />
-          </View>
-        </View>
-
         <ScrollView style={styles.list}>
+          <View style={styles.phonebook}>
+            <Text
+              style={{
+                ...styles.accountHeading,
+                marginBottom: Dimensions.get("window").width / 30,
+              }}
+            >
+              Enter new Alias or choose below
+            </Text>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              <Ionicons
+                name="add-circle-outline"
+                size={Dimensions.get("window").width / 13}
+                style={{
+                  marginRight: Dimensions.get("window").width / 15,
+                  color: combinedValidators.phoneAndEmail(phoneOrEmail)
+                    ? colors.primary
+                    : colors.textColor,
+                }}
+              />
+              <TextInput
+                value={phoneOrEmail}
+                placeholder="Phone number or email"
+                autoCorrect={false}
+                autoCompleteType="off"
+                autoCapitalize="none"
+                onChangeText={handlePhoneOrEmail}
+                style={{
+                  fontFamily: fonts.regular,
+                  fontSize: Dimensions.get("window").width / 25,
+                  width: "100%",
+                }}
+              />
+            </View>
+          </View>
+
           <Text
             style={{
               ...styles.accountHeading,
@@ -107,34 +137,25 @@ const LinkAlias = ({ route, navigation }: React.ComponentProps<any>) => {
           >
             Available Phone Numbers / Emails
           </Text>
-          {availablePhoneNumbers.map((phoneNumber) => (
-            <CustomRadioButton
-              checked={selectedPhoneOrEmail === phoneNumber}
-              text1=""
-              text2={phoneNumber}
-              key={phoneNumber}
-              onSelect={() => handleCheck(phoneNumber)}
-            />
-          ))}
+          <CustomRadioButton
+            checked={selectedPhoneOrEmail === phoneNumber}
+            text1=""
+            text2={phoneNumber}
+            key={phoneNumber}
+            onSelect={() => handleCheck(`${phoneNumber}`)}
+          />
         </ScrollView>
         <View
           style={{
-            paddingVertical: Dimensions.get("window").width / 10,
             paddingHorizontal: Dimensions.get("window").width / 15,
+            paddingBottom: Dimensions.get("window").width / 10,
+            paddingTop: Dimensions.get("window").width / 20,
           }}
         >
           <CustomButton2
-            onPress={() => {
-              navigation.navigate({
-                name: "OtpScreen",
-                params: {
-                  selectedPhoneOrEmail: sanitizePhoneNumber(
-                    selectedPhoneOrEmail
-                  ),
-                },
-              });
-            }}
-            text="Proceed"
+            onPress={handleSendOTP}
+            text="Send OTP"
+            loading={actionLoading}
             disabled={
               !combinedValidators.phoneAndEmail(
                 sanitizePhoneNumber(selectedPhoneOrEmail)
@@ -142,7 +163,7 @@ const LinkAlias = ({ route, navigation }: React.ComponentProps<any>) => {
             }
           />
         </View>
-      </KeyboardAvoidingView>
+      </View>
     </TouchableWithoutFeedback>
   );
 };
@@ -159,19 +180,20 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.line,
   },
   accountHeading: {
-    fontSize: 18,
-    fontFamily: "lato-regular",
+    fontSize: Dimensions.get("window").width / 25,
+    fontFamily: fonts.bold,
   },
   phonebook: {
     width: "100%",
-    padding: Dimensions.get("window").width / 15,
+    paddingVertical: Dimensions.get("window").width / 15,
     borderBottomWidth: 1,
     borderBottomColor: colors.line,
   },
   accountText: {
-    fontSize: Dimensions.get("window").width / 30,
-    fontFamily: "lato-light",
+    fontSize: Dimensions.get("window").width / 25,
+    fontFamily: fonts.regular,
     marginTop: Dimensions.get("window").height / 50,
+    textTransform: "capitalize",
   },
   list: {
     paddingHorizontal: Dimensions.get("window").width / 15,

@@ -1,9 +1,10 @@
 {
   "expo": {
-    "name": "kwiklli-mobile-sdk",
-    "slug": "kwiklli-mobile-sdk",
+    "name": "Kwiklli bank",
+    "slug": "kwiklli-bank-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
+    "description": "A bank demo application for Kwiklli mobile",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",

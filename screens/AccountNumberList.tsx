@@ -1,89 +1,91 @@
-import React, { useState } from "react";
-import {
-  View,
-  StyleSheet,
-  Text,
-  Dimensions,
-  ScrollView,
-} from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, StyleSheet, Text, Dimensions, ScrollView } from "react-native";
 import CustomRadioButton from "../components/CustomRadioButton";
 import CustomButton2 from "../components/CustomButton2";
 import colors from "../constants/colors";
 import LinkInfoModal from "../components/LinkInfoModal";
+import useAppState from "../hooks/useAppState";
+import useNavJourney from "../hooks/useNavJourney";
+import { IAccount } from "../Interfaces";
+import { fetchUserIdLinkedToBVNAction } from "../redux/actions";
+import { INDEPENDENT_UNLINKING } from "../constants/actions";
 
-const availableAccountNumbers = "*"
-  .repeat(3)
-  .split("*")
-  .map((val, index) => ({
-    id: `${index + 1}`,
-    name: `ADAEZE MOJI IBRAHIM ${index + 1}`,
-    accountNumber: `320459789${index}`,
-  }));
+const AccountNumberList = ({
+  navigation,
+  route,
+}: React.ComponentProps<any>) => {
+  const { userExist, accountNumber, senderFullName, dispatch } = useAppState();
+  const action = route?.params?.action;
 
-interface Account {
-  id: string;
-  name: string;
-  accountNumber: string;
-}
+  const { activeJourney } = useNavJourney({ action });
 
-const AccountNumberList = ({ navigation, route }: React.ComponentProps<any>) => {
-  const isLinking = route.params.isLinking;
-  const [isFirstTime, setIsFirstTime] = useState(route.params.isFirstTime);
-  const [selectedAccount, setSelectedAccount] = useState({
-    id: "",
-    name: "",
+  const [isModalOpen, setIsModalOpen] = useState(true);
+  const [selectedAccount, setSelectedAccount] = useState<IAccount>({
+    senderFullName: "",
     accountNumber: "",
   });
 
-  const handleCheck = (value: Account) => {
+  const handleCheck = (value: IAccount) => {
     setSelectedAccount(value);
   };
 
-  const handleIsFirstTime = () => {
-    setIsFirstTime(false);
+  const handleModal = () => {
+    setIsModalOpen(false);
   };
 
-  return (
-    <>
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>{isLinking ? 'Select account to link' : 'Select account to debit'}</Text>
-      </View>
+  useEffect(() => {
+    fetchUserIdLinkedToBVNAction(dispatch);
+  }, [])
 
-      <ScrollView style={styles.list}>
-        {availableAccountNumbers.map(({ name, accountNumber, id }) => (
-          <CustomRadioButton
-            checked={selectedAccount.id === id}
-            text1={name}
-            text2={accountNumber}
-            key={id}
-            onSelect={() => handleCheck({ name, accountNumber, id })}
-          />
-        ))}
-      </ScrollView>
-      <View
-        style={{
-          paddingVertical: Dimensions.get("window").width / 10,
-          paddingHorizontal: Dimensions.get("window").width / 15,
-        }}
-      >
-        <CustomButton2
-          onPress={() => {
-            navigation.navigate({
-              name: isLinking ? 'LinkAlias' : 'SelectAlias',
-              params: {
-                account: selectedAccount
-              }
-            })
-          }}
-          text="Proceed"
-          disabled={!selectedAccount.id}
-        />
-      </View>
-    </View>
-    <LinkInfoModal mode="dark" visible={isFirstTime} handleModal={handleIsFirstTime} />
-    </>
-  );
+  if (!userExist && isModalOpen && activeJourney?.activeAction !== INDEPENDENT_UNLINKING) {
+    return (
+      <>
+        <LinkInfoModal mode="dark" visible handleModal={handleModal} />
+      </>
+    );
+  } else {
+    return (
+      <>
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <Text style={styles.headerText}>
+              {activeJourney?.text}
+            </Text>
+          </View>
+
+          <ScrollView style={styles.list}>
+            <CustomRadioButton
+              checked={selectedAccount.accountNumber === accountNumber}
+              text1={`${senderFullName}`.toUpperCase()}
+              text2={`${accountNumber}`}
+              key={accountNumber}
+              onSelect={() => handleCheck({ senderFullName, accountNumber })}
+            />
+          </ScrollView>
+          <View
+            style={{
+              paddingVertical: Dimensions.get("window").width / 10,
+              paddingHorizontal: Dimensions.get("window").width / 15,
+            }}
+          >
+            <CustomButton2
+              onPress={() => {
+                navigation.navigate({
+                  name: activeJourney?.nextScreen,
+                  params: {
+                    account: selectedAccount,
+                    action,
+                  },
+                });
+              }}
+              text="Proceed"
+              disabled={!selectedAccount.accountNumber}
+            />
+          </View>
+        </View>
+      </>
+    );
+  }
 };
 
 const styles = StyleSheet.create({

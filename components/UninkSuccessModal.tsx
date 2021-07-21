@@ -9,7 +9,7 @@ import {
   Animated,
 } from "react-native";
 import colors from "../constants/colors";
-import { CheckSvg, TimesSvg, LinkSvg } from "../assets/icons/svgs";
+import { CheckSvg, TimesSvg, UnlinkSvg } from "../assets/icons/svgs";
 
 interface Props {
   mode: "dark" | "light";
@@ -97,7 +97,7 @@ const LinkModalInfo: React.FC<Props> = ({
                 fontSize: Dimensions.get("window").width / 18,
               }}
             >
-              Link Successful
+              Unlink Successful
             </Text>
           </Text>
 
@@ -109,7 +109,7 @@ const LinkModalInfo: React.FC<Props> = ({
                 {selectedPhoneOrEmail}
               </Text>{" "}
               <Text style={styles.bodyText}>
-                has been linked to your bank account
+                has been unlinked from your bank account
               </Text>
             </Text>
           </View>
@@ -123,7 +123,7 @@ const LinkModalInfo: React.FC<Props> = ({
               marginBottom: Dimensions.get("window").height / 22,
             }}
           >
-            <LinkSvg white />
+            <UnlinkSvg white />
           </View>
 
           <View

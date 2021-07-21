@@ -9,24 +9,26 @@ import {
   Animated,
 } from "react-native";
 import colors from "../constants/colors";
-import { CheckSvg, TimesSvg, LinkSvg } from "../assets/icons/svgs";
+import { CheckSvg, TimesSvg } from "../assets/icons/svgs";
 
 interface Props {
   mode: "dark" | "light";
   visible: boolean;
-  handleModal: () => void;
+  onClose: () => void;
   selectedPhoneOrEmail: string;
   amount: string;
   receiversName: string;
+  reversalDuration: string | number | undefined;
 }
 
 const LinkModalInfo: React.FC<Props> = ({
   mode,
   visible,
-  handleModal,
+  onClose,
   selectedPhoneOrEmail,
   amount,
   receiversName,
+  reversalDuration,
 }: Props) => {
   const { current: startValue } = useRef(new Animated.Value(0));
 
@@ -56,7 +58,7 @@ const LinkModalInfo: React.FC<Props> = ({
 
   return (
     <Modal
-      animationType="fade"
+      animationType="slide"
       transparent
       visible={visible}
       style={{ flex: 1 }}
@@ -105,16 +107,16 @@ const LinkModalInfo: React.FC<Props> = ({
                 <Text
                   style={{ ...styles.innerText, ...styles["bold-uppercase"] }}
                 >
-                  ₦{amount}
+                  ₦{+(amount).toLocaleString()}
                 </Text>{" "}
                 to{" "}
                 <Text
-                  style={{ ...styles.innerText, ...styles["bold-uppercase"] }}
+                  style={{ ...styles.innerText, ...styles["bold-uppercase"], textTransform: "capitalize" }}
                 >
                   {receiversName || selectedPhoneOrEmail}.
                 </Text>{" "}
                 Kindly ensure that they link their phone number or email in
-                their bank's app. This payment will expire in 3 of days and will
+                their bank's app. This payment will expire in {reversalDuration} day(s) and will
                 return to your account.
               </Text>
             </Text>
@@ -122,7 +124,7 @@ const LinkModalInfo: React.FC<Props> = ({
 
           <View style={styles.btnContainer}>
             <TouchableOpacity
-              onPress={handleModal}
+              onPress={onClose}
               style={{
                 backgroundColor: colors.white,
                 width: 50,
@@ -175,7 +177,7 @@ const styles = StyleSheet.create({
   },
   "bold-uppercase": {
     fontFamily: "lato-bold",
-    fontSize: Dimensions.get("window").width / 18,
+    fontSize: Dimensions.get("window").width / 19,
   },
   btnContainer: {
     flexDirection: "row",
