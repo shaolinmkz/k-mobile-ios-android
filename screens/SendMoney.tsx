@@ -402,6 +402,7 @@ const SendMoney = ({ route, navigation }: React.ComponentProps<any>) => {
               <View
                 style={{
                   paddingVertical: Dimensions.get("window").width / 20,
+                  paddingBottom: Dimensions.get("window").width / 10,
                 }}
               >
                 <CustomButton2

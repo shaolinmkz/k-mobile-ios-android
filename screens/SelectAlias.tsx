@@ -27,10 +27,8 @@ import useNavJourney from "../hooks/useNavJourney";
 const SelectAlias = ({ route, navigation }: React.ComponentProps<any>) => {
   const { account } = route.params;
   const { allContacts } = useAppState();
-  const [phoneOrEmail, setPhoneOrEmail] = useState("");
   const [selectedPhoneOrEmail, setSelectedPhoneOrEmail] = useState("");
-  // @ts-ignore
-  const [selectedContact, setSelectedContact] = useState<ContactType>(null);
+
 
   const { activeJourney } = useNavJourney();
 
@@ -58,14 +56,35 @@ const SelectAlias = ({ route, navigation }: React.ComponentProps<any>) => {
     });
   };
 
-  const handleSelect = (item: ContactType, value: string) => {
+  const handleSelect = (contactSelected: ContactType, value: string) => {
     if (combinedValidators.phoneAndEmail(sanitizePhoneNumber(value))) {
       setSelectedPhoneOrEmail(value);
-      setPhoneOrEmail(sanitizePhoneNumber(value));
-      setSelectedContact(item);
-      handleNavigation(item);
+      handleNavigation(contactSelected);
     }
   };
+
+  const EmptyComponent = () => (
+    <View
+    style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+  >
+    <View style={{ justifyContent: "center", alignItems: "center" }}>
+      <Ionicons
+        name={Platform.OS === "ios" ? "ios-people-sharp" : "md-people"}
+        size={Dimensions.get("window").width / 6}
+        color={colors.primary}
+      />
+      <Text
+        style={{
+          color: colors.secondary,
+          fontSize: Dimensions.get("window").width / 22,
+          fontFamily: fonts.bold,
+        }}
+      >
+        No Contacts
+      </Text>
+    </View>
+  </View>
+  )
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -156,9 +175,11 @@ const SelectAlias = ({ route, navigation }: React.ComponentProps<any>) => {
 
         {loadingContact && <PageLoader />}
 
-        {!loadingContact && !!contactData?.length && (
+        {!loadingContact && (
           <FlatList
             data={contactData}
+            ListEmptyComponent={EmptyComponent}
+            // ListEmptyComponent={PageLoader}
             keyExtractor={({ id }) => id}
             style={{
               padding: Dimensions.get("window").width / 15,
@@ -216,29 +237,6 @@ const SelectAlias = ({ route, navigation }: React.ComponentProps<any>) => {
               ) : null;
             }}
           />
-        )}
-
-        {!contactData?.length && !loadingContact && (
-          <View
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-          >
-            <View style={{ justifyContent: "center", alignItems: "center" }}>
-              <Ionicons
-                name={Platform.OS === "ios" ? "ios-people-sharp" : "md-people"}
-                size={Dimensions.get("window").width / 6}
-                color={colors.primary}
-              />
-              <Text
-                style={{
-                  color: colors.secondary,
-                  fontSize: Dimensions.get("window").width / 22,
-                  fontFamily: fonts.bold,
-                }}
-              >
-                No Contacts
-              </Text>
-            </View>
-          </View>
         )}
       </View>
     </TouchableWithoutFeedback>

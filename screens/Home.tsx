@@ -52,18 +52,21 @@ const Home = ({
       name: "Send Money",
       Icon: TransferSvg,
       screen: "AccountNumberList",
+      show: true,
     },
     {
       action: INDEPENDENT_LINKING,
       name: "Link Alias",
       Icon: LinkBoldSvg,
       screen: "AccountNumberList",
+      show: true,
     },
     {
       action: INDEPENDENT_UNLINKING,
       name: "Unlink Alias",
       Icon: UnlinkSvg,
       screen: "AccountNumberList",
+      show: userExist,
     },
   ];
 
@@ -82,8 +85,8 @@ const Home = ({
     });
   };
 
-  const initializeDataFetch = () => {
-    handleVerifyUser(dispatch)();
+  const initializeDataFetch = (pageLoading = true) => {
+    handleVerifyUser(dispatch, pageLoading)();
     handleFetchMaxTransferAmount(dispatch);
     fetchUserIdLinkedToBVNAction(dispatch);
     handleFetchReversalDuration(dispatch);
@@ -95,11 +98,15 @@ const Home = ({
   };
 
   useEffect(() => {
-    initializeDataFetch();
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+      initializeDataFetch(userExist === null);
+    });
+
+    return unsubscribe;
+  }, [navigation, userExist]);
 
   if (splashScreenOpen) {
-    return <SplashScreen logo={selectedBank?.appIcon} />;
+    return <SplashScreen timeout={5000} logo={selectedBank?.appIcon} />;
   } else if (pageLoading) {
     return <PageLoader />;
   } else if (!pageLoading) {
@@ -113,7 +120,7 @@ const Home = ({
           <View style={styles.cardContainer}>
             {userExist !== null && (
               <>
-                {menuCollection.map(({ name, Icon, screen, action }) => (
+                {menuCollection.map(({ name, Icon, screen, action, show }) => show && (
                   <TouchableOpacity
                     activeOpacity={0.5}
                     style={styles.card}

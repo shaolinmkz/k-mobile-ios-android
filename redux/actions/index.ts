@@ -151,10 +151,12 @@ export const validatePhoneNumber = (dispatch: (data: any) => void) => async (val
   }
 };
 
-export const handleVerifyUser = (dispatch: (data: any) => void) => async () => {
+export const handleVerifyUser = (dispatch: (data: any) => void, loading = true) => async () => {
 
   try {
-    dispatch({ type: SET_PAGE_LOADING, payload: true });
+    if(loading) {
+      dispatch({ type: SET_PAGE_LOADING, payload: true });
+    }
 
     const { accountNumber, appKey, bvn, selectedBank } = await getApiAndToken();
     const payload = {
@@ -272,7 +274,7 @@ export const initiateIndependentLinking = (dispatch: (data: any) => void, resend
       });
 
     toastSuccess(message, dispatch);
-
+    return true;
   } catch (error) {
     toastError(error?.response?.data?.message, dispatch);
   }
@@ -329,16 +331,19 @@ export const initiateInitialLinking = (dispatch: (data: any) => void, resend = f
       phoneNumber,
     };
 
-    dispatch({ type: SET_ACTION_LOADING, payload: true });
+    if(!resend) {
+      dispatch({ type: SET_ACTION_LOADING, payload: true });
+    }
 
-    const { data: { message } } = await kwiklliApi
+    await kwiklliApi
       .post('/banks/link-status', payload, {
         headers: {
           appKey,
         },
       });
 
-    toastSuccess(message, dispatch);
+    toastSuccess(`OTP sent to ${phoneNumber}`, dispatch);
+    return true;
   }
   catch (error) {
     toastError(error?.response?.data?.message, dispatch)

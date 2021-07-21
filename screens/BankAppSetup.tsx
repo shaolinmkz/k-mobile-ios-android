@@ -107,9 +107,9 @@ const BankAppSetup = ({ navigation }: any) => {
   };
 
   useEffect(() => {
-    dispatch({ type: SET_SPLASH_SCREEN, payload: true });
     isAuthenticated(dispatch).then((isAuth) => {
       if (isAuth) {
+        dispatch({ type: SET_SPLASH_SCREEN, payload: true });
         navigation.replace("Home");
       } else {
         setInitializing(false);

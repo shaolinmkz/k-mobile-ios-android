@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import randomColor from "randomcolor";
 import * as Contacts from "expo-contacts";
 import { SET_ALL_CONTACTS } from "../redux/types";
+import { isValidPhoneNumber } from "../helpers";
 
 export interface ContactType {
   emails: Contacts.Email[];
@@ -49,7 +50,8 @@ export const useContact = () => {
           displayColor: randomColor({ luminosity: 'dark' }),
           initials: `${`${name}`.split(" ")[0].toUpperCase().slice(0, 1)}${`${name}`.split(" ")[`${name}`.split(" ").length - 1].toUpperCase().slice(0, 1)}`
         })
-      ).sort((a, b) => `${a.name}`.toLowerCase().localeCompare(`${b.name}`.toLowerCase()));
+      ).sort((a, b) => `${a.name}`.toLowerCase().localeCompare(`${b.name}`.toLowerCase()))
+      .filter(({ phoneNumbers }) => isValidPhoneNumber(`${phoneNumbers?.[0]?.number}`));
 
       resolve(unpackedData);
     });

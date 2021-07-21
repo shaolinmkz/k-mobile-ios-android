@@ -4,7 +4,7 @@ import { View, Image, Modal, Animated } from "react-native";
 import { SET_SPLASH_SCREEN } from "../redux/types";
 import useAppState from "../hooks/useAppState";
 
-const SplashScreen = ({ logo }: React.ComponentProps<any>) => {
+const SplashScreen = ({ logo, timeout }: React.ComponentProps<any>) => {
   const { splashScreenOpen } = useAppState();
   const dispatch = useDispatch();
 
@@ -20,27 +20,22 @@ const SplashScreen = ({ logo }: React.ComponentProps<any>) => {
 
   useEffect(() => {
     if (splashScreenOpen) {
-      handleSplashScreen(2000).finally(() => {
+      handleSplashScreen(timeout).finally(() => {
         dispatch({ type: SET_SPLASH_SCREEN, payload: false });
       });
     }
   }, [splashScreenOpen]);
 
   useEffect(() => {
-    Animated.loop(
-      Animated.spring(startValue, {
-        toValue: -20,
-        friction: 1,
-        useNativeDriver: true,
-      }),
-      {
-        iterations: 100,
-      }
-    ).start();
+    Animated.spring(startValue, {
+      toValue: -20,
+      friction: 1,
+      useNativeDriver: true,
+    }).start()
   }, []);
 
   return (
-    <Modal animationType="none" transparent={false} visible style={{ flex: 1 }}>
+    <Modal animationType="fade" transparent={false} visible style={{ flex: 1 }}>
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <Animated.View
           style={[
@@ -65,5 +60,9 @@ const SplashScreen = ({ logo }: React.ComponentProps<any>) => {
     </Modal>
   );
 };
+
+SplashScreen.defaultProps = {
+  timeout: 3000
+}
 
 export default SplashScreen;
