@@ -8,13 +8,13 @@ import {
   Keyboard,
   ActivityIndicator,
   Platform,
+  ScrollView,
+  TouchableOpacity
 } from "react-native";
-import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { Input, Icon, Box } from "native-base";
 import { Ionicons } from "@expo/vector-icons";
 import AccountItem from "../components/AccountItem";
 import CustomButton2 from "../components/CustomButton2";
-import CustomModal from "../components/CustomModal";
 import CustomTextInput from "../components/CustomTextInput";
 import TransferSuccessModal from "../components/TransferSuccessModal";
 import colors from "../constants/colors";
@@ -23,6 +23,8 @@ import {
   authenticateUserViaHardware,
   combinedValidators,
   fallbackResolver,
+  isValidEmail,
+  isValidPhoneNumber,
   sanitizePhoneNumber,
   ternaryResolver,
 } from "../helpers";
@@ -55,11 +57,10 @@ const SendMoney = ({ route, navigation }: React.ComponentProps<any>) => {
     actionLoading,
     transferSuccessful,
     reversalDuration,
-    globalErrorMessage,
   } = useAppState();
 
-  const [localIsValidatingPhoneNumber, setLocalIsValidatingPhoneNumber] =
-    useState(false);
+  const [localIsValidatingPhoneNumber, setLocalIsValidatingPhoneNumber] = useState(false);
+  const [hasValidatedAlias, setHasvalidatedAlias] = useState(!!selectedContact);
   const [localActionLoading, setLocalActionLoading] = useState(false);
   const [confirmationModalOpen, setComfirmationModalOpen] = useState(false);
   const [selectedValidationOption, setSelectedValidationOption] = useState("");
@@ -89,23 +90,35 @@ const SendMoney = ({ route, navigation }: React.ComponentProps<any>) => {
       dispatch({ type: VALIDATED_PHONE_NUMBER, payload: "" });
       dispatch({ type: VALIDATED_OPTIONS_PHONE_NUMBER, payload: [] });
       setSelectedValidationOption("");
+      setHasvalidatedAlias(false);
+    }
+  };
+
+  const handleAliasValidation = () => {
+      dispatch({ type: VALIDATED_PHONE_NUMBER, payload: "" });
+      dispatch({ type: VALIDATED_OPTIONS_PHONE_NUMBER, payload: [] });
+      setSelectedValidationOption("");
 
       if (
-        combinedValidators.phoneAndEmail(value) &&
+        combinedValidators.phoneAndEmail(localState.receiverId) &&
         !isValidatingPhoneNumber &&
         !localIsValidatingPhoneNumber
       ) {
         setLocalIsValidatingPhoneNumber(true);
         Keyboard.dismiss();
-        validatePhoneNumber(dispatch)(value).finally(() => {
+        validatePhoneNumber(dispatch)(localState.receiverId).finally(() => {
           setLocalIsValidatingPhoneNumber(false);
+          setHasvalidatedAlias(true);
         });
       }
-    }
-  };
+
+  }
 
   const isLinkedToMe = (value: string) => {
-    return linkedAliases?.map(({ linkedId }) => linkedId).includes(value);
+    interface IAlias {
+      linkedId: string;
+    }
+    return linkedAliases?.map(({ linkedId }: IAlias) => linkedId).includes(value);
   };
 
   const handleInitializeStoreValues = () => {
@@ -194,6 +207,9 @@ const SendMoney = ({ route, navigation }: React.ComponentProps<any>) => {
   }, []);
 
   const winDi = Dimensions.get("window");
+  const winHeightByThree = winDi.height / 3;
+  // @ts-ignore
+  const filterVidatedDataOptions = [...new Set(validatedDataOptions)];
 
   return (
     <>
@@ -238,12 +254,11 @@ const SendMoney = ({ route, navigation }: React.ComponentProps<any>) => {
               />
             )}
 
-            {!!validatedDataOptions?.length &&
-              Array.isArray(validatedDataOptions) &&
+            {!!filterVidatedDataOptions?.length &&
+              Array.isArray(filterVidatedDataOptions) &&
               !!receiverId && (
-                <ScrollView style={{ maxHeight: 250 }}>
-                  {/* @ts-ignore */}
-                  {[...new Set(validatedDataOptions)].map(
+                <ScrollView style={{ maxHeight: (filterVidatedDataOptions.length > 2 && winHeightByThree > 250) ? winHeightByThree : 250 }}>
+                  {filterVidatedDataOptions.map(
                     (accountName, index) => (
                       <TouchableOpacity
                         activeOpacity={0.7}
@@ -406,13 +421,16 @@ const SendMoney = ({ route, navigation }: React.ComponentProps<any>) => {
                 }}
               >
                 <CustomButton2
-                  onPress={() => setComfirmationModalOpen(true)}
+                  onPress={hasValidatedAlias ? () => setComfirmationModalOpen(true) : handleAliasValidation}
                   loading={localActionLoading || actionLoading}
-                  text="Send Money"
+                  text={hasValidatedAlias
+                    ? "Send Money"
+                    : `Verify ${ternaryResolver(isValidEmail(localState.receiverId), "Email", ternaryResolver(isValidPhoneNumber(localState.receiverId), "Phone Number", "Alias"))}`}
                   disabled={[
                     validator.amount,
                     validator.receiverId && !selectedContact,
                     isValidatingPhoneNumber,
+                    !!validatedDataOptions?.length && !selectedValidationOption
                   ].includes(true)}
                 />
               </View>
@@ -420,6 +438,7 @@ const SendMoney = ({ route, navigation }: React.ComponentProps<any>) => {
           </View>
         </View>
       </TouchableWithoutFeedback>
+
       {transferSuccessful && (
         <TransferSuccessModal
           mode="dark"
