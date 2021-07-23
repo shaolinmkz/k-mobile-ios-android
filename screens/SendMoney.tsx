@@ -9,7 +9,7 @@ import {
   ActivityIndicator,
   Platform,
   ScrollView,
-  TouchableOpacity
+  TouchableOpacity,
 } from "react-native";
 import { Input, Icon, Box } from "native-base";
 import { Ionicons } from "@expo/vector-icons";
@@ -59,7 +59,8 @@ const SendMoney = ({ route, navigation }: React.ComponentProps<any>) => {
     reversalDuration,
   } = useAppState();
 
-  const [localIsValidatingPhoneNumber, setLocalIsValidatingPhoneNumber] = useState(false);
+  const [localIsValidatingPhoneNumber, setLocalIsValidatingPhoneNumber] =
+    useState(false);
   const [hasValidatedAlias, setHasvalidatedAlias] = useState(!!selectedContact);
   const [localActionLoading, setLocalActionLoading] = useState(false);
   const [confirmationModalOpen, setComfirmationModalOpen] = useState(false);
@@ -95,30 +96,31 @@ const SendMoney = ({ route, navigation }: React.ComponentProps<any>) => {
   };
 
   const handleAliasValidation = () => {
-      dispatch({ type: VALIDATED_PHONE_NUMBER, payload: "" });
-      dispatch({ type: VALIDATED_OPTIONS_PHONE_NUMBER, payload: [] });
-      setSelectedValidationOption("");
+    dispatch({ type: VALIDATED_PHONE_NUMBER, payload: "" });
+    dispatch({ type: VALIDATED_OPTIONS_PHONE_NUMBER, payload: [] });
+    setSelectedValidationOption("");
 
-      if (
-        combinedValidators.phoneAndEmail(localState.receiverId) &&
-        !isValidatingPhoneNumber &&
-        !localIsValidatingPhoneNumber
-      ) {
-        setLocalIsValidatingPhoneNumber(true);
-        Keyboard.dismiss();
-        validatePhoneNumber(dispatch)(localState.receiverId).finally(() => {
-          setLocalIsValidatingPhoneNumber(false);
-          setHasvalidatedAlias(true);
-        });
-      }
-
-  }
+    if (
+      combinedValidators.phoneAndEmail(localState.receiverId) &&
+      !isValidatingPhoneNumber &&
+      !localIsValidatingPhoneNumber
+    ) {
+      setLocalIsValidatingPhoneNumber(true);
+      Keyboard.dismiss();
+      validatePhoneNumber(dispatch)(localState.receiverId).finally(() => {
+        setLocalIsValidatingPhoneNumber(false);
+        setHasvalidatedAlias(true);
+      });
+    }
+  };
 
   const isLinkedToMe = (value: string) => {
     interface IAlias {
       linkedId: string;
     }
-    return linkedAliases?.map(({ linkedId }: IAlias) => linkedId).includes(value);
+    return linkedAliases
+      ?.map(({ linkedId }: IAlias) => linkedId)
+      .includes(value);
   };
 
   const handleInitializeStoreValues = () => {
@@ -134,7 +136,7 @@ const SendMoney = ({ route, navigation }: React.ComponentProps<any>) => {
   const closeConfirmationModalAndCleanup = () => {
     setComfirmationModalOpen(false);
     handleInputChange("password")("");
-  }
+  };
 
   const handleSendMoney = async (auth: boolean) => {
     if (auth) {
@@ -153,21 +155,28 @@ const SendMoney = ({ route, navigation }: React.ComponentProps<any>) => {
   };
 
   const handleBiometricTransfer = () => {
-    authenticateUserViaHardware({ promptMessage: "Biometric Confirmation" })
-    .then(result => {
-      if(result) {
+    authenticateUserViaHardware({
+      promptMessage: "Biometric Confirmation",
+    }).then((result) => {
+      if (result) {
         handleSendMoney(result.success);
       } else {
-        dispatch({ type: SET_GLOBAL_ERROR, payload: "Biometric confirmation failed..." })
+        dispatch({
+          type: SET_GLOBAL_ERROR,
+          payload: "Biometric confirmation failed...",
+        });
       }
-    })
+    });
   };
 
   const handlePasswordTransfer = () => {
-    if(localState.password === PASSWORD) {
+    if (localState.password === PASSWORD) {
       handleSendMoney(localState.password === PASSWORD);
     } else {
-      dispatch({ type: SET_GLOBAL_ERROR, payload: "Invalid password, please try again..." });
+      dispatch({
+        type: SET_GLOBAL_ERROR,
+        payload: "Invalid password, please try again...",
+      });
     }
   };
 
@@ -181,10 +190,30 @@ const SendMoney = ({ route, navigation }: React.ComponentProps<any>) => {
     receiverId:
       !combinedValidators.phoneAndEmail(receiverId) ||
       isLinkedToMe(receiverId) ||
-      isLinkedToMe(`${selectedContact?.phoneNumbers?.[0]?.number}`),
+      isLinkedToMe(
+        sanitizePhoneNumber(`${selectedContact?.phoneNumbers?.[0]?.number}`)
+      ),
     notValidatedUser: [!selectedContact, !selectedValidationOption].every(
       (val) => val === true
     ),
+  };
+
+  const errorMsg1 = "Must be a valid email or phone number";
+  const errorMsg2 = "You can't transfer money to an alias linked to you";
+
+  const resolveAliasEntryErrorMessage = () => {
+    if (!combinedValidators.phoneAndEmail(receiverId)) {
+      return errorMsg1;
+    }
+    if (
+      isLinkedToMe(receiverId) ||
+      isLinkedToMe(
+        sanitizePhoneNumber(`${selectedContact?.phoneNumbers?.[0]?.number}`)
+      )
+    ) {
+      return errorMsg2;
+    }
+    return undefined;
   };
 
   useEffect(() => {
@@ -257,31 +286,37 @@ const SendMoney = ({ route, navigation }: React.ComponentProps<any>) => {
             {!!filterVidatedDataOptions?.length &&
               Array.isArray(filterVidatedDataOptions) &&
               !!receiverId && (
-                <ScrollView style={{ maxHeight: (filterVidatedDataOptions.length > 2 && winHeightByThree > 250) ? winHeightByThree : 250 }}>
-                  {filterVidatedDataOptions.map(
-                    (accountName, index) => (
-                      <TouchableOpacity
-                        activeOpacity={0.7}
-                        key={index}
-                        onPress={() => setSelectedValidationOption(accountName)}
-                      >
-                        <AccountItem
-                          isMultiple
-                          checked={accountName === selectedValidationOption}
-                          initials={`${`${accountName}`
-                            .split(" ")[0]
-                            .slice(0, 1)}${`${accountName}`
-                            .split(" ")
-                            [`${accountName}`.split(" ").length - 1].slice(
-                              0,
-                              1
-                            )}`}
-                          name={`${accountName}`}
-                          phoneNumbers={`${receiverId}`}
-                        />
-                      </TouchableOpacity>
-                    )
-                  )}
+                <ScrollView
+                  style={{
+                    maxHeight:
+                      filterVidatedDataOptions.length > 2 &&
+                      winHeightByThree > 250
+                        ? winHeightByThree
+                        : 250,
+                  }}
+                >
+                  {filterVidatedDataOptions.map((accountName, index) => (
+                    <TouchableOpacity
+                      activeOpacity={0.7}
+                      key={index}
+                      onPress={() => setSelectedValidationOption(accountName)}
+                    >
+                      <AccountItem
+                        isMultiple
+                        checked={accountName === selectedValidationOption}
+                        initials={`${`${accountName}`
+                          .split(" ")[0]
+                          .slice(0, 1)}${`${accountName}`
+                          .split(" ")
+                          [`${accountName}`.split(" ").length - 1].slice(
+                            0,
+                            1
+                          )}`}
+                        name={`${accountName}`}
+                        phoneNumbers={`${receiverId}`}
+                      />
+                    </TouchableOpacity>
+                  ))}
                 </ScrollView>
               )}
 
@@ -305,6 +340,7 @@ const SendMoney = ({ route, navigation }: React.ComponentProps<any>) => {
                     maxLength={100}
                     onChangeText={handleInputChange("receiverId")}
                     labelColor={colors.labelColor}
+                    error={receiverId && resolveAliasEntryErrorMessage()}
                   />
                 )}
 
@@ -420,17 +456,54 @@ const SendMoney = ({ route, navigation }: React.ComponentProps<any>) => {
                   paddingBottom: Dimensions.get("window").width / 10,
                 }}
               >
+                {isLinkedToMe(
+                  sanitizePhoneNumber(
+                    `${selectedContact?.phoneNumbers?.[0]?.number}`
+                  )
+                ) && (
+                  <Text
+                    style={{
+                      paddingVertical: 10,
+                      color: colors.primary,
+                      fontFamily: fonts.regular,
+                      fontSize: winDi.width / 30,
+                      textAlign: "center",
+                    }}
+                  >
+                    {errorMsg2}
+                  </Text>
+                )}
                 <CustomButton2
-                  onPress={hasValidatedAlias ? () => setComfirmationModalOpen(true) : handleAliasValidation}
+                  onPress={
+                    hasValidatedAlias
+                      ? () => setComfirmationModalOpen(true)
+                      : handleAliasValidation
+                  }
                   loading={localActionLoading || actionLoading}
-                  text={hasValidatedAlias
-                    ? "Send Money"
-                    : `Verify ${ternaryResolver(isValidEmail(localState.receiverId), "Email", ternaryResolver(isValidPhoneNumber(localState.receiverId), "Phone Number", "Alias"))}`}
+                  text={
+                    hasValidatedAlias
+                      ? "Send Money"
+                      : `Verify ${ternaryResolver(
+                          isValidEmail(localState.receiverId),
+                          "Email",
+                          ternaryResolver(
+                            isValidPhoneNumber(localState.receiverId),
+                            "Phone Number",
+                            "Alias"
+                          )
+                        )}`
+                  }
                   disabled={[
                     validator.amount,
                     validator.receiverId && !selectedContact,
+                    isLinkedToMe(receiverId),
+                    isLinkedToMe(
+                      sanitizePhoneNumber(
+                        `${selectedContact?.phoneNumbers?.[0]?.number}`
+                      )
+                    ),
                     isValidatingPhoneNumber,
-                    !!validatedDataOptions?.length && !selectedValidationOption
+                    !!validatedDataOptions?.length && !selectedValidationOption,
                   ].includes(true)}
                 />
               </View>
@@ -457,11 +530,13 @@ const SendMoney = ({ route, navigation }: React.ComponentProps<any>) => {
         />
       )}
 
-
       {confirmationModalOpen && (
         <TouchableWithoutFeedback
           onPress={(e) => {
-            if (e.target === modlRef1.current || e.target === modlRef2.current) {
+            if (
+              e.target === modlRef1.current ||
+              e.target === modlRef2.current
+            ) {
               closeConfirmationModalAndCleanup();
             }
           }}
@@ -478,7 +553,7 @@ const SendMoney = ({ route, navigation }: React.ComponentProps<any>) => {
             }}
           >
             <View
-            ref={modlRef2}
+              ref={modlRef2}
               style={{
                 flex: 1,
                 justifyContent: "center",
