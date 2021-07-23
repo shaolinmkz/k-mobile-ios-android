@@ -16,6 +16,7 @@ import colors from "../constants/colors";
 import fonts from "../constants/fonts";
 import {
   ternaryResolver,
+  combinedValidators,
 } from "../helpers";
 import useAppState from "../hooks/useAppState";
 import {
@@ -221,7 +222,7 @@ const ManualLoginModal = ({ onClose }: IManualLoginModal) => {
                   onPress={handleSubmit}
                   text="Login"
                   loading={localActionLoading}
-                  disabled={!localState.password || !localState.username}
+                  disabled={!localState.password || !combinedValidators.phoneAndEmail(localState.username)}
                 />
               </View>
             </View>
