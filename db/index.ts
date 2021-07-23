@@ -5,7 +5,7 @@ const loginCredentials = {
   password: "123456",
 };
 
-// taj bank logo
+// Taj bank logo
 // https://res.cloudinary.com/shaolinmkz/image/upload/v1612356666/Random-Icons/taj-bank.png
 
 // Zenith Bank logo
@@ -19,6 +19,9 @@ const loginCredentials = {
 
 // Access bank logo
 // https://res.cloudinary.com/shaolinmkz/image/upload/v1626638585/Random-Icons/access-bank.png
+
+// Providus bank logo
+// https://res.cloudinary.com/shaolinmkz/image/upload/v1627057962/Random-Icons/Providus-Bank-logo.png
 
 
 export const registeredBanks: Array<IBank> = [
@@ -39,6 +42,15 @@ export const registeredBanks: Array<IBank> = [
     bankCode: "000015",
     label: "Zenith Bank",
     value: "000015",
+    ...loginCredentials,
+  },
+  {
+    appName: "Access Bank",
+    appIcon: "https://res.cloudinary.com/shaolinmkz/image/upload/v1626638585/Random-Icons/access-bank.png",
+    apiKey: "-9zaytogn.f929f900-0e9a-499e-ab34-55538f4d8ef0",
+    bankCode: "000014",
+    label: "Access Bank",
+    value: "000014",
     ...loginCredentials,
   },
 ];
