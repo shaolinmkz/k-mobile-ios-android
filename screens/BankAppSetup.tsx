@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   View,
@@ -51,7 +51,10 @@ const BankAppSetup = ({ navigation }: any) => {
   const [bankSelectionModalOpen, setBankSelectionModalOpen] = useState(false);
   const [isLoginModal, setIsLoginModal] = useState(false);
 
+  const parentRef = useRef(null);
+
   // Save app state hook
+  // This saves app states based on on key fields
   useSaveAppState();
 
   const appState: IInitialState = useSelector(
@@ -154,8 +157,12 @@ const BankAppSetup = ({ navigation }: any) => {
     <PageLoader />
   ) : (
     <>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.container}>
+      <TouchableWithoutFeedback onPress={(e) => {
+        if(e.target === parentRef.current) {
+          Keyboard.dismiss();
+        }
+      }}>
+        <View ref={parentRef} style={styles.container}>
           <View style={styles.inputContainer}>
             <View style={styles.btnContainer}>
               <CustomSelect
