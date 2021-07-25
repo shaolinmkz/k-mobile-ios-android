@@ -1,3 +1,4 @@
+import { Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import jwt_decode from "jwt-decode";
 import * as LocalAuthentication from 'expo-local-authentication';
@@ -190,6 +191,14 @@ interface IHardwareAuth {
 
 export const authenticateUserViaHardware = async ({ dispatch, promptMessage }: IHardwareAuth) => {
 
+
+    const cancelAuthFlow = () => {
+      if(Platform.OS === "android") {
+        LocalAuthentication.cancelAuthenticate();
+      }
+    }
+
+
   try {
     const hashardWare = await LocalAuthentication.hasHardwareAsync();
     if(hashardWare) {
@@ -205,13 +214,18 @@ export const authenticateUserViaHardware = async ({ dispatch, promptMessage }: I
        const isEnrolled = await LocalAuthentication.isEnrolledAsync();
 
        if(isEnrolled) {
+         const customPromptMessage = fallbackResolver(promptMessage, "Biometric Confirmation");
+
          const authenicated = await LocalAuthentication.authenticateAsync({
-          promptMessage: fallbackResolver(promptMessage, "Biometric Confirmation"),
+          promptMessage: customPromptMessage,
+          cancelLabel: "Cancel",
+          disableDeviceFallback: true,
          });
 
          if(!authenicated.success) {
+          cancelAuthFlow();
            // @ts-ignore
-           throw Error(fallbackResolver(authenicated?.message, "Oops! Authentication Failed..."));
+           throw Error(fallbackResolver(ternaryResolver(`${authenicated?.message}`.toLowerCase() === "cancel", `${promptMessage} Failed`, authenicated?.message), "Oops! Authentication Failed..."));
          }
 
          dispatch?.({ type: SET_GLOBAL_SUCCESS, payload: "Authentication Passed..." });

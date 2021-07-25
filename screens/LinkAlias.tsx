@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -30,6 +30,8 @@ const LinkAlias = ({ route, navigation }: React.ComponentProps<any>) => {
   const [selectedPhoneOrEmail, setSelectedPhoneOrEmail] = useState("");
   const { phoneNumber, dispatch, actionLoading } = useAppState();
   const { activeJourney } = useNavJourney();
+
+  const parentRef = useRef(null);
 
   const handleCheck = (value: string) => {
     setSelectedPhoneOrEmail(value);
@@ -75,8 +77,12 @@ const LinkAlias = ({ route, navigation }: React.ComponentProps<any>) => {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <View style={styles.container}>
+    <TouchableWithoutFeedback onPress={(e) => {
+      if(e.target === parentRef.current) {
+        Keyboard.dismiss();
+      }
+    }}>
+      <View ref={parentRef} style={styles.container}>
         <View style={styles.account}>
           <Text style={styles.accountHeading}>Linking alias to:</Text>
           <Text style={styles.accountText}>
