@@ -1,7 +1,7 @@
 import kwiklliApi from "../../api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { findTelco, isValidPhoneNumber, ternaryResolver, toastError, toastSuccess } from "../../helpers";
-import { replace, navigate } from "../../helpers/navigationRef";
+import { fallbackResolver, findTelco, isValidPhoneNumber, ternaryResolver, toastError, toastSuccess } from "../../helpers";
+import { replace } from "../../helpers/navigationRef";
 import {
   LOGIN,
   LOGIN_LOADING,
@@ -396,8 +396,9 @@ export const handleTransfer = (dispatch: (data: any) => void) => async ({ amount
       originBankCode: selectedBank?.bankCode,
       amount: Number(amount) * 100,
       receiverId,
+      bankReferenceId: `${Date.now()}`, // Added newly field
       paymentChannel: "MOBILE_APP",
-      telcoName: findTelco(receiverId, telcoPrefixes)?.toUpperCase?.() || "N/A",
+      telcoName: fallbackResolver(findTelco(receiverId, telcoPrefixes)?.toUpperCase?.(), "N/A"),
       senderFullName,
     };
 
