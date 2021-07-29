@@ -1,6 +1,6 @@
-// @ts-nocheck
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
+// @ts-ignore
 import randomColor from "randomcolor";
 import * as Contacts from "expo-contacts";
 import { SET_ALL_CONTACTS } from "../redux/types";
@@ -51,8 +51,8 @@ export const useContact = () => {
           initials: `${`${name}`.split(" ")[0].toUpperCase().slice(0, 1)}${`${name}`.split(" ")[`${name}`.split(" ").length - 1].toUpperCase().slice(0, 1)}`
         })
       ).sort((a, b) => `${a.name}`.toLowerCase().localeCompare(`${b.name}`.toLowerCase()))
-      .filter(({ phoneNumbers }) => isValidPhoneNumber(`${phoneNumbers?.[0]?.number}`));
-
+        .filter(({ phoneNumbers }) => isValidPhoneNumber(`${phoneNumbers?.[0]?.number}`));
+      // @ts-ignore
       resolve(unpackedData);
     });
   };
@@ -77,10 +77,16 @@ export const useContact = () => {
       })
   }
 
+  const delay = (time: number) => {
+    return new Promise(resolve => setTimeout(resolve, time));
+  }
+
   useEffect(() => {
     getContacts()
       .finally(() => {
-        setLoadingContact(false);
+        delay(1000).finally(() => {
+          setLoadingContact(false);
+        });
       });
   }, []);
 

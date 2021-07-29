@@ -1,6 +1,6 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createStackNavigator, TransitionPresets } from "@react-navigation/stack";
 import { Dimensions, Platform } from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 
@@ -50,6 +50,10 @@ const components = {
   ),
 };
 
+const TransitionScreenOptions = {
+  ...TransitionPresets.SlideFromRightIOS,
+};
+
 const Routes = () => {
   const { dispatch, selectedBank } = useAppState();
 
@@ -87,6 +91,7 @@ const Routes = () => {
             headerStyle,
             // @ts-ignore
             headerTitleContainerStyle,
+            ...TransitionScreenOptions,
           }}
         />
         <Stack.Screen
@@ -117,6 +122,7 @@ const Routes = () => {
             headerStyle,
             // @ts-ignore
             headerTitleContainerStyle,
+            ...TransitionScreenOptions,
           }}
         />
         <Stack.Screen
@@ -129,6 +135,7 @@ const Routes = () => {
               fontFamily: fonts.bold,
             },
             headerStyle,
+            ...TransitionScreenOptions,
           }}
         />
         <Stack.Screen
@@ -141,6 +148,7 @@ const Routes = () => {
               fontFamily: fonts.bold,
             },
             headerStyle,
+            ...TransitionScreenOptions,
           }}
         />
 
@@ -154,6 +162,7 @@ const Routes = () => {
               fontFamily: fonts.bold,
             },
             headerStyle,
+            ...TransitionScreenOptions,
           }}
         />
 
@@ -167,6 +176,7 @@ const Routes = () => {
               fontFamily: fonts.bold,
             },
             headerStyle,
+            ...TransitionScreenOptions,
           }}
         />
 
@@ -180,6 +190,7 @@ const Routes = () => {
               fontFamily: fonts.bold,
             },
             headerStyle,
+            ...TransitionScreenOptions,
           }}
         />
 
@@ -193,6 +204,7 @@ const Routes = () => {
               fontFamily: fonts.bold,
             },
             headerStyle,
+            ...TransitionScreenOptions,
           }}
         />
       </Stack.Navigator>

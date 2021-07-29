@@ -4,8 +4,9 @@
     "slug": "kwiklli-bank-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
-    "description": "A bank demo app for Kwiklli",
+    "description": "A new way to receive money 💰💰💰 through Kwiklli. Send money to any existing bank account. Link phone number or email address to your bank account. Cashout from any SANEF agent nearby.",
     "icon": "./assets/icon.png",
+    "owner": "kwiklli",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
