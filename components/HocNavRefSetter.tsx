@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
-import { NavigationRef } from "../helpers/navigationRef";
+import { useSelector, useDispatch } from "react-redux";
+import { NavigationRef, DispatchRef } from "../helpers/navigationRef";
 import { IInitialState, IAppState } from "../Interfaces";
 
 interface IProps {
@@ -15,6 +15,8 @@ const HocNavRefSetter = (props: IProps) => {
     (state: IAppState) => state.appState
   );
 
+  const dispatch = useDispatch();
+
   const customProps = {
     ...rest,
     ...appState,
@@ -22,6 +24,7 @@ const HocNavRefSetter = (props: IProps) => {
 
   useEffect(() => {
     NavigationRef.setRef(props.navigation);
+    DispatchRef.setDispatch(dispatch);
   }, []);
 
   return <Component {...customProps} />;
