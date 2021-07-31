@@ -170,11 +170,16 @@ export const isAuthenticated = async (dispatch: (data: any) => void) => {
     const prevAppState = await AsyncStorage.getItem("appState");
     const authenticated = await validateToken(token);
 
+    const stateOverride = {
+      authenticated,
+      splashScreenOpen: true,
+    }
+
     if (authenticated) {
       if (prevAppState) {
         dispatch({
           type: APP_STATE_UPDATE,
-          payload: JSON.parse(prevAppState),
+          payload: { ...JSON.parse(prevAppState), ...stateOverride },
         });
       }
     }

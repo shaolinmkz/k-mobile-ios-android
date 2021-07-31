@@ -1,5 +1,4 @@
 import * as React from "react"
-import { anonymousFunc } from ".";
 
 export const navigationRef = React.createRef<any>();
 
@@ -11,11 +10,11 @@ export const navigate = (routeName?: any, params?: any) => {
 };
 
 export class DispatchRef {
-  static dispatchRef = anonymousFunc;
+  static dispatchRef = (data: any) => data;
 
 
   static setDispatch(dispatch: any) {
-    this.dispatchRef = dispatch;
+    this.dispatchRef = dispatch ? dispatch : (data: any) => data;
   }
 
   static dispatch(action: any) {

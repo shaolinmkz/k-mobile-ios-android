@@ -48,6 +48,7 @@ export interface IInitialState {
   userExist?: null | boolean;
   hasChecked?: boolean;
   actionLoading?: boolean;
+  authenticated?: boolean;
   otp?: {
     char1?: string;
     char2?: string;
