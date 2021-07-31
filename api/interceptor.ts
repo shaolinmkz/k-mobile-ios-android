@@ -1,11 +1,13 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { replace } from "../helpers/navigationRef";
+import { replace, DispatchRef } from "../helpers/navigationRef";
+import { LOGOUT } from "../redux/types";
 
 const clearStorage = async () => {
   try {
     await AsyncStorage.clear();
-    replace("SetupBankApp");
+    replace("BankAppSetup");
+    DispatchRef.dispatch({ type: LOGOUT });
   } catch (e) {
     return e;
   }

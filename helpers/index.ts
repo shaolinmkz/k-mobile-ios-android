@@ -6,7 +6,7 @@ import { APP_STATE_UPDATE, SET_GLOBAL_ERROR, SET_GLOBAL_SUCCESS } from "../redux
 import { phonePrefix as phoneNumberPrefix, telcoPrefixes } from "./phoneNumberPrefixes";
 export { navigate } from "./navigationRef";
 
-export const anonymousFunc = () => null;
+export const anonymousFunc = (data: any) => data;
 
 /**
  * @function timerConverter
