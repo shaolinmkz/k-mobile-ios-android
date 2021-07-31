@@ -1,6 +1,9 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator, TransitionPresets } from "@react-navigation/stack";
+import {
+  createStackNavigator,
+  TransitionPresets,
+} from "@react-navigation/stack";
 import { Dimensions, Platform } from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 
@@ -55,7 +58,7 @@ const TransitionScreenOptions = {
 };
 
 const Routes = () => {
-  const { dispatch, selectedBank } = useAppState();
+  const { dispatch, selectedBank, authenticated } = useAppState();
 
   const headerStyle = {
     backgroundColor: colors.headerBg,
@@ -77,136 +80,142 @@ const Routes = () => {
 
   return (
     <NavigationContainer ref={navigationRef}>
-      <Stack.Navigator initialRouteName="BankAppSetup">
-        <Stack.Screen
-          name="BankAppSetup"
-          component={components.BankAppSetup}
-          options={{
-            title: "Setup",
-            headerTitleStyle: {
-              fontSize: Dimensions.get("window").width / 18,
-              fontFamily: fonts.bold,
-              color: colors.secondary,
-            },
-            headerStyle,
-            // @ts-ignore
-            headerTitleContainerStyle,
-            ...TransitionScreenOptions,
-          }}
-        />
-        <Stack.Screen
-          name="Home"
-          component={components.Home}
-          options={{
-            title: fallbackResolver(selectedBank?.label, "Home"),
-            headerRight: () => (
-              <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
-                <Item
-                  title="Cart"
-                  iconName={
-                    Platform.OS === "android"
-                      ? "md-exit-outline"
-                      : "ios-exit-outline"
-                  }
-                  onPress={() => {
-                    dispatch({ type: SET_LOGOUT_MODAL, payload: true });
-                  }}
-                />
-              </HeaderButtons>
-            ),
-            headerTitleStyle: {
-              fontSize: Dimensions.get("window").width / 18,
-              fontFamily: fonts.bold,
-              color: colors.secondary,
-            },
-            headerStyle,
-            // @ts-ignore
-            headerTitleContainerStyle,
-            ...TransitionScreenOptions,
-          }}
-        />
-        <Stack.Screen
-          name="AccountNumberList"
-          component={components.AccountNumberList}
-          options={{
-            title: "Accounts",
-            headerTitleStyle: {
-              fontSize: Dimensions.get("window").width / 20,
-              fontFamily: fonts.bold,
-            },
-            headerStyle,
-            ...TransitionScreenOptions,
-          }}
-        />
-        <Stack.Screen
-          name="LinkAlias"
-          component={components.LinkAlias}
-          options={{
-            title: "Select Alias",
-            headerTitleStyle: {
-              fontSize: Dimensions.get("window").width / 20,
-              fontFamily: fonts.bold,
-            },
-            headerStyle,
-            ...TransitionScreenOptions,
-          }}
-        />
+      <Stack.Navigator>
+        {!authenticated ? (
+          <Stack.Screen
+            name="BankAppSetup"
+            component={components.BankAppSetup}
+            options={{
+              title: "Login",
+              headerTitleStyle: {
+                fontSize: Dimensions.get("window").width / 18,
+                fontFamily: fonts.bold,
+                color: colors.secondary,
+              },
+              headerStyle,
+              // @ts-ignore
+              headerTitleContainerStyle,
+              ...TransitionScreenOptions,
+              animationTypeForReplace: authenticated ? 'push' : 'pop',
+            }}
+          />
+        ) : (
+          <>
+            <Stack.Screen
+              name="Home"
+              component={components.Home}
+              options={{
+                title: fallbackResolver(selectedBank?.label, "Home"),
+                headerRight: () => (
+                  <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+                    <Item
+                      title="Cart"
+                      iconName={
+                        Platform.OS === "android"
+                          ? "md-exit-outline"
+                          : "ios-exit-outline"
+                      }
+                      onPress={() => {
+                        dispatch({ type: SET_LOGOUT_MODAL, payload: true });
+                      }}
+                    />
+                  </HeaderButtons>
+                ),
+                headerTitleStyle: {
+                  fontSize: Dimensions.get("window").width / 18,
+                  fontFamily: fonts.bold,
+                  color: colors.secondary,
+                },
+                headerStyle,
+                // @ts-ignore
+                headerTitleContainerStyle,
+                ...TransitionScreenOptions,
+              }}
+            />
+            <Stack.Screen
+              name="AccountNumberList"
+              component={components.AccountNumberList}
+              options={{
+                title: "Accounts",
+                headerTitleStyle: {
+                  fontSize: Dimensions.get("window").width / 20,
+                  fontFamily: fonts.bold,
+                },
+                headerStyle,
+                ...TransitionScreenOptions,
+              }}
+            />
+            <Stack.Screen
+              name="LinkAlias"
+              component={components.LinkAlias}
+              options={{
+                title: "Select Alias",
+                headerTitleStyle: {
+                  fontSize: Dimensions.get("window").width / 20,
+                  fontFamily: fonts.bold,
+                },
+                headerStyle,
+                ...TransitionScreenOptions,
+              }}
+            />
 
-        <Stack.Screen
-          name="OtpScreen"
-          component={components.OtpScreen}
-          options={{
-            title: "One Time Password",
-            headerTitleStyle: {
-              fontSize: Dimensions.get("window").width / 20,
-              fontFamily: fonts.bold,
-            },
-            headerStyle,
-            ...TransitionScreenOptions,
-          }}
-        />
+            <Stack.Screen
+              name="OtpScreen"
+              component={components.OtpScreen}
+              options={{
+                title: "One Time Password",
+                headerTitleStyle: {
+                  fontSize: Dimensions.get("window").width / 20,
+                  fontFamily: fonts.bold,
+                },
+                headerStyle,
+                ...TransitionScreenOptions,
+              }}
+            />
 
-        <Stack.Screen
-          name="SelectAlias"
-          component={components.SelectAlias}
-          options={{
-            title: "Select Alias",
-            headerTitleStyle: {
-              fontSize: Dimensions.get("window").width / 20,
-              fontFamily: fonts.bold,
-            },
-            headerStyle,
-            ...TransitionScreenOptions,
-          }}
-        />
+            <Stack.Screen
+              name="SelectAlias"
+              component={components.SelectAlias}
+              options={{
+                title: "Select Alias",
+                headerTitleStyle: {
+                  fontSize: Dimensions.get("window").width / 20,
+                  fontFamily: fonts.bold,
+                },
+                headerStyle,
+                ...TransitionScreenOptions,
+              }}
+            />
 
-        <Stack.Screen
-          name="UnlinkAlias"
-          component={components.UnlinkAlias}
-          options={{
-            title: "Unlink Alias",
-            headerTitleStyle: {
-              fontSize: Dimensions.get("window").width / 20,
-              fontFamily: fonts.bold,
-            },
-            headerStyle,
-            ...TransitionScreenOptions,
-          }}
-        />
+            <Stack.Screen
+              name="UnlinkAlias"
+              component={components.UnlinkAlias}
+              options={{
+                title: "Unlink Alias",
+                headerTitleStyle: {
+                  fontSize: Dimensions.get("window").width / 20,
+                  fontFamily: fonts.bold,
+                },
+                headerStyle,
+                ...TransitionScreenOptions,
+              }}
+            />
 
-        <Stack.Screen
-          name="SendMoney"
-          component={components.SendMoney}
-          options={{
-            title: "Send Money",
-            headerTitleStyle: {
-              fontSize: Dimensions.get("window").width / 20,
-              fontFamily: fonts.bold,
-            },
-            headerStyle,
-            ...TransitionScreenOptions,
-          }}
-        />
+            <Stack.Screen
+              name="SendMoney"
+              component={components.SendMoney}
+              options={{
+                title: "Send Money",
+                headerTitleStyle: {
+                  fontSize: Dimensions.get("window").width / 20,
+                  fontFamily: fonts.bold,
+                },
+                headerStyle,
+                ...TransitionScreenOptions,
+              }}
+            />
+          </>
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   );

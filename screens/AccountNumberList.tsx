@@ -37,7 +37,7 @@ const AccountNumberList = ({
     fetchUserIdLinkedToBVNAction(dispatch);
   }, [])
 
-  if (!userExist && isModalOpen && activeJourney?.activeAction !== INDEPENDENT_UNLINKING) {
+  if (userExist === false && userExist !== null && isModalOpen && activeJourney?.activeAction !== INDEPENDENT_UNLINKING) {
     return (
       <>
         <LinkInfoModal mode="dark" visible handleModal={handleModal} />

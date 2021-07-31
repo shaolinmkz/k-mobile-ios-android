@@ -1,22 +1,27 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { replace, DispatchRef } from "../helpers/navigationRef";
+import { DispatchRef } from "../helpers/navigationRef";
 import { LOGOUT } from "../redux/types";
 
-const clearStorage = async () => {
+
+const customAxios = axios.create({
+  baseURL: "https://api-npay.bluegreensoft.com/v1",
+});
+
+const clearStorageAndLogout = async () => {
   try {
     await AsyncStorage.clear();
-    replace("BankAppSetup");
     DispatchRef.dispatch({ type: LOGOUT });
   } catch (e) {
     return e;
   }
 }
 
+
 /**
  * Interceptor construct
  */
-axios.interceptors.response.use(
+customAxios.interceptors.response.use(
   (response) => {
     return response;
   },
@@ -25,7 +30,7 @@ axios.interceptors.response.use(
       const isAuth = err?.config?.url?.includes?.("auth");
       const statusCode = err?.response?.status;
       if (statusCode === 401 && !isAuth) {
-        clearStorage();
+        clearStorageAndLogout();
       }
       return Promise.reject(err);
     } catch (cbErr) {
@@ -34,6 +39,5 @@ axios.interceptors.response.use(
   }
 );
 
-export default axios.create({
-  baseURL: "https://api-npay.bluegreensoft.com/v1",
-});
+
+export default customAxios;

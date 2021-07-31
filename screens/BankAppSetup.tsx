@@ -23,6 +23,7 @@ import {
   STOP_LOGIN_LOADING,
   LOGIN_LOADING,
   SET_GLOBAL_ERROR,
+  SET_AUTHENTICATED,
 } from "../redux/types";
 import { loginAction } from "../redux/actions";
 import CustomTextInput from "../components/CustomTextInput";
@@ -45,7 +46,7 @@ import PageLoader from "../components/PageLoader";
 import useSaveAppState from "../hooks/useSaveAppState";
 import ManualLoginModal from "../components/ManualLoginModal";
 
-const BankAppSetup = ({ navigation }: any) => {
+const BankAppSetup = () => {
   const dispatch = useDispatch();
   const [initializing, setInitializing] = useState(true);
   const [bankSelectionModalOpen, setBankSelectionModalOpen] = useState(false);
@@ -135,7 +136,7 @@ const BankAppSetup = ({ navigation }: any) => {
     isAuthenticated(dispatch).then((isAuth) => {
       if (isAuth) {
         dispatch({ type: SET_SPLASH_SCREEN, payload: true });
-        navigation.replace("Home");
+        dispatch({ type: SET_AUTHENTICATED, payload: true });
       } else {
         setInitializing(false);
       }

@@ -1,7 +1,13 @@
 import kwiklliApi from "../../api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { fallbackResolver, findTelco, isValidPhoneNumber, ternaryResolver, toastError, toastSuccess } from "../../helpers";
-import { replace } from "../../helpers/navigationRef";
+import {
+  fallbackResolver,
+  findTelco,
+  isValidPhoneNumber,
+  ternaryResolver,
+  toastError,
+  toastSuccess
+} from "../../helpers";
 import {
   LOGIN,
   LOGIN_LOADING,
@@ -53,6 +59,11 @@ export const loginAction = (dispatch: (data: any) => void) => async (payload: an
 
   try {
     const { data: { data, message } } = await kwiklliApi.post('/users/auth/login', payload);
+
+    await AsyncStorage.setItem('token', data.token);
+    await AsyncStorage.setItem('userData', JSON.stringify(data));
+    await AsyncStorage.setItem('selectedBank', JSON.stringify(selectedBank));
+
     toastSuccess(message, dispatch);
 
     dispatch({
@@ -65,11 +76,6 @@ export const loginAction = (dispatch: (data: any) => void) => async (payload: an
 
     dispatch({ type: SET_SPLASH_SCREEN, payload: true });
 
-    await AsyncStorage.setItem('token', data.token);
-    await AsyncStorage.setItem('userData', JSON.stringify(data));
-    await AsyncStorage.setItem('selectedBank', JSON.stringify(selectedBank));
-
-    replace("Home");
     return true;
   }
   catch (error) {
@@ -82,7 +88,6 @@ export const loginAction = (dispatch: (data: any) => void) => async (payload: an
 
 export const logoutAction = async (dispatch: (data: any) => void) => {
   await AsyncStorage.clear();
-  replace("BankAppSetup");
   dispatch({ type: LOGOUT });
 }
 
@@ -155,7 +160,7 @@ export const validatePhoneNumber = (dispatch: (data: any) => void) => async (val
 export const handleVerifyUser = (dispatch: (data: any) => void, loading = true) => async () => {
 
   try {
-    if(loading) {
+    if (loading) {
       dispatch({ type: SET_PAGE_LOADING, payload: true });
     }
 
@@ -332,7 +337,7 @@ export const initiateInitialLinking = (dispatch: (data: any) => void, resend = f
       phoneNumber,
     };
 
-    if(!resend) {
+    if (!resend) {
       dispatch({ type: SET_ACTION_LOADING, payload: true });
     }
 
