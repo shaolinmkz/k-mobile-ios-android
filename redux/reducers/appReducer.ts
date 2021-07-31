@@ -29,6 +29,7 @@ import {
   SET_GLOBAL_SUCCESS,
   SET_GLOBAL_ERROR,
   SET_LOGOUT_MODAL,
+  SET_AUTHENTICATED,
 } from '../types';
 import { registeredBanks } from '../../db';
 import { IAction, IInitialState } from '../../Interfaces/index';
@@ -78,6 +79,7 @@ export const initialState: IInitialState = {
   globalErrorMessage: undefined,
   globalSuccessMessage: undefined,
   logoutModalOpen: false,
+  authenticated: false,
 };
 
 
@@ -201,6 +203,12 @@ const rootReducer = (state = initialState, action: IAction) => {
         token: payload.token,
         userData: payload.userData,
         loginLoading: false,
+        authenticated: true,
+      };
+    case SET_AUTHENTICATED:
+      return {
+        ...state,
+        authenticated: payload,
       };
     case SELECT_BANK:
       return {
