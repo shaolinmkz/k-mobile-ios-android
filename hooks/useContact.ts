@@ -84,7 +84,7 @@ export const useContact = () => {
   useEffect(() => {
     getContacts()
       .finally(() => {
-        delay(1000).finally(() => {
+        delay(1500).finally(() => {
           setLoadingContact(false);
         });
       });
