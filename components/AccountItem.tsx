@@ -61,26 +61,63 @@ const AccountItem = ({
             </Text>
           </View>
 
+          {`${name}`.length <= 24 && (
+            <View>
+              <Text
+                style={{
+                  color: colors.secondary,
+                  fontFamily: fonts.bold,
+                  fontSize: Dimensions.get("window").width / 22,
+                  textTransform: "capitalize",
+                }}
+              >
+                {name}
+              </Text>
+              <Text
+                style={{
+                  color: colors.secondary,
+                  fontSize: Dimensions.get("window").width / 22,
+                }}
+              >
+                {sanitizePhoneNumber(phoneNumbers)}
+              </Text>
+            </View>
+          )}
+
+          {`${name}`.length > 24 && (
           <View>
+              <Text
+                style={{
+                  color: colors.secondary,
+                  fontFamily: fonts.bold,
+                  fontSize: Dimensions.get("window").width / 25,
+                  textTransform: "capitalize",
+                }}
+              >
+                {`${name}`.split(" ")[0]}
+              </Text>
+              <Text
+                style={{
+                  color: colors.secondary,
+                  fontFamily: fonts.bold,
+                  fontSize: Dimensions.get("window").width / 25,
+                  textTransform: "capitalize",
+                }}
+              >
+                {`${name}`.split(" ")[1]}{" "}{`${name}`.split(" ")[2]}
+              </Text>
+
             <Text
               style={{
                 color: colors.secondary,
-                fontFamily: fonts.bold,
-                fontSize: Dimensions.get("window").width / 22,
-                textTransform: "capitalize"
-              }}
-            >
-              {`${name}`.length > 22 ? `${`${name}`.slice(0, 22)}...` : name}
-            </Text>
-            <Text
-              style={{
-                color: colors.secondary,
-                fontSize: Dimensions.get("window").width / 22,
+                marginTop: Dimensions.get("window").height / 300,
+                fontSize: Dimensions.get("window").width / 24,
               }}
             >
               {sanitizePhoneNumber(phoneNumbers)}
             </Text>
           </View>
+          )}
         </View>
 
         {isMultiple && (
