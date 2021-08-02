@@ -198,11 +198,12 @@ export const initiateUnlink = (dispatch: (data: any) => void, resend = false) =>
       dispatch({ type: SET_ACTION_LOADING, payload: true })
     }
 
-    const { appKey, selectedBank } = await getApiAndToken();
+    const { appKey, selectedBank, bvn } = await getApiAndToken();
 
     const payload = {
       userId,
       bankCode: selectedBank?.bankCode,
+      bvn,
     };
 
     await kwiklliApi
