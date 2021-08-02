@@ -292,7 +292,7 @@ const SendMoney = ({ route, navigation }: React.ComponentProps<any>) => {
                       filterVidatedDataOptions.length > 2 &&
                       winHeightByThree > 250
                         ? winHeightByThree
-                        : 250,
+                        : 285,
                   }}
                 >
                   {filterVidatedDataOptions.map((accountName, index) => (

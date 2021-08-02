@@ -1,3 +1,4 @@
+import { cleanUpDuplicateAsync } from "shaolinmkz-utils";
 import kwiklliApi from "../../api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
@@ -140,9 +141,10 @@ export const validatePhoneNumber = (dispatch: (data: any) => void) => async (val
       });
 
     } else if (data?.accountName && Array.isArray(data?.accountName)) {
+      const cleanData = await cleanUpDuplicateAsync(data.accountName);
       dispatch({
         type: VALIDATED_OPTIONS_PHONE_NUMBER,
-        payload: data.accountName.map((val: any) => val.trim().replace(/undefined/gim, "")),
+        payload: cleanData,
       });
     }
 
