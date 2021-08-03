@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -8,12 +8,14 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   KeyboardAvoidingView,
+  TouchableOpacity,
+  Platform
 } from "react-native";
-import { Foundation } from "@expo/vector-icons";
+import { Foundation, Ionicons } from "@expo/vector-icons";
 import CustomRadioButton from "../components/CustomRadioButton";
 import CustomButton2 from "../components/CustomButton2";
 import colors from "../constants/colors";
-import { combinedValidators, sanitizePhoneNumber } from "../helpers";
+import { combinedValidators, sanitizePhoneNumber, ternaryResolver } from "../helpers";
 import fonts from "../constants/fonts";
 import useAppState from "../hooks/useAppState";
 import { initiateUnlink } from "../redux/actions";
@@ -22,6 +24,10 @@ import useNavJourney from "../hooks/useNavJourney";
 const UnlinkAlias = ({ route, navigation }: React.ComponentProps<any>) => {
   const { account, action } = route.params;
   const { activeJourney } = useNavJourney();
+
+  const modlRef1 = useRef(null);
+  const modlRef2 = useRef(null);
+  const [confirmationModalOpen, setComfirmationModalOpen] = useState(false);
 
   const { linkedAliases, dispatch, actionLoading } = useAppState();
   const [selectedPhoneOrEmail, setSelectedPhoneOrEmail] = useState("");
@@ -45,6 +51,7 @@ const UnlinkAlias = ({ route, navigation }: React.ComponentProps<any>) => {
   }
 
   const handleSendOtp = () => {
+    Keyboard.dismiss();
     initiateUnlink(dispatch)({ userId: selectedPhoneOrEmail })
     .then(result => {
       if(result) {
@@ -54,8 +61,10 @@ const UnlinkAlias = ({ route, navigation }: React.ComponentProps<any>) => {
   }
 
   const winDi = Dimensions.get("window");
+  const isAndroid = Platform.OS === "android";
 
   return (
+    <>
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <KeyboardAvoidingView behavior="padding" style={styles.container}>
         <View style={styles.account}>
@@ -117,7 +126,7 @@ const UnlinkAlias = ({ route, navigation }: React.ComponentProps<any>) => {
           }}
         >
           <CustomButton2
-            onPress={handleSendOtp}
+            onPress={() => setComfirmationModalOpen(true)}
             text="Send OTP"
             loading={actionLoading}
             disabled={
@@ -129,6 +138,118 @@ const UnlinkAlias = ({ route, navigation }: React.ComponentProps<any>) => {
         </View>
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
+
+    {confirmationModalOpen && (
+        <TouchableWithoutFeedback
+          onPress={(e) => {
+            if (
+              e.target === modlRef1.current ||
+              e.target === modlRef2.current
+            ) {
+              setComfirmationModalOpen(false);
+            }
+          }}
+        >
+          <View
+            ref={modlRef1}
+            style={{
+              position: "absolute",
+              backgroundColor: colors.transparent,
+              top: 0,
+              bottom: 0,
+              width: "100%",
+              flex: 1,
+            }}
+          >
+            <View
+              ref={modlRef2}
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <View
+                style={{
+                  backgroundColor: colors.white,
+                  height: ternaryResolver(
+                    winDi.height / 2 < 400,
+                    400,
+                    winDi.height / 2.1
+                  ),
+                  width: winDi.width / 1.1,
+                  padding: winDi.width / 15,
+                  justifyContent: "space-between"
+                }}
+              >
+                <View
+                  style={{
+                    paddingBottom: 20,
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    flexDirection: "row",
+                  }}
+                >
+                  <Text
+                    style={{
+                      textAlign: "left",
+                      color: colors.secondary,
+                      fontFamily: fonts.bold,
+                      fontSize: winDi.width / 20,
+                    }}
+                  >
+                    Confirmation
+                  </Text>
+
+                  <TouchableOpacity onPress={() => setComfirmationModalOpen(false)}>
+                    <Ionicons name={isAndroid ? "md-close-sharp" : "ios-close-sharp"} size={winDi.width / 12} color={colors.primary} />
+                  </TouchableOpacity>
+                </View>
+
+                <View
+                  style={{
+                    paddingBottom: 20,
+                  }}
+                >
+                  <Text
+                    style={{
+                      textAlign: "left",
+                      color: colors.textColorLight,
+                      fontFamily: fonts.regular,
+                      fontSize: winDi.width / 22,
+                    }}
+                  >
+                    Are you sure you want to unlink <Text style={{ fontFamily: fonts.bold }}>{`${selectedPhoneOrEmail}`}</Text> from this account number <Text style={{ fontFamily: fonts.bold }}>{`${account.accountNumber}`}</Text>?
+                  </Text>
+                </View>
+
+                <View>
+                    <View style={{ width: "100%", borderTopColor: colors.line, borderTopWidth: 2, }} />
+
+                  <View style={{ marginTop: winDi.height / 20, flexDirection: "row", justifyContent: "center" }}>
+                  <CustomButton2
+                      onPress={() => setComfirmationModalOpen(false)}
+                      text="Cancel"
+                      customStyle={{ width: winDi.width / 3, backgroundColor: colors.white }}
+                      customTextStyle={{ color: colors.primary }}
+                    />
+
+                  <CustomButton2
+                      onPress={() => {
+                        setComfirmationModalOpen(false);
+                        handleSendOtp()
+                      }}
+                      text="Proceed"
+                      customStyle={{ width: winDi.width / 3, marginLeft: 10 }}
+                    />
+                  </View>
+                </View>
+              </View>
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      )}
+    </>
   );
 };
 

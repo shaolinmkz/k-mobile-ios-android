@@ -85,6 +85,7 @@ const OtpScreen = ({ navigation, route }: React.ComponentProps<any>) => {
   };
 
   const handleResendOtp = useCallback(() => {
+    Keyboard.dismiss();
     if (activeJourney?.activeAction === INDEPENDENT_UNLINKING) {
       initiateUnlink(dispatch, true)({ userId: selectedPhoneOrEmail });
     } else if (activeJourney?.activeAction === INITIAL_LINKING) {
@@ -99,6 +100,7 @@ const OtpScreen = ({ navigation, route }: React.ComponentProps<any>) => {
 
   const handleConfirmOTP = () => {
     handleActionLoading(true);
+    Keyboard.dismiss();
     if (activeJourney?.activeAction === INDEPENDENT_UNLINKING) {
       confirmUnlink(dispatch)({ userId: selectedPhoneOrEmail, otp })
         .then((result) => {

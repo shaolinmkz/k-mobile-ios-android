@@ -65,6 +65,11 @@ const Routes = () => {
     height: Dimensions.get("screen").height / 9,
   };
 
+  const commonHeaderStyles = {
+    headerBackTitle: "",
+    headerTintColor: colors.secondary,
+  };
+
   const headerTitleContainerStyle = {
     top: 0,
     bottom: 0,
@@ -92,6 +97,7 @@ const Routes = () => {
                 fontFamily: fonts.bold,
                 color: colors.secondary,
               },
+              ...commonHeaderStyles,
               headerStyle,
               // @ts-ignore
               headerTitleContainerStyle,
@@ -126,6 +132,7 @@ const Routes = () => {
                   fontFamily: fonts.bold,
                   color: colors.secondary,
                 },
+                ...commonHeaderStyles,
                 headerStyle,
                 // @ts-ignore
                 headerTitleContainerStyle,
@@ -140,7 +147,10 @@ const Routes = () => {
                 headerTitleStyle: {
                   fontSize: Dimensions.get("window").width / 20,
                   fontFamily: fonts.bold,
+                  color: colors.secondary,
                 },
+                ...commonHeaderStyles,
+                headerTintColor: colors.secondary,
                 headerStyle,
                 ...TransitionScreenOptions,
               }}
@@ -153,7 +163,9 @@ const Routes = () => {
                 headerTitleStyle: {
                   fontSize: Dimensions.get("window").width / 20,
                   fontFamily: fonts.bold,
+                  color: colors.secondary,
                 },
+                ...commonHeaderStyles,
                 headerStyle,
                 ...TransitionScreenOptions,
               }}
@@ -167,7 +179,9 @@ const Routes = () => {
                 headerTitleStyle: {
                   fontSize: Dimensions.get("window").width / 20,
                   fontFamily: fonts.bold,
+                  color: colors.secondary,
                 },
+                ...commonHeaderStyles,
                 headerStyle,
                 ...TransitionScreenOptions,
               }}
@@ -181,7 +195,9 @@ const Routes = () => {
                 headerTitleStyle: {
                   fontSize: Dimensions.get("window").width / 20,
                   fontFamily: fonts.bold,
+                  color: colors.secondary,
                 },
+                ...commonHeaderStyles,
                 headerStyle,
                 ...TransitionScreenOptions,
               }}
@@ -195,7 +211,9 @@ const Routes = () => {
                 headerTitleStyle: {
                   fontSize: Dimensions.get("window").width / 20,
                   fontFamily: fonts.bold,
+                  color: colors.secondary,
                 },
+                ...commonHeaderStyles,
                 headerStyle,
                 ...TransitionScreenOptions,
               }}
@@ -209,7 +227,9 @@ const Routes = () => {
                 headerTitleStyle: {
                   fontSize: Dimensions.get("window").width / 20,
                   fontFamily: fonts.bold,
+                  color: colors.secondary,
                 },
+                ...commonHeaderStyles,
                 headerStyle,
                 ...TransitionScreenOptions,
               }}

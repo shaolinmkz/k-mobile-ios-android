@@ -59,6 +59,7 @@ const LinkAlias = ({ route, navigation }: React.ComponentProps<any>) => {
   };
 
   const handleSendOTP = () => {
+    Keyboard.dismiss();
     if (activeJourney?.activeAction === INITIAL_LINKING) {
       initiateInitialLinking(dispatch)().then((result) => {
         if (result) {

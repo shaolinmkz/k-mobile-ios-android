@@ -15,16 +15,18 @@ interface Props {
   disabled?: boolean;
   onPress?: () => void;
   loading?: boolean;
+  customStyle: any;
+  customTextStyle: any;
 }
 
-const CustomButton2 = ({ text, onPress, disabled, loading }: Props) => {
+const CustomButton2 = ({ text, onPress, disabled, loading, customStyle, customTextStyle }: Props) => {
   const disabledBtnStyle = disabled ? { backgroundColor: colors.disabled } : {};
   const disabledTextStyle = disabled ? { color: colors.white } : {};
 
   return (
     <TouchableOpacity
       activeOpacity={0.8}
-      style={{ ...styles.button, ...disabledBtnStyle }}
+      style={{ ...styles.button, ...customStyle, ...disabledBtnStyle }}
       onPress={[disabled, loading].includes(true) ? anonymousFunc : onPress}
     >
       {loading && (
@@ -35,7 +37,7 @@ const CustomButton2 = ({ text, onPress, disabled, loading }: Props) => {
         />
       )}
       {!loading && (
-        <Text style={{ ...styles.text, ...disabledTextStyle }}>{text}</Text>
+        <Text style={{ ...styles.text, ...customTextStyle, ...disabledTextStyle }}>{text}</Text>
       )}
     </TouchableOpacity>
   );
@@ -43,6 +45,8 @@ const CustomButton2 = ({ text, onPress, disabled, loading }: Props) => {
 
 CustomButton2.defaultProps = {
   loading: false,
+  customStyle: {},
+  customTextStyle: {},
 }
 
 const styles = StyleSheet.create({
