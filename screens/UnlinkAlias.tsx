@@ -209,8 +209,6 @@ const UnlinkAlias = ({ route, navigation }: React.ComponentProps<any>) => {
                 <View
                   style={{
                     paddingBottom: 20,
-                    justifyContent: "center",
-                    alignItems: "center",
                   }}
                 >
                   <Text
@@ -218,7 +216,7 @@ const UnlinkAlias = ({ route, navigation }: React.ComponentProps<any>) => {
                       textAlign: "left",
                       color: colors.textColorLight,
                       fontFamily: fonts.regular,
-                      fontSize: winDi.width / 25,
+                      fontSize: winDi.width / 22,
                     }}
                   >
                     Are you sure you want to unlink <Text style={{ fontFamily: fonts.bold }}>{`${selectedPhoneOrEmail}`}</Text> from this account number <Text style={{ fontFamily: fonts.bold }}>{`${account.accountNumber}`}</Text>?
