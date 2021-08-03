@@ -241,7 +241,7 @@ const UnlinkAlias = ({ route, navigation }: React.ComponentProps<any>) => {
                         setComfirmationModalOpen(false);
                         handleSendOtp()
                       }}
-                      text="Yes"
+                      text="Proceed"
                       customStyle={{ width: winDi.width / 3, marginLeft: 10 }}
                     />
                   </View>
