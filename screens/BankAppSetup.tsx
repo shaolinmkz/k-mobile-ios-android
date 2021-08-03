@@ -97,6 +97,7 @@ const BankAppSetup = () => {
 
   const handleLogin = async () => {
     try {
+      Keyboard.dismiss();
       dispatch({ type: LOGIN_LOADING });
 
       const payload = {

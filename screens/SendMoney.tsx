@@ -155,6 +155,7 @@ const SendMoney = ({ route, navigation }: React.ComponentProps<any>) => {
   };
 
   const handleBiometricTransfer = () => {
+    Keyboard.dismiss();
     authenticateUserViaHardware({
       promptMessage: "Biometric Confirmation",
     }).then((result) => {
@@ -170,6 +171,7 @@ const SendMoney = ({ route, navigation }: React.ComponentProps<any>) => {
   };
 
   const handlePasswordTransfer = () => {
+    Keyboard.dismiss();
     if (localState.password === PASSWORD) {
       handleSendMoney(localState.password === PASSWORD);
     } else {
