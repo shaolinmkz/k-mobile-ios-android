@@ -141,10 +141,10 @@ export const validatePhoneNumber = (dispatch: (data: any) => void) => async (val
       });
 
     } else if (data?.accountName && Array.isArray(data?.accountName)) {
-      const cleanData = await cleanUpDuplicateAsync(data.accountName);
+      const cleanData: any = await cleanUpDuplicateAsync(data.accountName);
       dispatch({
-        type: VALIDATED_OPTIONS_PHONE_NUMBER,
-        payload: cleanData,
+        type: cleanData?.length > 1 ? VALIDATED_OPTIONS_PHONE_NUMBER : VALIDATED_PHONE_NUMBER,
+        payload: cleanData?.length > 1 ? cleanData : cleanData?.[0],
       });
     }
 
