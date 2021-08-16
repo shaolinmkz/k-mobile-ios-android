@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
-import { View, Image, Modal, Animated } from "react-native";
+import { View, Image, Modal, Animated, Dimensions } from "react-native";
 import { SET_SPLASH_SCREEN } from "../redux/types";
 import useAppState from "../hooks/useAppState";
 
@@ -34,6 +34,8 @@ const SplashScreen = ({ logo, timeout }: React.ComponentProps<any>) => {
     }).start()
   }, []);
 
+  const winDi = Dimensions.get("window");
+
   return (
     <Modal animationType="fade" transparent={false} visible style={{ flex: 1 }}>
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -51,8 +53,8 @@ const SplashScreen = ({ logo, timeout }: React.ComponentProps<any>) => {
           <Image
             source={{
               uri: logo,
-              width: 100,
-              height: 100,
+              width: winDi.width / 2.2,
+              height: winDi.width / 2.2,
             }}
           />
         </Animated.View>
