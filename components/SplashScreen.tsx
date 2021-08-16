@@ -53,8 +53,8 @@ const SplashScreen = ({ logo, timeout }: React.ComponentProps<any>) => {
           <Image
             source={{
               uri: logo,
-              width: winDi.width / 2.2,
-              height: winDi.width / 2.2,
+              width: winDi.width / 2.5,
+              height: winDi.width / 2.5,
             }}
           />
         </Animated.View>
