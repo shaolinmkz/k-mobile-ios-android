@@ -24,7 +24,7 @@ export const registeredBanks: Array<IBank> = [
   },
   {
     appName: "Access Bank",
-    appIcon: "https://res.cloudinary.com/shaolinmkz/image/upload/v1628588974/Random-Icons/banks_logo/access_bank.png",
+    appIcon: "https://res.cloudinary.com/shaolinmkz/image/upload/v1626638585/Random-Icons/access-bank.png",
     apiKey: "-9zaytogn.f929f900-0e9a-499e-ab34-55538f4d8ef0",
     bankCode: "000014",
     label: "Access Bank",
@@ -79,7 +79,7 @@ export const registeredBanks: Array<IBank> = [
   {
     appName: "Heritage Bank",
     appIcon: "https://res.cloudinary.com/shaolinmkz/image/upload/v1628589005/Random-Icons/banks_logo/Heritage_Bank_PLC.png",
-    apiKey: "TQS2g3FyZ.b915b448-b133-4cbb-a2e9-884686f6772d",
+    apiKey: "G0xTH03dI.683d759e-1941-4a00-bb3a-a4577793b8f4",
     bankCode: "000020",
     label: "Heritage Bank",
     value: "000020",
