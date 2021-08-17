@@ -37,7 +37,7 @@ const LinkModalInfo: React.FC<Props> = ({
   const contentBackgroundColor = isDarkMode ? colors.secondary : colors.white;
   const textColor = isDarkMode ? colors.white : colors.textColor;
 
-  const ckeckIconSize = Dimensions.get("window").height / 8;
+  const checkIconSize = Dimensions.get("window").height / 8;
   const closeIconSize = Dimensions.get("window").height / 40;
 
   useEffect(() => {
@@ -85,7 +85,7 @@ const LinkModalInfo: React.FC<Props> = ({
                 },
               ]}
             >
-              <CheckSvg width={ckeckIconSize} height={ckeckIconSize} />
+              <CheckSvg width={checkIconSize} height={checkIconSize} />
             </Animated.View>
           </View>
 
@@ -96,7 +96,7 @@ const LinkModalInfo: React.FC<Props> = ({
                 fontSize: Dimensions.get("window").width / 18,
               }}
             >
-              Transfer Successfully
+              Transfer Successful
             </Text>
           </Text>
 
