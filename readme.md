@@ -12,4 +12,4 @@ Just an app to level up on mobile development with React Native
 <img src="https://res.cloudinary.com/shaolinmkz/image/upload/v1616080009/softcom/kwiklli/npay-white.svg" width="200">
 
 ---
-![](https://res.cloudinary.com/shaolinmkz/image/upload/v1616075931/softcom/kwiklli/kwiklli-sdk.gif)
+![](kwiklli_giphy.gif)
