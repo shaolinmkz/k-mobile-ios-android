@@ -79,7 +79,7 @@ export const loginAction = (dispatch: (data: any) => void) => async (payload: an
 
     return true;
   }
-  catch (error) {
+  catch (error: any) {
     toastError(error?.response?.data?.message, dispatch);
   }
   finally {
@@ -184,7 +184,7 @@ export const handleVerifyUser = (dispatch: (data: any) => void, loading = true) 
     dispatch({ type: SET_USER_EXIST, payload: data?.userExist });
 
   }
-  catch (error) {
+  catch (error: any) {
     dispatch({ type: SET_USER_EXIST, payload: null });
     toastError(error?.response?.data?.message, dispatch);
   }
@@ -219,7 +219,7 @@ export const initiateUnlink = (dispatch: (data: any) => void, resend = false) =>
 
     return true;
   }
-  catch (error) {
+  catch (error: any) {
     toastError(error?.response?.data?.message, dispatch);
   }
   finally {
@@ -253,7 +253,7 @@ export const confirmUnlink = (dispatch: (data: any) => void) => async ({ userId,
     fetchUserIdLinkedToBVNAction(dispatch);
     return true;
   }
-  catch (error) {
+  catch (error: any) {
     toastError(error?.response?.data?.message, dispatch);
   }
   finally {
@@ -284,7 +284,7 @@ export const initiateIndependentLinking = (dispatch: (data: any) => void, resend
 
     toastSuccess(message, dispatch);
     return true;
-  } catch (error) {
+  } catch (error: any) {
     toastError(error?.response?.data?.message, dispatch);
   }
   finally {
@@ -318,7 +318,7 @@ export const confirmIndependentLinking = (dispatch: (data: any) => void) => asyn
     dispatch({ type: SET_LINK_SUCCESSFUL, payload: true });
     handleVerifyUser(dispatch)();
     return true;
-  } catch (error) {
+  } catch (error: any) {
     toastError(error?.response?.data?.message, dispatch);
   }
   finally {
@@ -354,7 +354,7 @@ export const initiateInitialLinking = (dispatch: (data: any) => void, resend = f
     toastSuccess(`OTP sent to ${phoneNumber}`, dispatch);
     return true;
   }
-  catch (error) {
+  catch (error: any) {
     toastError(error?.response?.data?.message, dispatch)
   }
   finally {
@@ -387,7 +387,7 @@ export const confirmInitialLinking = (dispatch: (data: any) => void) => async ({
     dispatch({ type: SET_LINK_SUCCESSFUL, payload: true });
     handleVerifyUser(dispatch)();
     return true;
-  } catch (error) {
+  } catch (error: any) {
     toastError(error?.response?.data?.message, dispatch);
   } finally {
     dispatch({ type: SET_ACTION_LOADING, payload: false });
@@ -422,7 +422,7 @@ export const handleTransfer = (dispatch: (data: any) => void) => async ({ amount
     toastSuccess(data?.message, dispatch);
     dispatch({ type: SET_TRANSFER_SUCCESSFUL, payload: true });
   }
-  catch (error) {
+  catch (error: any) {
     toastError(error?.response?.data?.message, dispatch);
   }
   finally {
