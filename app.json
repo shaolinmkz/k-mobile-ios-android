@@ -1,0 +1,38 @@
+{
+  "expo": {
+    "name": "Kwiklli bank",
+    "slug": "kwiklli-bank-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "description": "A new way to receive money 💰💰💰 through Kwiklli. Send money to any existing bank account. Link phone number or email address to your bank account. Cashout from any SANEF agent nearby.",
+    "icon": "./assets/icon.png",
+    "owner": "kwiklli",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.softcom.kwiklli",
+      "buildNumber": "1.0.0"
+    },
+    "android": {
+      "package": "com.softcom.kwiklli",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FFFFFF"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
