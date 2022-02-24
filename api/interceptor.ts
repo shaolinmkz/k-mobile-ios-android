@@ -5,7 +5,7 @@ import { LOGOUT } from "../redux/types";
 
 
 const customAxios = axios.create({
-  baseURL: "https://api-npay.bluegreensoft.com/v1",
+  baseURL: "<API_ENDPOINT>/v1",
 });
 
 const clearStorageAndLogout = async () => {

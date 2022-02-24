@@ -1,4 +1,4 @@
 export const kwiklliSuperAdminAuthCredentials = {
-  username: "oluwole.s@softcom.ng",
-  password: "123456",
+  username: "<TEST_GOD_MODE_EMAIL>",
+  password: "<TEST_GOD_MODE_PASSWORD>",
 };
