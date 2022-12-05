@@ -9,4 +9,4 @@ Just an app to level up on mobile development with React Native
 - Cash out from any SANEF agent nearby.
 
 ---
-![](kwiklli_giphy.gif)
+![](preview.gif)
